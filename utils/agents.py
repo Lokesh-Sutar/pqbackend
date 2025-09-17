@@ -55,7 +55,7 @@ def create_sentiment_agent() -> Agent:
         name='Sentiment_Agent',
         id='agent_2',
         model=Gemini(
-            id=GEMINI_API_KEY, api_key=GEMINI_API_KEY, system_prompt=SYSTEM_PROMPT
+            id=GEMINI_MODEL_NAME, api_key=GEMINI_API_KEY, system_prompt=SYSTEM_PROMPT
         ),
         tools=[
             DuckDuckGoTools(cache_results=True),

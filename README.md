@@ -53,7 +53,7 @@ pip install uv
 Once the installation is complete, you can start the backend server using the following command:
 
 ```bash
-uv run python main.py
+uv run main.py
 ```
 
 The server should now be running, and you'll see output logs in your terminal. ✨

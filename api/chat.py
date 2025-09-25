@@ -1,13 +1,12 @@
-import asyncio
 import json
 import logging
-from collections.abc import AsyncGenerator
+from collections.abc import AsyncGenerator, Generator
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter
 from fastapi.responses import StreamingResponse
 
 from config import DEFAULT_SESSION_ID, DEFAULT_USER_ID
-from utils.agents import team
+from core.agents import team
 from utils.event_processor import process_event
 
 router = APIRouter()
@@ -17,26 +16,35 @@ logger = logging.getLogger(__name__)
 
 @router.get(path='/api/chat')
 async def chat(prompt: str) -> StreamingResponse:
+    import time
+
     async def event_generator() -> AsyncGenerator:
         logger.info(f"Starting agent run for prompt: '{prompt[:50]}...'")
         try:
-            async for event in team.arun(
+            for event in team.run(
                 prompt,
                 stream=True,
                 stream_intermediate_steps=True,
                 user_id=DEFAULT_USER_ID,
+                exponential_backoff=True,
+                delay_between_retries=3,
+                retries=10,
                 session_id=DEFAULT_SESSION_ID,
             ):
                 yield process_event(event)
+                time.sleep(0.01)
 
-                await asyncio.sleep(0.01)
-
-            end_event_data = json.dumps({'message': 'RunCompleted'})
+            end_event_data = json.dumps(
+                {'message': 'All tools and agents have completed their runs.'}
+            )
             yield f'event: end\ndata: {end_event_data}\n\n'
-            logger.info('Agent run completed successfully.')
+            logger.info('Completed!')
 
         except Exception as e:
-            logger.error(f'An error occurred during agent execution: {e}', exc_info=True)
+            logger.error(
+                'An error occurred during agent execution. Please check debug logs.',
+                exc_info=True,
+            )
             error_data = json.dumps({'error': str(e)})
             yield f'event: error\ndata: {error_data}\n\n'
 

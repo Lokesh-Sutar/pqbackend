@@ -6,6 +6,7 @@ logger = logging.getLogger(__name__)
 
 FINANCE_AGENT_ID = 'agent_1'
 SENTIMENT_AGENT_ID = 'agent_2'
+TEAM_NAME = 'team_1'
 
 
 def clean_payload(payload: dict) -> dict:
@@ -48,13 +49,6 @@ def handle_reasoning_event(event_name: str, payload: dict) -> dict:
 def handle_run_event(event_name: str, payload: dict) -> dict:
     """Processes high-level run status events."""
     logger.info(f'Handling run event: {event_name}')
-
-    if event_name == 'RunCompletedEvent' and 'metrics' in payload:
-        logger.info('--- AGENT RUN COMPLETED ---')
-        metrics_json = json.dumps(payload.get('metrics', {}), indent=2)
-        logger.info(f'Final Metrics:\n{metrics_json}')
-        logger.info('---------------------------')
-
     return {'type': 'run', 'payload': payload}
 
 
@@ -75,9 +69,11 @@ def handle_sentiment_tool_event(payload: dict) -> dict:
 def handle_default_tool_event(payload: dict) -> dict:
     """Fallback for tool calls from any other agent."""
     logger.warning(
-        f'Processing a tool call from an unknown agent: {payload.get("agent_id")}'
+        f'Processing a tool call from an unknown agent: {payload.get("agent_id", "Team Probably")}'
     )
-    payload['source_agent_name'] = 'Unknown'
+    payload['source_agent_name'] = (
+        f'Unknown or {payload.get("agent_id", "Team Probably")}'
+    )
     return {'type': 'tool', 'payload': payload}
 
 

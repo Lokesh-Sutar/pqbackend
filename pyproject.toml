@@ -7,6 +7,7 @@ requires-python = ">=3.12"
 dependencies = [
     "agno>=2.0.2",
     "aiohttp>=3.12.15",
+    "asyncpraw>=7.8.1",
     "ddgs>=9.5.5",
     "fastapi>=0.116.1",
     "google-genai>=1.35.0",
@@ -18,6 +19,9 @@ dependencies = [
     "ruff>=0.13.0",
     "sqlalchemy>=2.0.43",
     "sse-starlette>=3.0.2",
+    "ta-lib>=0.6.7",
+    "torch>=2.8.0",
+    "transformers>=4.56.1",
     "uvicorn>=0.35.0",
     "yfinance>=0.2.65",
 ]
@@ -30,7 +34,6 @@ reportUnknownParameterType = false
 reportUnknownArgumentType = false
 
 reportAny = false
-reportUnusedImport = false
 
 reportMissingParameterType = false
 reportMissingTypeArgument = false

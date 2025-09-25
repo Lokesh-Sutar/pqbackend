@@ -15,8 +15,11 @@ from config import (
     GOOGLE_API_KEY_2,
     GOOGLE_MODEL_NAME_0,
     GOOGLE_MODEL_NAME_1,
+    REASONING_MODE,
     db,
 )
+from tools.sentiment.finhub import get_finnhub_news_sentiment
+from tools.sentiment.reddit import get_reddit_sentiment
 from tools.signals.bands import get_bollinger_bands_signal
 from tools.signals.macd import get_macd_signal
 from tools.signals.rsi import get_rsi_signal
@@ -64,11 +67,16 @@ def create_sentiment_agent() -> Agent:
         model=Gemini(id=GOOGLE_MODEL_NAME_1, api_key=GOOGLE_API_KEY_1, seed=42),
         instructions=[
             'Role: You are a Market Sentiment Analyst.',
-            'Task: Scan news, social media, and financial forums to determine the prevailing market sentiment for a given stock ticker.',
-            'Process: Aggregate key themes and opinions. Ignore irrelevant noise.',
-            'Output: Your final output MUST be a single JSON object with this structure: {"ticker": "SYMBOL", "sentiment": "Positive | Negative | Neutral", "key_points": ["Point 1", "Point 2", "..."]}',
+            'Task: For a given stock ticker, you must use ALL available sentiment tools (Reddit, FinHub News, DuckDuckGo, Google Search) to gather market sentiment data. Do not skip any tool.',
+            'Process: For each tool, extract the sentiment signal, confidence, justification, and key headlines or points. Aggregate the results from all tools, identifying consensus and divergence. Ignore irrelevant or off-topic results.',
+            'Output: Your final output MUST be a single JSON object with this exact structure: {"ticker": "SYMBOL", "sentiment_summary": {"overall_sentiment": "Positive | Negative | Neutral | Mixed", "confidence": "High | Medium | Low", "justification": "..."}, "tool_outputs": [{"tool_name": "TOOL", "sentiment": "...", "confidence": "...", "justification": "...", "top_points": ["Headline or key point 1", "Headline or key point 2", ...]}], "key_points": ["Aggregated Point 1", "Aggregated Point 2", ...]}. Do not add any conversational text. Only return the JSON object.',
         ],
-        tools=[DuckDuckGoTools(fixed_max_results=30, timeout=30), GoogleSearchTools(fixed_max_results=30, timeout=30)],
+        tools=[
+            get_reddit_sentiment,
+            get_finnhub_news_sentiment,
+            DuckDuckGoTools(fixed_max_results=10, timeout=30),
+            GoogleSearchTools(fixed_max_results=10, timeout=30),
+        ],
         exponential_backoff=True,
         delay_between_retries=3,
         user_id=DEFAULT_USER_ID,
@@ -82,8 +90,8 @@ def create_sentiment_agent() -> Agent:
 
 
 def create_team() -> Team:
-    finance_agent = create_finance_agent()
-    sentiment_agent = create_sentiment_agent()
+    finance_agent: Agent = create_finance_agent()
+    sentiment_agent: Agent = create_sentiment_agent()
 
     return Team(
         id='team_1',
@@ -104,23 +112,23 @@ def create_team() -> Team:
         ],
         exponential_backoff=True,
         delay_between_retries=3,
-        reasoning=True,
-        reasoning_max_steps=3,
+        reasoning=REASONING_MODE,
+        # reasoning_max_steps=3,
         markdown=True,
         members=[finance_agent, sentiment_agent],
         # db=db,
         user_id=DEFAULT_USER_ID,
         session_id=DEFAULT_SESSION_ID,
-        add_history_to_context=True,
-        num_history_runs=5,
-        enable_session_summaries=True,
+        # add_history_to_context=True,
+        # num_history_runs=5,
+        # enable_session_summaries=True,
         # enable_agentic_memory=True,
         # enable_user_memories=True,
-        add_session_summary_to_context=True,
-        add_memories_to_context=True,
+        # add_session_summary_to_context=True,
+        # add_memories_to_context=True,
         debug_mode=DEBUG_MODE,
         debug_level=DEBUG_LEVEL,
     )
 
 
-team = create_team()
+team: Team = create_team()

@@ -5,7 +5,7 @@ import yfinance as yf
 from agno.tools import tool
 from pandas import DataFrame
 
-from tools.signals.utils import get_ticker, logger_hook, validate_data
+from tools.utils import get_ticker, logger_hook, validate_data
 
 
 @tool(
@@ -15,13 +15,12 @@ from tools.signals.utils import get_ticker, logger_hook, validate_data
 )
 def get_vix_market_fear_signal():
     try:
-        # Try to load VIX from CSV first, then fallback to yfinance
         try:
             vix_df = get_ticker('^VIX')
         except:
             vix = yf.Ticker('^VIX')
             vix_df = vix.history(period='1y')
-            vix_df.columns = vix_df.columns.str.lower()  # Normalize column names
+            vix_df.columns = vix_df.columns.str.lower()
 
         if 'close' not in vix_df.columns or len(vix_df) < 6:
             return {
@@ -41,7 +40,6 @@ def get_vix_market_fear_signal():
 
     latest_vix = vix_df['close'].iloc[-1]
 
-    # More nuanced VIX interpretation
     if latest_vix < 12:
         signal = 'Extremely Low Fear (Complacency Risk)'
         justification = f'VIX at {latest_vix:.1f} indicates extreme complacency. Such low volatility often precedes market corrections.'
@@ -58,7 +56,6 @@ def get_vix_market_fear_signal():
         signal = 'Extreme Fear (Panic Mode)'
         justification = f'VIX at {latest_vix:.1f} indicates extreme fear and panic selling. May present contrarian opportunity.'
 
-    # Calculate rate of change
     roc_5d = vix_df['close'].pct_change(periods=5).iloc[-1] * 100
     roc_20d = vix_df['close'].pct_change(periods=20).iloc[-1] * 100
 

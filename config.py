@@ -18,6 +18,11 @@ OPENROUTER_MODEL_REASONING = 'moonshotai/kimi-k2:free'
 OPENROUTER_MODEL_REASONING_PROVIDER = 'moonshotai'
 OPENROUTER_MODEL_API: str | None = os.getenv('OPENROUTER_MODEL_API')
 
+REDDIT_CLIENT_ID: str | None = os.getenv('REDDIT_CLIENT_ID')
+REDDIT_CLIENT_SECRET: str | None = os.getenv('REDDIT_CLIENT_SECRET')
+REDDIT_USER_AGENT: str | None = os.getenv('REDDIT_USER_AGENT')
+FINNHUB_API_KEY: str | None = os.getenv('FINNHUB_API_KEY')
+
 APP_HOST: str = '127.0.0.1'
 APP_PORT: int = 8000
 
@@ -25,8 +30,13 @@ DB_FILE: str = 'agno.db'
 
 DEFAULT_USER_ID: str = 'user_1234'
 DEFAULT_SESSION_ID: str = 'session_user_1234'
+FINANCE_AGENT_ID = 'agent_1'
+SENTIMENT_AGENT_ID = 'agent_2'
+TEAM_NAME_ID = 'team_1'
 
 DEBUG_MODE = False
 DEBUG_LEVEL = 2  # 1 or 2
+
+REASONING_MODE = False
 
 db = SqliteDb(db_file=DB_FILE)

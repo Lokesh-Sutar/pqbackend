@@ -4,7 +4,7 @@ import talib
 from agno.tools import tool
 from pandas import DataFrame
 
-from tools.signals.utils import get_ticker, logger_hook, validate_data
+from tools.utils import get_ticker, logger_hook, validate_data
 
 
 @tool(
@@ -18,12 +18,10 @@ def get_bollinger_bands_signal(ticker: str):
     period = 20
     std_devs = 2
 
-    # Validate data
     validation_error = validate_data(df, ['close'], period, 'Bollinger Bands')
     if validation_error:
         return validation_error
 
-    # Calculate Bollinger Bands using TA-Lib
     close_prices = df['close'].values.astype(float)
     upper_band, middle_band, lower_band = talib.BBANDS(
         close_prices, timeperiod=period, nbdevup=std_devs, nbdevdn=std_devs
@@ -42,14 +40,10 @@ def get_bollinger_bands_signal(ticker: str):
             'details': {},
         }
 
-    # Calculate bandwidth
     bandwidth = ((latest_upper - latest_lower) / latest_middle) * 100
 
-    # Calculate %B (position within bands)
     percent_b = (latest_close - latest_lower) / (latest_upper - latest_lower) * 100
 
-    # Volatility analysis
-    # Compare current bandwidth to recent average
     recent_bandwidth = (upper_band[-20:] - lower_band[-20:]) / middle_band[-20:] * 100
     avg_bandwidth = np.nanmean(recent_bandwidth)
 
@@ -63,7 +57,6 @@ def get_bollinger_bands_signal(ticker: str):
         volatility_signal = 'Normal Volatility'
         volatility_justification = f'Bandwidth ({bandwidth:.2f}%) is near normal levels.'
 
-    # Price position analysis
     if percent_b > 100:
         price_position = 'Above Upper Band (Extreme Overbought)'
         price_justification = f'Price is {(percent_b - 100):.1f}% above the upper band. This suggests extreme overbought conditions.'

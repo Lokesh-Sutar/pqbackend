@@ -4,7 +4,7 @@ import talib
 from agno.tools import tool
 from pandas import DataFrame
 
-from tools.signals.utils import get_ticker, logger_hook, validate_data
+from tools.utils import get_ticker, logger_hook, validate_data
 
 
 @tool(
@@ -17,24 +17,20 @@ def get_sma_crossover_signal(ticker: str):
     short_window = 50
     long_window = 200
 
-    # Validate data
     validation_error = validate_data(
         df, ['close', 'high', 'low'], long_window, 'SMA Crossover'
     )
     if validation_error:
         return validation_error
 
-    # Convert to numpy arrays for TA-Lib
     close_prices = df['close'].values.astype(float)
     high_prices = df['high'].values.astype(float)
     low_prices = df['low'].values.astype(float)
 
-    # Calculate indicators using TA-Lib
     sma_short = talib.SMA(close_prices, timeperiod=short_window)
     sma_long = talib.SMA(close_prices, timeperiod=long_window)
     atr_values = talib.ATR(high_prices, low_prices, close_prices, timeperiod=14)
 
-    # Get current and previous values (skip NaN values)
     valid_idx = ~(np.isnan(sma_short) | np.isnan(sma_long))
     if np.sum(valid_idx) < 2:
         return {
@@ -51,7 +47,6 @@ def get_sma_crossover_signal(ticker: str):
     current_atr = atr_values[-1]
     current_close = close_prices[-1]
 
-    # Determine signal
     signal = 'Neutral'
     justification = f'The {short_window}-day SMA ({curr_short:.2f}) is currently {"above" if curr_short > curr_long else "below"} the {long_window}-day SMA ({curr_long:.2f}), indicating no recent crossover event.'
 
@@ -62,7 +57,6 @@ def get_sma_crossover_signal(ticker: str):
         signal = 'Death Cross (Bearish)'
         justification = f'The {short_window}-day SMA just crossed below the {long_window}-day SMA. This is a classic long-term bearish signal, suggesting a potential major downtrend.'
 
-    # Volatility assessment
     volatility_level = 'Normal'
     if current_atr > current_close * 0.03:
         volatility_level = 'High'

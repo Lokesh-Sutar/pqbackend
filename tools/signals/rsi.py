@@ -4,11 +4,11 @@ import talib
 from agno.tools import tool
 from pandas import DataFrame
 
-from tools.signals.utils import get_ticker, logger_hook, validate_data
+from tools.utils import get_ticker, logger_hook, validate_data
 
 
 @tool(
-    name='get_rsi_signal',  # Fixed: Changed from duplicate name
+    name='get_rsi_signal',
     description='This tool analyzes the stock data for RSI signals using TA-Lib.',
     tool_hooks=[logger_hook],
 )
@@ -17,12 +17,10 @@ def get_rsi_signal(ticker: str):
 
     period = 14
 
-    # Validate data
     validation_error = validate_data(df, ['close'], period + 1, 'RSI')
     if validation_error:
         return validation_error
 
-    # Calculate RSI using TA-Lib (more accurate than manual calculation)
     close_prices = df['close'].values.astype(float)
     rsi_values = talib.RSI(close_prices, timeperiod=period)
 
@@ -36,7 +34,6 @@ def get_rsi_signal(ticker: str):
             'details': {},
         }
 
-    # Determine signal with more nuanced thresholds
     signal = 'Neutral'
     confidence = 'Medium'
 

@@ -35,6 +35,7 @@ def get_bollinger_bands_signal(ticker: str):
     if any(np.isnan([latest_upper, latest_middle, latest_lower])):
         return {
             'tool': 'Bollinger Bands',
+            'description': 'This tool analyzes the stock data for Bollinger Bands signals using TA-Lib.',
             'signal': 'Insufficient Data',
             'justification': 'Not enough data to calculate Bollinger Bands',
             'details': {},
@@ -75,6 +76,7 @@ def get_bollinger_bands_signal(ticker: str):
 
     return {
         'tool': 'Bollinger Bands',
+        'description': 'This tool analyzes the stock data for Bollinger Bands signals using TA-Lib.',
         'volatility_signal': volatility_signal,
         'volatility_justification': volatility_justification,
         'price_position': price_position,

@@ -123,6 +123,7 @@ class SentimentAnalysisBase:
         ticker: str,
         tool_name: str,
         total_items: int,
+        description: str,
         sentiments: Dict[str, int],
         confidence_scores: List[float],
         item_data: Dict[str, List],
@@ -135,6 +136,7 @@ class SentimentAnalysisBase:
         if total_items == 0:
             return {
                 'tool': tool_name,
+                'description': description,
                 'signal': 'No Data',
                 'justification': f'No analyzable data found for {ticker}',
                 'details': {
@@ -170,6 +172,7 @@ class SentimentAnalysisBase:
 
         return {
             'tool': tool_name,
+            'description': description,
             'signal': signal,
             'confidence': confidence,
             'justification': justification,
@@ -187,7 +190,8 @@ class SentimentAnalysisBase:
         """Create standardized error response"""
         return {
             'tool': tool_name,
-            'signal': 'Error',
+            'description': 'An error occured by a tool. Please check.',
+            'signal': 'error',
             'justification': message,
             'details': {},
         }

@@ -25,6 +25,7 @@ def get_vix_market_fear_signal():
         if 'close' not in vix_df.columns or len(vix_df) < 6:
             return {
                 'tool': 'VIX (Market Fear Gauge)',
+                'description': 'This tool analyzes VIX data for market sentiment signals.',
                 'signal': 'Insufficient Data',
                 'justification': 'Requires at least 6 data points for the VIX.',
                 'details': {},
@@ -33,6 +34,7 @@ def get_vix_market_fear_signal():
     except Exception as e:
         return {
             'tool': 'VIX (Market Fear Gauge)',
+            'description': 'This tool analyzes VIX data for market sentiment signals.',
             'signal': 'Data Fetch Error',
             'justification': f'Could not fetch VIX data: {e}',
             'details': {},
@@ -71,6 +73,7 @@ def get_vix_market_fear_signal():
 
     return {
         'tool': 'VIX (Market Fear Gauge)',
+        'description': 'This tool analyzes VIX data for market sentiment signals.',
         'signal': signal,
         'justification': justification,
         'details': {

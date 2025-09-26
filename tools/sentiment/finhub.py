@@ -80,6 +80,7 @@ class FinHubSentimentAnalyzer(SentimentAnalysisBase):
             return self.generate_trading_signal(
                 ticker=ticker,
                 tool_name='FinHub News Sentiment',
+                description='This tool is used to fetch and measure the sentiment score of a particular ticker from Reddit',
                 total_items=0,
                 sentiments={'positive': 0, 'negative': 0, 'neutral': 0},
                 confidence_scores=[],
@@ -153,6 +154,7 @@ class FinHubSentimentAnalyzer(SentimentAnalysisBase):
 
         return self.generate_trading_signal(
             ticker=ticker,
+            description='This tool is used to fetch and measure the sentiment score of a particular ticker from Reddit',
             tool_name='FinHub News Sentiment',
             total_items=len(analyzed_articles),
             sentiments=sentiments,

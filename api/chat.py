@@ -1,6 +1,6 @@
 import json
 import logging
-from collections.abc import AsyncGenerator, Generator
+from collections.abc import AsyncGenerator
 
 from fastapi import APIRouter
 from fastapi.responses import StreamingResponse

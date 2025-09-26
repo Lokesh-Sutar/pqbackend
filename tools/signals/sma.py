@@ -35,6 +35,7 @@ def get_sma_crossover_signal(ticker: str):
     if np.sum(valid_idx) < 2:
         return {
             'tool': 'SMA Crossover',
+            'description': 'This tool analyzes the stock data for SMA crossover signals using TA-Lib.',
             'signal': 'Insufficient Data',
             'justification': 'Not enough valid SMA data points',
             'details': {},
@@ -65,6 +66,7 @@ def get_sma_crossover_signal(ticker: str):
 
     return {
         'tool': 'SMA Crossover',
+        'description': 'This tool analyzes the stock data for SMA crossover signals using TA-Lib.',
         'signal': signal,
         'justification': justification,
         'details': {

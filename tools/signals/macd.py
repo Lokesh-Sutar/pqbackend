@@ -37,6 +37,7 @@ def get_macd_signal(ticker: str):
     if any(np.isnan([curr_macd, curr_signal, prev_macd, prev_signal])):
         return {
             'tool': 'MACD',
+            'description': 'This tool analyzes the stock data for MACD signals using TA-Lib.',
             'signal': 'Insufficient Data',
             'justification': 'Not enough data to calculate MACD',
             'details': {},
@@ -60,6 +61,7 @@ def get_macd_signal(ticker: str):
 
     return {
         'tool': 'MACD',
+        'description': 'This tool analyzes the stock data for MACD signals using TA-Lib.',
         'signal': signal,
         'justification': justification + f' The histogram is {histogram_trend}.',
         'details': {

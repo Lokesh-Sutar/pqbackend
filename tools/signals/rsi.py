@@ -29,6 +29,7 @@ def get_rsi_signal(ticker: str):
     if np.isnan(latest_rsi):
         return {
             'tool': 'RSI',
+            'description': 'This tool analyzes the stock data for RSI signals using TA-Lib.',
             'signal': 'Insufficient Data',
             'justification': 'Not enough data to calculate RSI',
             'details': {},
@@ -58,6 +59,7 @@ def get_rsi_signal(ticker: str):
 
     return {
         'tool': 'RSI',
+        'description': 'This tool analyzes the stock data for RSI signals using TA-Lib.',
         'signal': signal,
         'confidence': confidence,
         'justification': justification,

@@ -93,6 +93,7 @@ class RedditSentimentAnalyzer(SentimentAnalysisBase):
 
             return self.generate_trading_signal(
                 ticker=ticker,
+                description='This tool is used to fetch and measure the sentiment score of a particular ticker from Reddit',
                 tool_name='Reddit Sentiment',
                 total_items=len(analyzed_posts),
                 sentiments=sentiments,

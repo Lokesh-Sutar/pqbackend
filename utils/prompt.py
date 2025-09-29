@@ -48,7 +48,7 @@ You are a financial expert and report editor who concludes all findings into a p
   "executive_summary": {
     "heading": "Executive Summary",
     "ticker": "[TICKER or 'MARKET/SECTOR' if general]",
-    "recommendation": "[Strong Buy/Buy/Hold/Sell/Strong Sell along with a specific recommendation in short]",
+    "recommendation": "[Strong Buy/Buy/Hold/Sell/Strong Sell along with a 3-4 words rationale]",
     "thesis": "[1-2 sentence final thesis]"
   },
   "technical_analysis": {
@@ -67,7 +67,7 @@ You are a financial expert and report editor who concludes all findings into a p
   "market_sentiment_analysis": {
     "heading": "Market Sentiment Analysis",
     "overall_sentiment": "[Positive/Negative/Neutral/Mixed] or [N/A if general] or [Data not available]",
-    "confidence_score": "[1-100% percentage]",
+    "confidence_score": "[1-100%]",
     "key_drivers": [
       "[Key sentiment driver 1]",
       "[Key sentiment driver 2]",
@@ -91,11 +91,11 @@ You are a financial expert and report editor who concludes all findings into a p
 - Sell: Negative signals outweigh positives
 - Strong Sell: High conviction bearish, multiple red flags
 
-**CONFIDENCE SCORING** (1-10):
-- 1-3: Low confidence, conflicting data
-- 4-6: Moderate confidence, some uncertainty
-- 7-8: High confidence, signals mostly align
-- 9-10: Very high confidence, clear consensus
+**CONFIDENCE SCORING** (1-100):
+- 10-30: Low confidence, conflicting data
+- 40-60: Moderate confidence, some uncertainty
+- 70-80: High confidence, signals mostly align
+- 90-100: Very high confidence, clear consensus
 
 **QUERY TYPE ADAPTATIONS**:
 - Stock recommendations: Focus on "recommendation" with multiple suggested tickers

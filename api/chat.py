@@ -19,7 +19,9 @@ async def chat(prompt: str) -> StreamingResponse:
     import time
 
     async def event_generator() -> AsyncGenerator:
+        start_time = time.time()
         logger.info(f"Starting agent run for prompt: '{prompt[:50]}...'")
+
         try:
             for event in team.run(
                 prompt,
@@ -34,11 +36,25 @@ async def chat(prompt: str) -> StreamingResponse:
                 yield process_event(event)
                 time.sleep(0.01)
 
+            end_time = time.time()
+
+            total_duration = end_time - start_time
+
+            logger.info(f'Completed in {total_duration:.2f} seconds')
+
             end_event_data = json.dumps(
-                {'message': 'All tools and agents have completed their runs.'}
+                {
+                    'message': 'All tools and agents have completed their runs.',
+                    'execution_time': {
+                        'start_time': start_time,
+                        'end_time': end_time,
+                        'total_duration_seconds': round(total_duration, 2),
+                        'total_duration_formatted': f'{total_duration:.2f}s',
+                    },
+                }
             )
             yield f'event: end\ndata: {end_event_data}\n\n'
-            logger.info('Completed!')
+            logger.info(end_event_data)
 
         except Exception as e:
             logger.error(

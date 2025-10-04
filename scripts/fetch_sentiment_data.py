@@ -56,23 +56,53 @@ DEFAULT_TICKERS = [
 ]
 
 # Indian stock tickers (NSE - .NS suffix, BSE - .BO suffix)
+# Indian stock tickers (NSE - .NS suffix, BSE - .BO suffix)
+
 INDIAN_TICKERS = [
+    # --- BIG CONGLOMERATES ---
     'RELIANCE.NS',  # Reliance Industries
-    'TCS.NS',  # Tata Consultancy Services
-    'HDFCBANK.NS',  # HDFC Bank
-    'INFY.NS',  # Infosys
-    'ICICIBANK.NS',  # ICICI Bank
-    'HINDUNILVR.NS',  # Hindustan Unilever
-    'BHARTIARTL.NS',  # Bharti Airtel
-    'ITC.NS',  # ITC Limited
-    'SBIN.NS',  # State Bank of India
-    'BAJFINANCE.NS',  # Bajaj Finance
-    'TATAMOTORS.NS',  # Tata Motors
-    'WIPRO.NS',  # Wipro
     'ADANIENT.NS',  # Adani Enterprises
+    'TATAMOTORS.NS',  # Tata Motors
+    'TATASTEEL.NS',  # Tata Steel
+    # --- TECHNOLOGY / IT ---
+    'TCS.NS',  # Tata Consultancy Services
+    'INFY.NS',  # Infosys
+    'WIPRO.NS',  # Wipro
+    'HCLTECH.NS',  # HCL Technologies
+    'TECHM.NS',  # Tech Mahindra
+    # --- BANKING / FINANCE ---
+    'HDFCBANK.NS',  # HDFC Bank
+    'ICICIBANK.NS',  # ICICI Bank
+    'SBIN.NS',  # State Bank of India
+    'KOTAKBANK.NS',  # Kotak Mahindra Bank
+    'BAJFINANCE.NS',  # Bajaj Finance
+    # --- FMCG / CONSUMER ---
+    'HINDUNILVR.NS',  # Hindustan Unilever
+    'ITC.NS',  # ITC Limited
+    'ASIANPAINT.NS',  # Asian Paints
+    'DABUR.NS',  # Dabur
+    'NESTLEIND.NS',  # Nestlé India
+    # --- PHARMA / HEALTHCARE ---
+    'SUNPHARMA.NS',  # Sun Pharmaceutical
+    'DRREDDY.NS',  # Dr. Reddy’s Labs
+    'CIPLA.NS',  # Cipla
+    'DIVISLAB.NS',  # Divi’s Laboratories
+    'LUPIN.NS',  # Lupin
+    # --- DEFENCE / ENGINEERING ---
+    'BEL.NS',  # Bharat Electronics
+    'HAL.NS',  # Hindustan Aeronautics
+    'LT.NS',  # Larsen & Toubro
+    'BEML.NS',  # BEML
+    'MAZDOCK.NS',  # Mazagon Dock Shipbuilders
+    # --- ENERGY / POWER ---
+    'ONGC.NS',  # Oil & Natural Gas Corp
+    'NTPC.NS',  # NTPC Ltd
+    'POWERGRID.NS',  # Power Grid Corp
+    'IOC.NS',  # Indian Oil Corp
 ]
 
 TICKER_TO_COMPANY = {
+    # US stocks
     'AAPL': 'Apple',
     'AMD': 'Advanced Micro Devices',
     'AMZN': 'Amazon',
@@ -88,6 +118,40 @@ TICKER_TO_COMPANY = {
     'QCOM': 'Qualcomm',
     'TSLA': 'Tesla',
     'UBER': 'Uber',
+    # Indian stocks
+    'RELIANCE.NS': 'Reliance Industries',
+    'ADANIENT.NS': 'Adani Enterprises',
+    'TATAMOTORS.NS': 'Tata Motors',
+    'TATASTEEL.NS': 'Tata Steel',
+    'TCS.NS': 'Tata Consultancy Services',
+    'INFY.NS': 'Infosys',
+    'WIPRO.NS': 'Wipro',
+    'HCLTECH.NS': 'HCL Technologies',
+    'TECHM.NS': 'Tech Mahindra',
+    'HDFCBANK.NS': 'HDFC Bank',
+    'ICICIBANK.NS': 'ICICI Bank',
+    'SBIN.NS': 'State Bank of India',
+    'KOTAKBANK.NS': 'Kotak Mahindra Bank',
+    'BAJFINANCE.NS': 'Bajaj Finance',
+    'HINDUNILVR.NS': 'Hindustan Unilever',
+    'ITC.NS': 'ITC Limited',
+    'ASIANPAINT.NS': 'Asian Paints',
+    'DABUR.NS': 'Dabur',
+    'NESTLEIND.NS': 'Nestlé India',
+    'SUNPHARMA.NS': 'Sun Pharmaceutical',
+    'DRREDDY.NS': "Dr. Reddy's Laboratories",
+    'CIPLA.NS': 'Cipla',
+    'DIVISLAB.NS': "Divi's Laboratories",
+    'LUPIN.NS': 'Lupin',
+    'BEL.NS': 'Bharat Electronics',
+    'HAL.NS': 'Hindustan Aeronautics',
+    'LT.NS': 'Larsen & Toubro',
+    'BEML.NS': 'BEML',
+    'MAZDOCK.NS': 'Mazagon Dock Shipbuilders',
+    'ONGC.NS': 'Oil & Natural Gas Corporation',
+    'NTPC.NS': 'NTPC Limited',
+    'POWERGRID.NS': 'Power Grid Corporation',
+    'IOC.NS': 'Indian Oil Corporation',
 }
 
 subreddits = [
@@ -114,7 +178,7 @@ subreddits = [
     'pennystocks',
     'smallstreetbets',
     'RobinHood',
-    'Wallstreetbetsnew',  # backup/fallback communities
+    'Wallstreetbetsnew',
     # Idea-sharing & research
     'InvestingIdeas',
     'StockPicks',

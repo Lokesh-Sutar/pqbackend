@@ -1,6 +1,5 @@
 from agno.agent import Agent
 from agno.models.google import Gemini
-from agno.models.groq import Groq
 from agno.models.openrouter import OpenRouter
 from agno.team import Team
 from agno.tools.calculator import CalculatorTools
@@ -29,11 +28,16 @@ from tools.advisory.backtester import backtest_investment_strategies
 from tools.advisory.portfolio_builder import build_portfolio_allocation
 from tools.sentiment.finhub import get_finnhub_news_sentiment
 from tools.sentiment.reddit import get_reddit_sentiment
-from tools.signals.bands import get_bollinger_bands_signal
-from tools.signals.macd import get_macd_signal
-from tools.signals.rsi import get_rsi_signal
-from tools.signals.sma import get_sma_crossover_signal
-from tools.signals.vix import get_vix_market_fear_signal
+from tools.signals import (
+    get_bollinger_bands_signal,
+    get_fibonacci_retracement,
+    get_ichimoku_cloud_signal,
+    get_macd_signal,
+    get_obv_signal,
+    get_rsi_signal,
+    get_sma_crossover_signal,
+    get_vix_market_fear_signal,
+)
 from utils.prompt import (
     ADVISOR_AGENT_OUTPUT,
     FINAL_OUTPUT_FORMAT,
@@ -60,6 +64,9 @@ def create_finance_agent() -> Agent:
             get_macd_signal,
             get_bollinger_bands_signal,
             get_vix_market_fear_signal,
+            get_fibonacci_retracement,
+            get_ichimoku_cloud_signal,
+            get_obv_signal,
             YFinanceTools(
                 exclude_tools=['get_technical_indicators', 'get_historical_stock_prices']
             ),

@@ -1,107 +1,86 @@
-SYSTEM_PROMPT: str = """
-You are a financial expert and report editor who concludes all findings into a professional Investment Memorandum.
+FINAL_OUTPUT_FORMAT: str = """
+# Executive Summary:
+---
+Tickers: list if more = []
+Recommendation: str
+Note: str
 
-**CORE FUNCTION**: Take provided data (technical analysis, sentiment analysis, thesis) and format into clean, machine-readable JSON.
+# Agent Summary (if only 1 then give that one only):
 
-**CRITICAL RULES**:
-- Output ONLY valid JSON. No extra text, markdown, or commentary.
-- Do NOT add new information or opinions beyond what's provided.
-- Keep language concise, elegant, and accessible to non-finance professionals.
-- Handle single or multiple tickers appropriately.
+Sentiment Agent Name: str
+---
+Recommendation: str
+Sentiment Score (if applicable)
+- Score
+- Source
+- Reason
+- Top 5 Headlines combined
+    - Headline 1
+    - Headline 2
+    - Headline 3
+    ....
 
-**EDGE CASE HANDLING**:
-- If no specific tickers mentioned: Use "MARKET" or "SECTOR" as ticker value
-- If requesting stock recommendations: Focus on "recommendation" field with suggested tickers
-- If insufficient data: Use "Insufficient Data" for missing fields
-- If conflicting signals: Use "Mixed" for consolidated signals and explain in synthesis
+Finance Agent Name: str
+---
+Recommendation: str
+Important Techinals (if applicable)
+- Technical 1
+- Technical 2
+- Technical 3
+....
 
-**MULTIPLE TICKER FORMAT**: When analyzing multiple tickers, structure as:
-```json
-{
-  "executive_summary": {
-    "heading": "Executive Summary",
-    "tickers": ["AAPL", "GOOGL", "MSFT"],
-    "primary_recommendation": "Strong Buy on AAPL, Hold on GOOGL, Sell on MSFT",
-    "comparative_thesis": "Brief comparison and overall market view"
-  },
-  "individual_analysis": [
-    {
-      "ticker": "AAPL",
-      "recommendation": "Strong Buy",
-      "technical_signal": "Bullish",
-      "sentiment": "Positive",
-      "key_rationale": "Brief rationale"
-    }
-  ],
-  "comparative_insights": {
-    "heading": "Comparative Analysis",
-    "best_opportunity": "AAPL",
-    "risk_assessment": "Brief risk comparison",
-    "market_context": "Overall market conditions affecting all tickers"
-  }
-}
-```
+Advisor Agent Name: str
+---
+Recommendation: str
+Personalized Information:
+- Position
+- Error Margin
+- Capital Allocation
+- Stop Loss/Profit
+....
 
-**SINGLE TICKER/GENERAL ANALYSIS FORMAT**:
-```json
-{
-  "executive_summary": {
-    "heading": "Executive Summary",
-    "ticker": "[TICKER or 'MARKET/SECTOR' if general]",
-    "recommendation": "[Strong Buy/Buy/Hold/Sell/Strong Sell along with a 3-4 words rationale]",
-    "thesis": "[1-2 sentence final thesis]"
-  },
-  "technical_analysis": {
-    "heading": "Technical/Financial Analysis",
-    "consolidated_signal": "[Bullish/Bearish/Neutral/Mixed]",
-    "key_indicators": [
-      {
-        "indicator_name": "[Indicator Name]",
-        "signal": "[Bullish/Bearish/Neutral]",
-        "justification": "[Brief data-driven explanation]"
-      },
-      List all indicators used
+# Final Conclusion:
+---
+2-3 lines conclusion of entire thing.
+"""
 
-    ]
-  },
-  "market_sentiment_analysis": {
-    "heading": "Market Sentiment Analysis",
-    "overall_sentiment": "[Positive/Negative/Neutral/Mixed] or [N/A if general] or [Data not available]",
-    "confidence_score": "[1-100%]",
-    "key_drivers": [
-      "[Key sentiment driver 1]",
-      "[Key sentiment driver 2]",
-      List all key drivers
-    ]
-  },
-  "integrated_thesis_and_recommendation": {
-    "heading": "Investment Recommendation",
-    "synthesis_paragraph": "[Paragraph explaining how technical and sentiment align or conflict, leading to final recommendation]",
-    "final_conclusion": "[Single sentence definitive conclusion]",
-    "risk_factors": "[Key risks to consider]",
-    "time_horizon": "[Short-term/Medium-term/Long-term based on analysis]"
-  }
-}
-```
+SENTIMENT_AGENT_OUTPUT: str = """
+Sentiment Agent Name: str
+---
+Recommendation: str
+Sentiment Score (if applicable)
+    - Score
+    - Source
+    - Reason
+    - Top 5 Headlines combined
+        - Headline 1
+        - Headline 2
+        - Headline 3
+        ....
+Conclusion: str
+"""
 
-**RECOMMENDATION GUIDANCE**:
-- Strong Buy: High conviction, multiple bullish signals align
-- Buy: Positive signals outweigh negatives  
-- Hold: Mixed or neutral signals, wait-and-see
-- Sell: Negative signals outweigh positives
-- Strong Sell: High conviction bearish, multiple red flags
+FINANCE_AGENT_OUTPUT: str = """
+Finance Agent Name: str
+---
+Recommendation: str
+Important Techinals (if applicable)
+    - Technical 1
+    - Technical 2
+    - Technical 3
+    ....
+Conclusion: str
+"""
 
-**CONFIDENCE SCORING** (1-100):
-- 10-30: Low confidence, conflicting data
-- 40-60: Moderate confidence, some uncertainty
-- 70-80: High confidence, signals mostly align
-- 90-100: Very high confidence, clear consensus
-
-**QUERY TYPE ADAPTATIONS**:
-- Stock recommendations: Focus on "recommendation" with multiple suggested tickers
-- Sector analysis: Use sector name as "ticker", broad market context
-- Comparison requests: Use multiple ticker format with comparative insights
-- General questions: Provide educational response in "synthesis_paragraph"
-
-Remember: Your output determines investment decisions. Be precise, objective, and clear.
+ADVISOR_AGENT_OUTPUT: str = """
+Advisor Agent Name: str
+---
+Recommendation: str
+Personalized Information:
+    - Position
+    - Error Margin
+    - Capital Allocation
+    - Stop Loss/Profit
+    ....
+Conclusion: str
 """

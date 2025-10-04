@@ -1,3 +1,5 @@
+from typing import Any
+
 import numpy as np
 import pandas as pd
 import talib
@@ -5,7 +7,7 @@ import yfinance as yf
 from agno.tools import tool
 from pandas import DataFrame
 
-from tools.utils import get_ticker, logger_hook, validate_data
+from tools.helper import get_ticker, logger_hook, validate_data
 
 
 @tool(
@@ -13,11 +15,18 @@ from tools.utils import get_ticker, logger_hook, validate_data
     description='This tool analyzes VIX data for market sentiment signals.',
     tool_hooks=[logger_hook],
 )
-def get_vix_market_fear_signal():
+def get_vix_market_fear_signal() -> dict[str, Any]:
+    """
+    Analyze VIX (Volatility Index) market fear gauge.
+
+    Returns:
+        dict with VIX analysis including tool name, fear signal level,
+        justification, and volatility metrics
+    """
     try:
         try:
             vix_df = get_ticker('^VIX')
-        except:
+        except Exception:
             vix = yf.Ticker('^VIX')
             vix_df = vix.history(period='1y')
             vix_df.columns = vix_df.columns.str.lower()

@@ -1,31 +1,34 @@
+import logging
+import threading
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Union
+from typing import Any, Callable, List, Optional
 
 import pandas as pd
 import yfinance as yf
 from pandas import DataFrame
-from transformers import AutoModelForSequenceClassification, AutoTokenizer, pipeline
+
+logger = logging.getLogger(__name__)
 
 
 def logger_hook(function_name: str, function_call: Callable, arguments: dict[str, Any]):
     """Hook function that wraps the tool execution"""
-    print(f'About to call {function_name} with arguments: {arguments}')
+    logger.info(f'Calling {function_name} with arguments: {arguments}')
     result = function_call(**arguments)
-    print(f'Function call completed with result: {result}')
+    logger.debug(f'Function {function_name} completed')
     return result
 
 
 def get_ticker(ticker: str) -> pd.DataFrame:
     """Load ticker data from CSV file"""
-    data_dir = Path(__file__).resolve().parent.parent.parent / 'data'
+    data_dir = Path(__file__).resolve().parent.parent / 'data' / 'cache'
     df_file = data_dir / f'{ticker}.csv'
 
     try:
         df: pd.DataFrame = pd.read_csv(df_file)
-        print(f'TICKER {ticker} IS LOADED FROM CSV')
+        logger.info(f'Loaded {ticker} from CSV')
         return df
     except FileNotFoundError:
-        print(f'CSV file not found for {ticker}, attempting to fetch from yfinance')
+        logger.info(f'CSV not found for {ticker}, fetching from yfinance')
         ticker_obj = yf.Ticker(ticker)
         df = ticker_obj.history(period='2y')
         df.columns = df.columns.str.lower()
@@ -57,32 +60,55 @@ def validate_data(
     return None
 
 
+_shared_finbert_model: Any = None
+_model_lock = threading.Lock()
+
+
 class SentimentAnalysisBase:
     """Base class for sentiment analysis with shared FinBERT functionality"""
 
     def __init__(self):
         self.finbert: Any = None
-        self._initialize_model()
+        self._model_initialized = False
 
-    def _initialize_model(self):
-        """Initialize FinBERT model with error handling"""
-        try:
-            tokenizer = AutoTokenizer.from_pretrained('ProsusAI/finbert')
-            model = AutoModelForSequenceClassification.from_pretrained(
-                'ProsusAI/finbert', num_labels=3
-            )
-            self.finbert = pipeline(
-                'sentiment-analysis',  # type: ignore[arg-type]
-                model=model,
-                tokenizer=tokenizer,
-                device='cpu',  # pyright: ignore[reportArgumentType]
-            )  # type: ignore[call-overload]
-        except Exception as e:
-            print(f'Failed to initialize sentiment model: {e}')
-            self.finbert = None
+    def _ensure_model_loaded(self):
+        """Lazy load FinBERT model (shared singleton pattern)"""
+        if self._model_initialized:
+            return
 
-    def analyze_text_sentiment(self, text: str) -> Optional[Dict[str, Any]]:
+        global _shared_finbert_model
+        with _model_lock:
+            if _shared_finbert_model is None:
+                logger.info('Loading FinBERT model (first time only, may take 10-15s)...')
+                try:
+                    from transformers import (
+                        AutoModelForSequenceClassification,
+                        AutoTokenizer,
+                        pipeline,
+                    )
+
+                    tokenizer = AutoTokenizer.from_pretrained('ProsusAI/finbert')
+                    model = AutoModelForSequenceClassification.from_pretrained(
+                        'ProsusAI/finbert', num_labels=3
+                    )
+                    _shared_finbert_model = pipeline(
+                        'sentiment-analysis',  # type: ignore[arg-type]
+                        model=model,
+                        tokenizer=tokenizer,
+                        device='cpu',  # pyright: ignore[reportArgumentType]
+                    )  # type: ignore[call-overload]
+                    logger.info('FinBERT model loaded successfully')
+                except Exception as e:
+                    logger.error(f'Failed to initialize sentiment model: {e}')
+                    _shared_finbert_model = None
+
+            self.finbert = _shared_finbert_model
+            self._model_initialized = True
+
+    def analyze_text_sentiment(self, text: str) -> Optional[dict[str, Any]]:
         """Analyze sentiment of a single text using FinBERT"""
+        self._ensure_model_loaded()
+
         if not self.finbert or not text or len(text.strip()) < 10:
             return None
 
@@ -100,12 +126,12 @@ class SentimentAnalysisBase:
 
             return {'label': normalized_label, 'score': score}
         except Exception as e:
-            print(f'Error analyzing text sentiment: {e}')
+            logger.warning(f'Error analyzing text sentiment: {e}')
             return None
 
     def categorize_sentiment_counts(
-        self, items: List[Dict[str, Any]], sentiment_key: str = 'sentiment'
-    ) -> Dict[str, int]:
+        self, items: List[dict[str, Any]], sentiment_key: str = 'sentiment'
+    ) -> dict[str, int]:
         """Count sentiment categories from a list of analyzed items"""
         sentiments = {'positive': 0, 'negative': 0, 'neutral': 0}
 
@@ -124,13 +150,13 @@ class SentimentAnalysisBase:
         tool_name: str,
         total_items: int,
         description: str,
-        sentiments: Dict[str, int],
+        sentiments: dict[str, int],
         confidence_scores: List[float],
-        item_data: Dict[str, List],
+        item_data: dict[str, List],
         positive_threshold: float = 60.0,
         negative_threshold: float = 60.0,
         mixed_threshold: float = 15.0,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Generate standardized trading signal based on sentiment analysis"""
 
         if total_items == 0:
@@ -186,7 +212,7 @@ class SentimentAnalysisBase:
             },
         }
 
-    def create_error_response(self, tool_name: str, message: str) -> Dict[str, Any]:
+    def create_error_response(self, tool_name: str, message: str) -> dict[str, Any]:
         """Create standardized error response"""
         return {
             'tool': tool_name,

@@ -6,15 +6,15 @@ from fastapi import APIRouter
 from fastapi.responses import StreamingResponse
 
 from config import DEFAULT_SESSION_ID, DEFAULT_USER_ID
-from core.agents import team
+from core.agents import get_team
 from utils.event_processor import process_event
 
-router = APIRouter()
+chat_router = APIRouter()
 
 logger = logging.getLogger(__name__)
 
 
-@router.get(path='/api/chat')
+@chat_router.get(path='/api/chat')
 async def chat(prompt: str) -> StreamingResponse:
     import time
 
@@ -23,6 +23,7 @@ async def chat(prompt: str) -> StreamingResponse:
         logger.info(f"Starting agent run for prompt: '{prompt[:50]}...'")
 
         try:
+            team = get_team()
             for event in team.run(
                 prompt,
                 stream=True,

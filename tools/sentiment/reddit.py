@@ -1,99 +1,81 @@
-from typing import Any, Dict, List
+import logging
+from typing import Any
 
-import praw
 from agno.tools import tool
-from praw.exceptions import PRAWException
 
-from config import REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET, REDDIT_USER_AGENT
-from tools.utils import SentimentAnalysisBase, logger_hook
+from tools.sentiment.db_utils import get_recent_reddit_posts, get_reddit_stats
+from tools.helper import SentimentAnalysisBase, logger_hook
+
+logger = logging.getLogger(__name__)
 
 
 class RedditSentimentAnalyzer(SentimentAnalysisBase):
-    """Simplified Reddit sentiment analyzer using FinBERT"""
+    """Reddit sentiment analyzer using pre-computed database results"""
 
     def __init__(self):
         super().__init__()
-        self.reddit = None
-        self._initialize_reddit()
 
-    def _initialize_reddit(self):
-        """Initialize Reddit API connection with error handling"""
+    def analyze_ticker_sentiment(self, ticker: str, days_back: int = 7) -> dict[str, Any]:
+        """
+        Retrieve and analyze pre-computed Reddit sentiment for a ticker.
+
+        Args:
+            ticker: Stock ticker symbol
+            days_back: Number of days to look back (default: 7)
+
+        Returns:
+            Dictionary with sentiment analysis results
+        """
         try:
-            client_id = REDDIT_CLIENT_ID
-            client_secret = REDDIT_CLIENT_SECRET
-            user_agent = REDDIT_USER_AGENT
+            stats = get_reddit_stats(ticker, days_back)
 
-            self.reddit = praw.Reddit(
-                client_id=client_id, client_secret=client_secret, user_agent=user_agent
-            )
-            self.reddit.read_only = True
-        except Exception as e:
-            print(f'Failed to initialize Reddit API: {e}')
-            self.reddit = None
+            if stats['total_posts'] == 0:
+                return {
+                    'tool': 'Reddit Sentiment',
+                    'description': 'This tool fetches pre-computed sentiment scores for a particular ticker from Reddit',
+                    'signal': 'No Data',
+                    'justification': f'No Reddit posts found for {ticker} in the last {days_back} days. Please run fetch_sentiment_data.py to collect data.',
+                    'details': {
+                        'items_analyzed': 0,
+                        'last_update': stats['last_update'],
+                        'top_items': {'positive': [], 'negative': [], 'neutral': []},
+                    },
+                }
 
-    def analyze_ticker_sentiment(self, ticker: str, limit: int = 150) -> Dict[str, Any]:
-        """Analyze sentiment for a specific ticker from Reddit"""
-        if not self.reddit or not self.finbert:
-            return self.create_error_response(
-                'Reddit Sentiment', 'Failed to initialize Reddit API or sentiment model'
-            )
+            posts = get_recent_reddit_posts(ticker, days_back, limit=10)
 
-        subreddits = ['stocks', 'investing', 'StockMarket', 'wallstreetbets']
-        analyzed_posts = []
-        post_headlines = {'positive': [], 'negative': [], 'neutral': []}
+            post_headlines = {'positive': [], 'negative': [], 'neutral': []}
+            analyzed_posts = []
 
-        try:
-            for sub_name in subreddits:
-                try:
-                    subreddit = self.reddit.subreddit(sub_name)
-                    posts_found = 0
+            for post in posts:
+                sentiment = post['sentiment']
+                label = sentiment['label']
 
-                    for post in subreddit.top(limit=limit):
-                        if (
-                            ticker.lower() in post.title.lower()
-                            or ticker.lower() in post.selftext.lower()
-                        ):
-                            text = f'{post.title} {post.selftext}'.strip()
-                            sentiment_result = self.analyze_text_sentiment(text)
+                post_data = {
+                    'sentiment': sentiment,
+                    'title': post['title'],
+                    'score': post['score'],
+                    'subreddit': post['subreddit'],
+                }
+                analyzed_posts.append(post_data)
 
-                            if sentiment_result:
-                                post_data = {
-                                    'sentiment': sentiment_result,
-                                    'title': post.title,
-                                    'score': post.score,
-                                    'subreddit': sub_name,
-                                }
-                                analyzed_posts.append(post_data)
+                if len(post_headlines[label]) < 10:
+                    post_headlines[label].append(
+                        {
+                            'title': post['title'],
+                            'score': post['score'],
+                            'subreddit': post['subreddit'],
+                            'url': post.get('url', ''),
+                        }
+                    )
 
-                                label = sentiment_result['label']
-                                if len(post_headlines[label]) < 10:
-                                    post_headlines[label].append(
-                                        {
-                                            'title': post.title,
-                                            'score': post.score,
-                                            'subreddit': sub_name,
-                                        }
-                                    )
+            sentiments = self.categorize_sentiment_counts(analyzed_posts)
+            confidence_scores = [post['sentiment']['score'] for post in analyzed_posts]
 
-                                posts_found += 1
-
-                    if posts_found > 0:
-                        print(
-                            f'Found {posts_found} posts mentioning {ticker} in r/{sub_name}'
-                        )
-
-                except Exception as e:
-                    print(f'Error accessing subreddit {sub_name}: {e}')
-                    continue
-
-            sentiments: Dict[str, int] = self.categorize_sentiment_counts(analyzed_posts)
-            confidence_scores: list[Any] = [
-                post['sentiment']['score'] for post in analyzed_posts
-            ]
-
+            logger.info('Generating Reddit Sentiment...')
             return self.generate_trading_signal(
                 ticker=ticker,
-                description='This tool is used to fetch and measure the sentiment score of a particular ticker from Reddit',
+                description=f'This tool fetches pre-computed sentiment scores for {ticker} from Reddit (last {days_back} days). Data last updated: {stats["last_update"]}',
                 tool_name='Reddit Sentiment',
                 total_items=len(analyzed_posts),
                 sentiments=sentiments,
@@ -109,8 +91,9 @@ class RedditSentimentAnalyzer(SentimentAnalysisBase):
             )
 
         except Exception as e:
+            logger.error(f'Error retrieving Reddit sentiment: {e}', exc_info=True)
             return self.create_error_response(
-                'Reddit Sentiment', f'Failed to analyze sentiment: {str(e)}'
+                'Reddit Sentiment', f'Failed to retrieve sentiment data: {str(e)}'
             )
 
 
@@ -127,25 +110,30 @@ def get_analyzer() -> RedditSentimentAnalyzer:
 
 @tool(
     name='get_reddit_sentiment',
-    description='Returns a JSON object with a trading signal, confidence, justification, and top Reddit post headlines for a given stock ticker. Sentiment is analyzed using FinBERT on recent posts from major finance subreddits. Output includes percentages, average confidence, and up to 10 headlines for positive, negative, and neutral sentiment.',
+    description='Returns a JSON object with a trading signal, confidence, justification, and top Reddit post headlines for a given stock ticker. Uses pre-computed sentiment analysis from database (updated every 12 hours). Output includes percentages, average confidence, and up to 10 headlines for positive, negative, and neutral sentiment.',
     tool_hooks=[logger_hook],
 )
-def get_reddit_sentiment(ticker: str) -> Dict[str, Any]:
+def get_reddit_sentiment(ticker: str, days_back: int = 7) -> dict[str, Any]:
     """
-    Analyze Reddit sentiment for a stock ticker.
+    Retrieve pre-computed Reddit sentiment for a stock ticker from database.
 
     Args:
         ticker: Stock ticker symbol (e.g., 'AAPL', 'TSLA')
+        days_back: Number of days to look back (default: 7)
 
     Returns:
         Dictionary with sentiment analysis results
     """
-    if not ticker or not isinstance(ticker, str):
+    if not ticker:
         temp_analyzer = RedditSentimentAnalyzer()
         return temp_analyzer.create_error_response(
             'Reddit Sentiment', 'Invalid ticker provided'
         )
 
     ticker = ticker.upper().strip()
+    days_back = max(1, min(days_back, 90))
+
     analyzer: RedditSentimentAnalyzer = get_analyzer()
-    return analyzer.analyze_ticker_sentiment(ticker)
+    logger.info('Reddit Sentiment Generated!!')
+
+    return analyzer.analyze_ticker_sentiment(ticker, days_back)

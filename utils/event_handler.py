@@ -1,7 +1,7 @@
 import logging
 from typing import Any, Callable
 
-from config import FINANCE_AGENT_ID, SENTIMENT_AGENT_ID
+from config import ADVISORY_AGENT_ID, FINANCE_AGENT_ID, SENTIMENT_AGENT_ID
 
 logger: logging.Logger = logging.getLogger(__name__)
 
@@ -41,6 +41,7 @@ def handle_tool_event(event_name: str, payload: dict[str, Any]) -> dict[str, Any
     TOOL_HANDLER_MAP: dict[str, Callable[[dict[str, Any]], dict[str, Any]]] = {
         FINANCE_AGENT_ID: handle_finance_tool_event,
         SENTIMENT_AGENT_ID: handle_sentiment_tool_event,
+        ADVISORY_AGENT_ID: handle_advisory_tool_event,
     }
 
     handler = TOOL_HANDLER_MAP.get(agent_id, handle_default_tool_event)  # pyright: ignore[reportArgumentType, reportCallIssue]
@@ -121,6 +122,21 @@ def handle_sentiment_tool_event(payload: dict[str, Any]) -> dict[str, Any]:
     logger.info('Processing a tool call from the Sentiment Agent.')
     payload['source_agent_name'] = 'Sentiment'
     return {'type': 'tool-sentiment', 'payload': payload}
+
+
+def handle_advisory_tool_event(payload: dict[str, Any]) -> dict[str, Any]:
+    """
+    Custom logic for tool calls from the advisory agent.
+
+    Args:
+        payload: Event data payload from advisory agent
+
+    Returns:
+        dict[str, Any]: Processed event data with type 'tool-advisory'
+    """
+    logger.info('Processing a tool call from the Advisory Agent.')
+    payload['source_agent_name'] = 'Advisory'
+    return {'type': 'tool-advisory', 'payload': payload}
 
 
 def handle_default_tool_event(payload: dict[str, Any]) -> dict[str, Any]:

@@ -436,16 +436,35 @@ class SentimentDataFetcher:
 
             for article in news[:max_results]:
                 try:
-                    title = article.get('title', '')
-                    publisher = article.get('publisher', 'Unknown')
-                    link = article.get('link', '')
-                    provider_publish_time = article.get('providerPublishTime', 0)
+                    provider_name = 'Unknown Provider'
+                    content = article.get('content', None)
+                    pubdate = 0
+                    if content:
+                        title = content.get('title', 'No Title')
+                        summary = content.get('summary', 'No Summary')
+                        pubdate = content.get('pubDate', 0)
+                        if pubdate:
+                            try:
+                                dt = datetime.fromisoformat(
+                                    pubdate.replace('Z', '+00:00')
+                                )
+                                pubdate = int(dt.timestamp())
+                            except (ValueError, TypeError):
+                                pubdate = 0
 
-                    if not title:
-                        continue
+                        link = content.get('link', 'No Link')
+                        provider = content.get('provider', None)
+                        if provider:
+                            provider_name = provider.get(
+                                'displayName', 'Unknown Provider'
+                            )
+                        click_url = content.get('clickThroughUrl', None)
+                        if click_url:
+                            link = click_url.get('url', link)
 
-                    # Analyze sentiment
-                    sentiment = self.analyze_text_sentiment(title)
+                    if title != 'No Title' and summary != 'No Summary':
+                        text_to_analyze = f'{title} {summary}'.strip()
+                        sentiment = self.analyze_text_sentiment(text_to_analyze)
 
                     if not sentiment:
                         continue
@@ -454,9 +473,10 @@ class SentimentDataFetcher:
                         conn=conn,
                         ticker=ticker,
                         title=title,
-                        publisher=publisher,
+                        summary=summary,
+                        publisher=provider_name,
                         link=link,
-                        published_at=provider_publish_time,
+                        published_at=pubdate,
                         sentiment_label=sentiment['label'],
                         sentiment_score=sentiment['score'],
                     )

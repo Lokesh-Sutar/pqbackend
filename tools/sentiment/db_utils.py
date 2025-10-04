@@ -63,6 +63,7 @@ def initialize_database():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             ticker TEXT NOT NULL,
             title TEXT NOT NULL,
+            summary TEXT,
             publisher TEXT,
             link TEXT,
             published_at INTEGER,
@@ -222,6 +223,7 @@ def insert_yfinance_news(
     conn: sqlite3.Connection,
     ticker: str,
     title: str,
+    summary: str,
     publisher: str,
     link: str,
     published_at: int,
@@ -245,13 +247,14 @@ def insert_yfinance_news(
         cursor.execute(
             """
             INSERT INTO yfinance_news 
-            (ticker, title, publisher, link, published_at, 
+            (ticker, title, summary, publisher, link, published_at, 
              sentiment_label, sentiment_score, analyzed_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 ticker.upper(),
                 title,
+                summary,
                 publisher,
                 link,
                 published_at,

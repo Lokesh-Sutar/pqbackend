@@ -6,11 +6,10 @@ from core.agents import (
     get_team,
 )
 from core.models import (
-    FinancialAnalysis,
     MarketSignal,
     PortfolioAllocation,
-    SentimentScore,
-    TechnicalIndicator,
+    SentimentAnalysis,
+    StockAnalysis,
 )
 
 __all__ = [
@@ -20,8 +19,7 @@ __all__ = [
     'create_team',
     'get_team',
     'MarketSignal',
-    'SentimentScore',
-    'TechnicalIndicator',
+    'SentimentAnalysis',
     'PortfolioAllocation',
-    'FinancialAnalysis',
+    'StockAnalysis',
 ]

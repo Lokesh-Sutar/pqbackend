@@ -211,3 +211,4 @@ __marimo__/
 agno.db
 temp/
 logs/
+stock_data_raw_parquet/

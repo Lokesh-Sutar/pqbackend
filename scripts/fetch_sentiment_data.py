@@ -38,6 +38,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 DEFAULT_TICKERS = [
+    # tech stocks
     'AAPL',
     'AMD',
     'AMZN',
@@ -53,52 +54,55 @@ DEFAULT_TICKERS = [
     'QCOM',
     'TSLA',
     'UBER',
+    # defence stocks
+    'LMT',
+    'NOC',
+    'BA',
+    'RTX',
+    # agriculture stocks
+    'DE',
+    'AGCO',
+    'CTVA',
+    # medical stocks
+    'JNJ',
+    'PFE',
+    'MRK',
 ]
 
-# Indian stock tickers (NSE - .NS suffix, BSE - .BO suffix)
-# Indian stock tickers (NSE - .NS suffix, BSE - .BO suffix)
-
 INDIAN_TICKERS = [
-    # --- BIG CONGLOMERATES ---
-    'RELIANCE.NS',  # Reliance Industries
-    'ADANIENT.NS',  # Adani Enterprises
-    'TATAMOTORS.NS',  # Tata Motors
-    'TATASTEEL.NS',  # Tata Steel
-    # --- TECHNOLOGY / IT ---
-    'TCS.NS',  # Tata Consultancy Services
-    'INFY.NS',  # Infosys
-    'WIPRO.NS',  # Wipro
-    'HCLTECH.NS',  # HCL Technologies
-    'TECHM.NS',  # Tech Mahindra
-    # --- BANKING / FINANCE ---
-    'HDFCBANK.NS',  # HDFC Bank
-    'ICICIBANK.NS',  # ICICI Bank
-    'SBIN.NS',  # State Bank of India
-    'KOTAKBANK.NS',  # Kotak Mahindra Bank
-    'BAJFINANCE.NS',  # Bajaj Finance
-    # --- FMCG / CONSUMER ---
-    'HINDUNILVR.NS',  # Hindustan Unilever
-    'ITC.NS',  # ITC Limited
-    'ASIANPAINT.NS',  # Asian Paints
-    'DABUR.NS',  # Dabur
-    'NESTLEIND.NS',  # Nestlé India
-    # --- PHARMA / HEALTHCARE ---
-    'SUNPHARMA.NS',  # Sun Pharmaceutical
-    'DRREDDY.NS',  # Dr. Reddy’s Labs
-    'CIPLA.NS',  # Cipla
-    'DIVISLAB.NS',  # Divi’s Laboratories
-    'LUPIN.NS',  # Lupin
-    # --- DEFENCE / ENGINEERING ---
-    'BEL.NS',  # Bharat Electronics
-    'HAL.NS',  # Hindustan Aeronautics
-    'LT.NS',  # Larsen & Toubro
-    'BEML.NS',  # BEML
-    'MAZDOCK.NS',  # Mazagon Dock Shipbuilders
-    # --- ENERGY / POWER ---
-    'ONGC.NS',  # Oil & Natural Gas Corp
-    'NTPC.NS',  # NTPC Ltd
-    'POWERGRID.NS',  # Power Grid Corp
-    'IOC.NS',  # Indian Oil Corp
+    'RELIANCE.NS',
+    'ADANIENT.NS',
+    'TATAMOTORS.NS',
+    'TATASTEEL.NS',
+    'TCS.NS',
+    'INFY.NS',
+    'WIPRO.NS',
+    'HCLTECH.NS',
+    'TECHM.NS',
+    'HDFCBANK.NS',
+    'ICICIBANK.NS',
+    'SBIN.NS',
+    'KOTAKBANK.NS',
+    'BAJFINANCE.NS',
+    'HINDUNILVR.NS',
+    'ITC.NS',
+    'ASIANPAINT.NS',
+    'DABUR.NS',
+    'NESTLEIND.NS',
+    'SUNPHARMA.NS',
+    'DRREDDY.NS',
+    'CIPLA.NS',
+    'DIVISLAB.NS',
+    'LUPIN.NS',
+    'BEL.NS',
+    'HAL.NS',
+    'LT.NS',
+    'BEML.NS',
+    'MAZDOCK.NS',
+    'ONGC.NS',
+    'NTPC.NS',
+    'POWERGRID.NS',
+    'IOC.NS',
 ]
 
 TICKER_TO_COMPANY = {
@@ -118,6 +122,16 @@ TICKER_TO_COMPANY = {
     'QCOM': 'Qualcomm',
     'TSLA': 'Tesla',
     'UBER': 'Uber',
+    'LMT': 'Lockheed Martin',
+    'NOC': 'Northrop Grumman',
+    'BA': 'Boeing',
+    'RTX': 'Raytheon Technologies',
+    'DE': 'Deere & Company',
+    'AGCO': 'AGCO Corporation',
+    'CTVA': 'Corteva',
+    'JNJ': 'Johnson & Johnson',
+    'PFE': 'Pfizer',
+    'MRK': 'Merck & Co.',
     # Indian stocks
     'RELIANCE.NS': 'Reliance Industries',
     'ADANIENT.NS': 'Adani Enterprises',
@@ -205,7 +219,10 @@ class SentimentDataFetcher:
                 'ProsusAI/finbert', num_labels=3
             )
             self.finbert = pipeline(  # pyright: ignore[reportCallIssue]
-                'sentiment-analysis', model=model, tokenizer=tokenizer, device='cpu'
+                'sentiment-analysis',
+                model=model,
+                tokenizer=tokenizer,
+                device='cpu',  # pyright: ignore[reportArgumentType]
             )
             logger.info('FinBERT model loaded successfully')
         except Exception as e:
@@ -260,8 +277,6 @@ class SentimentDataFetcher:
         company_lower = company_name.lower()
         ticker_lower = ticker.lower()
 
-        # Check if company name appears with stock-related keywords
-        # add more keywords related to stock market
         stock_keywords = [
             'stock',
             'ticker',
@@ -297,12 +312,9 @@ class SentimentDataFetcher:
             'volume',
         ]
 
-        # Company name must be present
         if company_lower not in combined_text:
             return False
 
-        # Check if any stock-related keyword appears near the company name
-        # or if the ticker symbol appears (as fallback)
         has_stock_context = any(keyword in combined_text for keyword in stock_keywords)
         has_ticker_mention = ticker_lower in combined_text
 
@@ -320,7 +332,6 @@ class SentimentDataFetcher:
             logger.error('Reddit API or FinBERT not initialized')
             return 0
 
-        # Get company name for better search relevance
         company_name = TICKER_TO_COMPANY.get(ticker, ticker)
         logger.info(f'Fetching Reddit data for {ticker} ({company_name})...')
 
@@ -331,14 +342,11 @@ class SentimentDataFetcher:
                 subreddit = self.reddit.subreddit(sub_name)
                 posts_processed = 0
 
-                # Search for posts mentioning the company name
                 search_query = f'{company_name} stock'
 
-                # Use search instead of just hot posts for better targeting
                 for post in subreddit.search(
                     search_query, time_filter='month', limit=limit
                 ):
-                    # Verify relevance using more sophisticated check
                     if not self._is_relevant_post(post, ticker, company_name):
                         continue
 
@@ -371,7 +379,7 @@ class SentimentDataFetcher:
                     f'Processed {posts_processed} relevant posts from r/{sub_name} for {ticker}'
                 )
 
-                time.sleep(2)  # Increased delay to respect Reddit API rate limits
+                time.sleep(2)
 
             except Exception as e:
                 logger.error(f'Error fetching from r/{sub_name} for {ticker}: {e}')
@@ -420,7 +428,7 @@ class SentimentDataFetcher:
 
             inserted_count = 0
 
-            for article in news_data[:50]:
+            for article in news_data:
                 try:
                     headline = article.get('headline', '')
                     summary = article.get('summary', '')
@@ -486,10 +494,8 @@ class SentimentDataFetcher:
         logger.info(f'Fetching YFinance news for {ticker}...')
 
         try:
-            # Get the stock ticker object
             stock = yf.Ticker(ticker)
 
-            # Fetch news
             news = stock.news
 
             if not news:

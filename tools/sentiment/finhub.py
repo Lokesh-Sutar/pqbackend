@@ -4,8 +4,8 @@ from typing import Any, List
 
 from agno.tools import tool
 
-from tools.sentiment.db_utils import get_finnhub_stats, get_recent_finnhub_articles
 from tools.helper import SentimentAnalysisBase, logger_hook
+from tools.sentiment.db_utils import get_finnhub_stats, get_recent_finnhub_articles
 
 logger = logging.getLogger(__name__)
 
@@ -133,5 +133,11 @@ def get_finnhub_news_sentiment(ticker: str, days_back: int = 7):
     ticker = ticker.upper().strip()
     analyzer = get_analyzer()
     logger.info('Finhub Sentiment Generated!!')
+
+    # random delay to not overwhelm LLM
+    import random
+    import time
+
+    time.sleep(random.uniform(5, 15))
 
     return analyzer.analyze_ticker_news_sentiment(ticker, days_back)

@@ -25,6 +25,8 @@ REDDIT_CLIENT_SECRET: str | None = os.getenv('REDDIT_CLIENT_SECRET')
 REDDIT_USER_AGENT: str | None = os.getenv('REDDIT_USER_AGENT')
 FINNHUB_API_KEY: str | None = os.getenv('FINNHUB_API_KEY')
 
+HF_API_KEY: str | None = os.getenv('HF_API_KEY')
+
 APP_HOST: str = '127.0.0.1'
 APP_PORT: int = 8000
 

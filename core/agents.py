@@ -1,5 +1,6 @@
 from agno.agent import Agent
 from agno.models.google import Gemini
+from agno.models.huggingface import HuggingFace
 from agno.models.openrouter import OpenRouter
 from agno.team import Team
 from agno.tools.calculator import CalculatorTools
@@ -23,7 +24,6 @@ from config import (
     REASONING_MODE,
     db,
 )
-from core.models import FinancialAnalysis
 from tools.advisory.backtester import backtest_investment_strategies
 from tools.advisory.portfolio_builder import build_portfolio_allocation
 from tools.sentiment.finhub import get_finnhub_news_sentiment
@@ -48,11 +48,13 @@ from utils.prompt import (
 
 def create_finance_agent() -> Agent:
     return Agent(
-        model=Gemini(id=GOOGLE_MODEL_NAME_1, api_key=GOOGLE_API_KEY_2, seed=42),
+        name='Finance_Agent',
+        id='agent_1',
         description='You are a Finance Agent who is going to analyze the key financials and technical indicators of a company.',
+        model=Gemini(id=GOOGLE_MODEL_NAME_1, api_key=GOOGLE_API_KEY_2, seed=42),
         instructions=[
             '1. You are a technical analysis expert for a given stock ticker.',
-            "2. Use all available technical indicator tools (SMA, RSI, MACD, Bollinger Bands) to analyze the stock's current momentum and trend.",
+            "2. Use all technical indicator tools (SMA, RSI, MACD, Bollinger Bands, Ichimoku Cloud, Fibonacci Retracement, OBV) to analyze the stock's current momentum and trend.",
             '3. Use the VIX tool to assess the overall market sentiment (fear/greed) as context for your analysis.',
             '4. Synthesize the signals from all indicators into a single, coherent technical outlook.',
             '5. Do not provide financial advice. Your role is to interpret the technical data objectively.',
@@ -75,8 +77,6 @@ def create_finance_agent() -> Agent:
         exponential_backoff=True,
         delay_between_retries=3,
         markdown=True,
-        name='Finance_Agent',
-        id='agent_1',
         user_id=DEFAULT_USER_ID,
         session_id=DEFAULT_SESSION_ID,
         debug_mode=DEBUG_MODE,
@@ -101,7 +101,6 @@ def create_sentiment_agent() -> Agent:
         tools=[
             get_reddit_sentiment,
             get_finnhub_news_sentiment,
-            CalculatorTools(),
             DuckDuckGoTools(
                 enable_search=True, enable_news=True, fixed_max_results=10, timeout=30
             ),

@@ -3,8 +3,8 @@ from typing import Any
 
 from agno.tools import tool
 
-from tools.sentiment.db_utils import get_recent_reddit_posts, get_reddit_stats
 from tools.helper import SentimentAnalysisBase, logger_hook
+from tools.sentiment.db_utils import get_recent_reddit_posts, get_reddit_stats
 
 logger = logging.getLogger(__name__)
 
@@ -135,5 +135,11 @@ def get_reddit_sentiment(ticker: str, days_back: int = 7) -> dict[str, Any]:
 
     analyzer: RedditSentimentAnalyzer = get_analyzer()
     logger.info('Reddit Sentiment Generated!!')
+
+    # random delay to not overwhelm LLM
+    import random
+    import time
+
+    time.sleep(random.uniform(5, 15))
 
     return analyzer.analyze_ticker_sentiment(ticker, days_back)

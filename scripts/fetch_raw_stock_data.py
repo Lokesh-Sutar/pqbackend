@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 import polars as pl
 import requests
@@ -80,7 +81,10 @@ if downloaded_files:
         ['symbol', 'date', 'open', 'high', 'low', 'close', 'volume', 'adj_close']
     )
     final_df = final_lazy_df.collect()
-    output_dir_csv = 'ticker_csvs'
+    print(final_df.head())
+    project_root = Path(__file__).resolve().parent.parent
+    print('Project Root:', project_root)
+    output_dir_csv = project_root / 'data' / 'cache'
     os.makedirs(output_dir_csv, exist_ok=True)
     print(f"\nSaving individual CSV files to '{output_dir_csv}/' directory ---")
 

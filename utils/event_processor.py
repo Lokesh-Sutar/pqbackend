@@ -67,7 +67,6 @@ def process_event(event) -> str:
         return f'event: {event_type}\ndata: {json_data}\n\n'
 
     except Exception as e:
-        # Return error event if processing fails
         error_data = {
             'event': 'error',
             'type': 'error',

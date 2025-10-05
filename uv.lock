@@ -951,6 +951,19 @@ wheels = [
 ]
 
 [[package]]
+name = "linkup-sdk"
+version = "0.6.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "httpx" },
+    { name = "pydantic" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/26/7c/915bf52100c98268274f2c1690716f8c6896b1ce2d7a87dfb515b5d23457/linkup_sdk-0.6.0.tar.gz", hash = "sha256:f612ad7b1afd321f12e6a32331ac0fec338fee34fd8564073202277155f00e86", size = 58424, upload-time = "2025-09-22T15:50:16.973Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/c5/10/9742c2b99e940de4e0e811d0bb71c15c7c732675e2c5147a500f6e8c2e60/linkup_sdk-0.6.0-py3-none-any.whl", hash = "sha256:4d12c5ba8c54003f83d4ebeaedfdce214a697224e2cbdabf3d9a02c541e6160e", size = 10388, upload-time = "2025-09-22T15:50:15.532Z" },
+]
+
+[[package]]
 name = "lxml"
 version = "6.0.1"
 source = { registry = "https://pypi.org/simple" }
@@ -1584,6 +1597,7 @@ dependencies = [
     { name = "fastapi" },
     { name = "google-genai" },
     { name = "googlesearch-python" },
+    { name = "linkup-sdk" },
     { name = "openai" },
     { name = "pandas-stubs" },
     { name = "praw" },
@@ -1610,6 +1624,7 @@ requires-dist = [
     { name = "fastapi", specifier = ">=0.116.1" },
     { name = "google-genai", specifier = ">=1.35.0" },
     { name = "googlesearch-python", specifier = ">=1.3.0" },
+    { name = "linkup-sdk", specifier = ">=0.6.0" },
     { name = "openai", specifier = ">=1.107.1" },
     { name = "pandas-stubs", specifier = ">=2.3.2.250827" },
     { name = "praw", specifier = ">=7.8.1" },

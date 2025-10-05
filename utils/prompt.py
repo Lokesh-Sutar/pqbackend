@@ -1,125 +1,187 @@
 FINAL_OUTPUT_FORMAT: str = """
 # 📊 Investment Analysis Report
 
-**Tickers:** {list all}  
-**Recommendation:** BUY / SELL / HOLD / MIXED  
-**Confidence:** {High/Medium/Low}
+---
+
+## 🎯 Executive Summary
+
+| Metric | Value |
+|--------|-------|
+| **Analyzed Tickers** | {comma-separated list} |
+| **Overall Recommendation** | {BUY / SELL / HOLD / MIXED} |
+| **Confidence Level** | {High / Medium / Low} |
+| **Primary Signal** | {What's driving the recommendation} |
 
 ---
 
-## 🎯 Bottom Line
-{2-3 sentences: Direct actionable conclusion synthesizing all agent insights. State what to do and why.}
+## 💡 Bottom Line
+
+{2-3 sentences: Direct, actionable conclusion. What should the investor do and why? Synthesize all agent insights into one clear directive.}
 
 ---
 
-## 📋 Quick Overview
+## 📊 Multi-Ticker Overview
 
-| Agent | Key Finding | Signal |
-|-------|-------------|--------|
-| 🔍 Search | {1-2 sentence summary} | ✅/⚠️/❌ |
-| 💭 Sentiment | {Trend & summary} | ✅/⚠️/❌ |
-| 📈 Finance | {Technical outlook} | ✅/⚠️/❌ |
-| 🎯 Advisor | {Recommendation} | ✅/⚠️/❌ |
+| Ticker | Recommendation | Entry | Stop Loss | Target | Risk | Confidence |
+|--------|----------------|-------|-----------|--------|------|------------|
+| {AAPL} | {BUY} | ${150} | ${142} | ${165} | {Med} | {85%} |
+| {MSFT} | {HOLD} | ${380} | ${365} | ${400} | {Low} | {70%} |
+| {GOOGL} | {SELL} | ${140} | ${145} | ${130} | {High} | {75%} |
 
-_(Skip rows for agents with no data)_
-
----
-
-## 📊 Key Metrics
-
-**{Ticker}:**
-- **Price Action:** {trend direction}
-- **Sentiment Score:** {0-100} [{source}]
-- **Technical Signal:** {Bullish/Bearish/Neutral}
-- **Entry/Exit:** ${entry} / SL: ${stop} / TP: ${target}
-
-_(Repeat for each ticker if multiple)_
+_(Include only analyzed tickers. For single ticker, this becomes a single row.)_
 
 ---
 
-## Investment Strategy
-**{Ticker}:** 
-- Position: {size} | Risk: {level} | Horizon: {timeframe}
-- Entry: ${X} | Stop: ${Y} (-Z%) | Target: ${A} (+B%)
+## 🤖 Agent Signals
+
+| Agent | {Ticker 1} | {Ticker 2} | {Ticker 3} | Key Insight |
+|-------|------------|------------|------------|-------------|
+| **🔍 Search** | ✅ Positive | ⚠️ Neutral | ❌ Negative | {1 sentence summarizing search findings} |
+| **💭 Sentiment** | 78/100 ✅ | 52/100 ⚠️ | 35/100 ❌ | {Overall sentiment trend} |
+| **📈 Finance** | Bullish ✅ | Sideways ⚠️ | Bearish ❌ | {Technical outlook summary} |
+| **🎯 Advisor** | BUY ✅ | HOLD ⚠️ | SELL ❌ | {Investment strategy summary} |
+
+_(For single ticker, use single column. Skip agent rows with no data.)_
 
 ---
 
-## ⚠️ Risk Factors
-- {Key risk 1}
-- {Key risk 2}
-- {Key risk 3}
+## 📈 Technical Snapshot
+
+| Ticker | Price Trend | RSI | MACD | MA Trend | Support | Resistance |
+|--------|-------------|-----|------|----------|---------|------------|
+| {AAPL} | {Uptrend ↗} | {65} | {Bullish ✅} | {Above 50/200} | ${145} | ${160} |
+| {MSFT} | {Sideways →} | {48} | {Neutral ⚠️} | {Mixed} | ${375} | ${390} |
+| {GOOGL} | {Downtrend ↘} | {32} | {Bearish ❌} | {Below 50/200} | ${130} | ${145} |
 
 ---
 
-## 🎯 Action Items
-1. {Specific action based on recommendation}
-2. {Monitoring points}
-3. {Exit conditions}
+## 💭 Sentiment Breakdown
+
+| Ticker | Score | Source | Interpretation | Top Signal |
+|--------|-------|--------|----------------|------------|
+| {AAPL} | 78/100 | {Reddit/YFinance} | {Strongly Bullish} | {Product launch hype} |
+| {MSFT} | 52/100 | {Twitter/Finhub} | {Neutral} | {Mixed earnings reaction} |
+| {GOOGL} | 35/100 | {News/Reddit} | {Bearish} | {Regulatory concerns} |
+
+**Recent Headlines:**
+1. {Most impactful headline 1}
+2. {Most impactful headline 2}
+3. {Most impactful headline 3}
 
 ---
+
+## 🎯 Position Strategy
+
+| Ticker | Action | Position Size | Time Horizon | Risk/Reward | Max Loss | Expected Gain |
+|--------|--------|---------------|--------------|-------------|----------|---------------|
+| {AAPL} | {BUY} | {5% / $5,000} | {3-6 months} | {1:2} | {-5.3%} | {+10%} |
+| {MSFT} | {HOLD} | {Current} | {6-12 months} | {1:1.5} | {-3.9%} | {+5.3%} |
+| {GOOGL} | {SELL} | {Exit} | {Immediate} | {N/A} | {Cut at -3.6%} | {N/A} |
+
+---
+
+## 🔍 Recent Developments
+
+| Ticker | Key Developments |
+|--------|------------------|
+| {AAPL} | • {Development 1}|
+|        | • {Development 2}|
+| {MSFT} | • {Development 1}|
+|        | • {Development 2}|
+
+---
+
+## ⚠️ Risk Assessment
+
+| Risk Factor | {Ticker 1} | {Ticker 2} | {Ticker 3} | Mitigation |
+|-------------|------------|------------|------------|------------|
+| **Market Risk** | {Medium} | {Low} | {High} | {Diversification strategy} |
+| **Sector Risk** | {Low} | {Medium} | {High} | {Sector rotation watch} |
+| **Company Risk** | {Low} | {Low} | {Medium} | {Stop loss protection} |
+| **Volatility** | {Moderate} | {Low} | {High} | {Position sizing} |
+
+---
+
+## 📋 Action Checklist
+
+| Priority | Action | Ticker(s) | Deadline |
+|----------|--------|-----------|----------|
+| 🔴 High | {Action 1 - e.g., Enter position} | {AAPL} | {Within 2 days} |
+| 🟡 Med | {Action 2 - e.g., Monitor support} | {MSFT} | {This week} |
+| 🟢 Low | {Action 3 - e.g., Review in 30 days} | {GOOGL} | {End of month} |
+
+---
+
+## 📌 Key Takeaways
+
+| # | Insight |
+|---|---------|
+| 1️⃣ | {Most important finding from all agents} |
+| 2️⃣ | {Second most important consideration} |
+| 3️⃣ | {Third key point for decision making} |
+
 
 """
 
 SEARCH_AGENT_OUTPUT: str = """
 # 🔍 Search Report
 
-**{Ticker/Company}:**
-- {Key insight 1}
-- {Key insight 2}
-- {Key insight 3}
+| Ticker | Key Developments | Signal |
+|--------|------------------|--------|
+| {AAPL} | • {Development 1} | ✅/⚠️/❌ |
+|        | • {Development 2} |          |
+|        | • {Development 3} |          |
+| {AAPL} | • {Development 1} | ✅/⚠️/❌ |
+|        | • {Development 2} |          |
+|        | • {Development 3} |          |
 
-_(Repeat for multiple tickers)_
 
-**Conclusion:** {1 sentence}
+**Conclusion:** {1 sentence summary of web research findings}
 """
 
 SENTIMENT_AGENT_OUTPUT: str = """
 # 💭 Sentiment Report
 
-**{Ticker}:**
-- **Score:** {0-100} [{Source}]
-- **Signal:** {Bullish/Bearish/Neutral}
-- **Trend:** {Improving/Declining/Stable}
+| Ticker | Score | Source | Interpretation | Trend | Signal |
+|--------|-------|--------|----------------|-------|--------|
+| {AAPL} | 78/100 | {Reddit/YFinance} | {Strongly Bullish} | ↗ Rising | ✅ |
+| {MSFT} | 52/100 | {Twitter} | {Neutral} | → Stable | ⚠️ |
+| {GOOGL} | 35/100 | {Finhub} | {Bearish} | ↘ Falling | ❌ |
 
 **Top Headlines:**
 1. {Headline 1}
 2. {Headline 2}
 3. {Headline 3}
 
-_(Repeat for multiple tickers)_
+**Summary:** {1 sentence overall sentiment conclusion}
 """
 
 FINANCE_AGENT_OUTPUT: str = """
 # 📈 Finance Report
 
-**{Ticker}:**
+| Ticker | Trend | RSI | MACD | MA Position | Support | Resistance | Signal |
+|--------|-------|-----|------|-------------|---------|------------|--------|
+| {AAPL} | ↗ Up | 65 | Bullish ✅ | Above 50/200 | $145 | $160 | ✅ |
+| {MSFT} | → Flat | 48 | Neutral ⚠️ | Mixed | $375 | $390 | ⚠️ |
+| {GOOGL} | ↘ Down | 32 | Bearish ❌ | Below 50/200 | $130 | $145 | ❌ |
 
-**Signal:** {Bullish/Bearish/Neutral}
-
-**Technicals:**
-- RSI: {value} ({overbought/oversold/neutral})
-- MACD: {bullish/bearish}
-- Trend: {up/down/sideways}
-- Support: ${X} | Resistance: ${Y}
-
-**Outlook:** {1-2 sentence conclusion}
-
-_(Repeat for multiple tickers)_
+**Technical Outlook:**
+- **{AAPL}:** {1-2 sentence technical summary}
+- **{MSFT}:** {1-2 sentence technical summary}
+- **{GOOGL}:** {1-2 sentence technical summary}
 """
 
 ADVISOR_AGENT_OUTPUT: str = """
 # 🎯 Advisor Report
 
-**{Ticker} - {BUY/SELL/HOLD}**
+| Ticker | Action | Entry | Stop Loss | Target | Position | Risk | Horizon | Confidence |
+|--------|--------|-------|-----------|--------|----------|------|---------|------------|
+| {AAPL} | BUY ✅ | $150 | $142 (-5.3%) | $165 (+10%) | 5% / $5K | Medium | 3-6M | 85% |
+| {MSFT} | HOLD ⚠️ | $380 | $365 (-3.9%) | $400 (+5.3%) | Current | Low | 6-12M | 70% |
+| {GOOGL} | SELL ❌ | $140 | $145 (-3.6%) | $130 (-7%) | Exit | High | Now | 75% |
 
-**Setup:**
-- Entry: ${X}
-- Stop Loss: ${Y} (-Z%)
-- Target: ${A} (+B%)
-- Position: {size}
-- Risk: {Low/Med/High}
-
-**Rationale:** {2 sentences why this trade makes sense}
-
-_(Repeat for multiple tickers)_
+**Rationale:**
+- **{AAPL}:** {1-2 sentence why BUY}
+- **{MSFT}:** {1-2 sentence why HOLD}
+- **{GOOGL}:** {1-2 sentence why SELL}
 """

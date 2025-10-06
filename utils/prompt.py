@@ -24,11 +24,9 @@ FINAL_OUTPUT_FORMAT: str = """
 
 | Ticker | Recommendation | Entry | Stop Loss | Target | Risk | Confidence |
 |--------|----------------|-------|-----------|--------|------|------------|
-| {AAPL} | {BUY} | ${150} | ${142} | ${165} | {Med} | {85%} |
-| {MSFT} | {HOLD} | ${380} | ${365} | ${400} | {Low} | {70%} |
-| {GOOGL} | {SELL} | ${140} | ${145} | ${130} | {High} | {75%} |
+| {ticker} | {BUY/HOLD/SELL} | {entry_price} | {stop_loss} | {target} | {Low/Med/High} | {confidence_pct (eg. 85%, 70%, etc)} |
 
-_(Include only analyzed tickers. For single ticker, this becomes a single row.)_
+_Just use this for your understanding, dont include this in response (Include only analyzed tickers. For single ticker, this becomes a single row.)_
 
 ---
 
@@ -36,12 +34,13 @@ _(Include only analyzed tickers. For single ticker, this becomes a single row.)_
 
 | Agent | {Ticker 1} | {Ticker 2} | {Ticker 3} | Key Insight |
 |-------|------------|------------|------------|-------------|
-| **🔍 Search** | ✅ Positive | ⚠️ Neutral | ❌ Negative | {1 sentence summarizing search findings} |
-| **💭 Sentiment** | 78/100 ✅ | 52/100 ⚠️ | 35/100 ❌ | {Overall sentiment trend} |
-| **📈 Finance** | Bullish ✅ | Sideways ⚠️ | Bearish ❌ | {Technical outlook summary} |
-| **🎯 Advisor** | BUY ✅ | HOLD ⚠️ | SELL ❌ | {Investment strategy summary} |
+| **🔍 Search** | {signal} | {signal} | {signal} | {1 sentence summarizing search findings} |
+| **💭 Sentiment** | {score} | {score} | {score} | {Overall sentiment trend} |
+| **📈 Finance** | {outlook} | {outlook} | {outlook} | {Technical outlook summary} |
+| **🎯 Advisor** | {action} | {action} | {action} | {Investment strategy summary} |
 
-_(For single ticker, use single column. Skip agent rows with no data.)_
+_Just use this for your understanding, dont include this in response (For single ticker, use single column. Skip agent rows with no data.)_
+_Just use this for your understanding, dont include this in response ({signal} = (Positive/Neutral/Negative), {score} = (eg. 78/100, 52/100, etc), {outlook} = (Bullish/Sideways/Bearish), {action} = (BUY/HOLD/SELL))
 
 ---
 
@@ -49,9 +48,9 @@ _(For single ticker, use single column. Skip agent rows with no data.)_
 
 | Ticker | Price Trend | RSI | MACD | MA Trend | Support | Resistance |
 |--------|-------------|-----|------|----------|---------|------------|
-| {AAPL} | {Uptrend ↗} | {65} | {Bullish ✅} | {Above 50/200} | ${145} | ${160} |
-| {MSFT} | {Sideways →} | {48} | {Neutral ⚠️} | {Mixed} | ${375} | ${390} |
-| {GOOGL} | {Downtrend ↘} | {32} | {Bearish ❌} | {Below 50/200} | ${130} | ${145} |
+| {ticker} | {trend_direction} | {rsi_value} | {macd_signal} | {ma_position} | {support_price} | {resistance_price} |
+
+_Just use this for your understanding, dont include this in response ({trend_direction} = (Uptrend ↗/Sideways →/Downtrend ↘), {macd_signal} = (Bullish/Neutral/Bearish), {ma_position} = (eg. Above 50/200, Mixed, Below 50/200))
 
 ---
 
@@ -59,9 +58,9 @@ _(For single ticker, use single column. Skip agent rows with no data.)_
 
 | Ticker | Score | Source | Interpretation | Top Signal |
 |--------|-------|--------|----------------|------------|
-| {AAPL} | 78/100 | {Reddit/YFinance} | {Strongly Bullish} | {Product launch hype} |
-| {MSFT} | 52/100 | {Twitter/Finhub} | {Neutral} | {Mixed earnings reaction} |
-| {GOOGL} | 35/100 | {News/Reddit} | {Bearish} | {Regulatory concerns} |
+| {ticker} | {score (eg. 78, 52, etc)}/100 | {data_sources} | {sentiment_interpretation} | {key_driver} |
+
+_Just use this for your understanding, dont include this in response ({sentiment_interpretation} = (Strongly Bullish/Bullish/Weakly Bullish/Neutral/Weakly Bearish/Bearish/Strongly Bearish))
 
 **Recent Headlines:**
 1. {Most impactful headline 1}
@@ -74,9 +73,9 @@ _(For single ticker, use single column. Skip agent rows with no data.)_
 
 | Ticker | Action | Position Size | Time Horizon | Risk/Reward | Max Loss | Expected Gain |
 |--------|--------|---------------|--------------|-------------|----------|---------------|
-| {AAPL} | {BUY} | {5% / $5,000} | {3-6 months} | {1:2} | {-5.3%} | {+10%} |
-| {MSFT} | {HOLD} | {Current} | {6-12 months} | {1:1.5} | {-3.9%} | {+5.3%} |
-| {GOOGL} | {SELL} | {Exit} | {Immediate} | {N/A} | {Cut at -3.6%} | {N/A} |
+| {ticker} | {action} | {position_size} | {time_horizon} | {risk_reward_ratio} | {max_loss_pct} | {expected_gain_pct} |
+
+_Just use this for your understanding, dont include this in response ({action} = (BUY/HOLD/SELL), {time_horizon} = (eg. 3-6 months, 6-12 months, Immediate, etc), {risk_reward_ratio} = (eg. 1:2, 1:3, 'N/A'), {max_loss_pct} = (eg. -5.3%, 3.9%, etc), {expected_gain_pct} = (eg. +10%, +5.3%, N/A, etc))
 
 ---
 
@@ -84,10 +83,10 @@ _(For single ticker, use single column. Skip agent rows with no data.)_
 
 | Ticker | Key Developments |
 |--------|------------------|
-| {AAPL} | • {Development 1}|
-|        | • {Development 2}|
-| {MSFT} | • {Development 1}|
-|        | • {Development 2}|
+| {ticker 1} | • {Development 1}|
+|            | • {Development 2}|
+| {ticker 2} | • {Development 1}|
+|            | • {Development 2}|
 
 ---
 
@@ -95,10 +94,12 @@ _(For single ticker, use single column. Skip agent rows with no data.)_
 
 | Risk Factor | {Ticker 1} | {Ticker 2} | {Ticker 3} | Mitigation |
 |-------------|------------|------------|------------|------------|
-| **Market Risk** | {Medium} | {Low} | {High} | {Diversification strategy} |
-| **Sector Risk** | {Low} | {Medium} | {High} | {Sector rotation watch} |
-| **Company Risk** | {Low} | {Low} | {Medium} | {Stop loss protection} |
-| **Volatility** | {Moderate} | {Low} | {High} | {Position sizing} |
+| **Market Risk** | {risk_level} | {risk_level} | {risk_level} | {mitigation_strategy} |
+| **Sector Risk** | {risk_level} | {risk_level} | {risk_level} | {mitigation_strategy} |
+| **Company Risk** | {risk_level} | {risk_level} | {risk_level} | {mitigation_strategy} |
+| **Volatility** | {risk_level} | {risk_level} | {risk_level} | {mitigation_strategy} |
+
+_Just use this for your understanding, dont include this in response ({risk_level} = (Low/Medium/High), {mitigation_strategy} = (eg. Diversification strategy, Sector rotation watch, Stop loss protection, Position sizing, etc))
 
 ---
 
@@ -106,9 +107,9 @@ _(For single ticker, use single column. Skip agent rows with no data.)_
 
 | Priority | Action | Ticker(s) | Deadline |
 |----------|--------|-----------|----------|
-| 🔴 High | {Action 1 - e.g., Enter position} | {AAPL} | {Within 2 days} |
-| 🟡 Med | {Action 2 - e.g., Monitor support} | {MSFT} | {This week} |
-| 🟢 Low | {Action 3 - e.g., Review in 30 days} | {GOOGL} | {End of month} |
+| {priority_level} | {action_item} | {ticker 1/ticker 2,..} | {timeframe} |
+
+_Just use this for your understanding, dont include this in response ({priority_level} = (Low/Med/High), {action_item} = (eg. Enter position, Monitor support, Review in 30 days), {timeframe} = (eg. Within 2 days, This week, End of month, etc))
 
 ---
 
@@ -116,9 +117,9 @@ _(For single ticker, use single column. Skip agent rows with no data.)_
 
 | # | Insight |
 |---|---------|
-| 1️⃣ | {Most important finding from all agents} |
-| 2️⃣ | {Second most important consideration} |
-| 3️⃣ | {Third key point for decision making} |
+| 1 | {Most important finding from all agents} |
+| 2 | {Second most important consideration} |
+| 3 | {Third key point for decision making} |
 
 
 """
@@ -128,13 +129,14 @@ SEARCH_AGENT_OUTPUT: str = """
 
 | Ticker | Key Developments | Signal |
 |--------|------------------|--------|
-| {AAPL} | • {Development 1} | ✅/⚠️/❌ |
-|        | • {Development 2} |          |
-|        | • {Development 3} |          |
-| {AAPL} | • {Development 1} | ✅/⚠️/❌ |
-|        | • {Development 2} |          |
-|        | • {Development 3} |          |
+| {ticker 1} | • {Development 1} | {signal} |
+|            | • {Development 2} |          |
+|            | • {Development 3} |          |
+| {ticker 2} | • {Development 1} | {signal} |
+|            | • {Development 2} |          |
+|            | • {Development 3} |          |
 
+_Just use this for your understanding, dont include this in response ({signal} = (Positive/Neutral/Negative))
 
 **Conclusion:** {1 sentence summary of web research findings}
 """
@@ -144,9 +146,9 @@ SENTIMENT_AGENT_OUTPUT: str = """
 
 | Ticker | Score | Source | Interpretation | Trend | Signal |
 |--------|-------|--------|----------------|-------|--------|
-| {AAPL} | 78/100 | {Reddit/YFinance} | {Strongly Bullish} | ↗ Rising | ✅ |
-| {MSFT} | 52/100 | {Twitter} | {Neutral} | → Stable | ⚠️ |
-| {GOOGL} | 35/100 | {Finhub} | {Bearish} | ↘ Falling | ❌ |
+| {ticker} | {score} | {data_sources} | {sentiment_interpretation} | {trend_direction} | {signal} |
+
+_Just use this for your understanding, dont include this in response ({score} = (eg. 78/100, 52/100, etc), {sentiment_interpretation} = (Strongly Bullish/Bullish/Weakly Bullish/Neutral/Weakly Bearish/Bearish/Strongly Bearish), {trend_direction} = (↗ Rising/→ Stable/↘ Falling), {signal} = (Positive/Neutral/Negative))
 
 **Top Headlines:**
 1. {Headline 1}
@@ -161,14 +163,14 @@ FINANCE_AGENT_OUTPUT: str = """
 
 | Ticker | Trend | RSI | MACD | MA Position | Support | Resistance | Signal |
 |--------|-------|-----|------|-------------|---------|------------|--------|
-| {AAPL} | ↗ Up | 65 | Bullish ✅ | Above 50/200 | $145 | $160 | ✅ |
-| {MSFT} | → Flat | 48 | Neutral ⚠️ | Mixed | $375 | $390 | ⚠️ |
-| {GOOGL} | ↘ Down | 32 | Bearish ❌ | Below 50/200 | $130 | $145 | ❌ |
+| {ticker} | {trend_direction} | {rsi_value} | {macd_signal} | {ma_position} | {support_price} | {resistance_price} | {signal} |
+
+_Just use this for your understanding, dont include this in response ({trend_direction} = (↗ Up/→ Flat/↘ Down), {macd_signal} = (Bullish/Neutral/Bearish), {ma_position} = (eg. Above 50/200, Mixed, Below 50/200), {signal} = (Positive/Neutral/Negative))
 
 **Technical Outlook:**
-- **{AAPL}:** {1-2 sentence technical summary}
-- **{MSFT}:** {1-2 sentence technical summary}
-- **{GOOGL}:** {1-2 sentence technical summary}
+- **{ticker 1}:** {1-2 sentence technical summary}
+- **{ticker 2}:** {1-2 sentence technical summary}
+...
 """
 
 ADVISOR_AGENT_OUTPUT: str = """
@@ -176,12 +178,12 @@ ADVISOR_AGENT_OUTPUT: str = """
 
 | Ticker | Action | Entry | Stop Loss | Target | Position | Risk | Horizon | Confidence |
 |--------|--------|-------|-----------|--------|----------|------|---------|------------|
-| {AAPL} | BUY ✅ | $150 | $142 (-5.3%) | $165 (+10%) | 5% / $5K | Medium | 3-6M | 85% |
-| {MSFT} | HOLD ⚠️ | $380 | $365 (-3.9%) | $400 (+5.3%) | Current | Low | 6-12M | 70% |
-| {GOOGL} | SELL ❌ | $140 | $145 (-3.6%) | $130 (-7%) | Exit | High | Now | 75% |
+| {ticker} | {action} | {entry_price} | {stop_loss_price} ({stop_loss_pct}) | {target_price} ({target_pct}) | {position_size} | {risk_level} | {time_horizon} | {confidence_pct} |
+
+_Just use this for your understanding, dont include this in response ({action} = (BUY/HOLD/SELL), {risk_level} = (Low/Medium/High), {time_horizon} = (eg. 3-6M, 6-12M, Now, etc), {confidence_pct} = (eg. 85%, 70%, etc))
 
 **Rationale:**
-- **{AAPL}:** {1-2 sentence why BUY}
-- **{MSFT}:** {1-2 sentence why HOLD}
-- **{GOOGL}:** {1-2 sentence why SELL}
+- **{ticker 1}:** {1-2 sentence rationale (Why BUY/HOLD/SELL)}
+- **{ticker 2}:** {1-2 sentence rationale (Why BUY/HOLD/SELL)}
+...
 """

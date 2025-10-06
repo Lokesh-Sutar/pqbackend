@@ -289,17 +289,17 @@ def get_recent_reddit_posts(
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    cutoff_time = datetime.now() - timedelta(days=days_back)
-    cutoff_timestamp = int(cutoff_time.timestamp())
+    # cutoff_time = datetime.now() - timedelta(days=days_back)
+    # cutoff_timestamp = int(cutoff_time.timestamp())
 
     _ = cursor.execute(
         """
         SELECT * FROM reddit_posts 
-        WHERE ticker = ? AND created_utc >= ?
+        WHERE ticker = ?
         ORDER BY created_utc DESC
         LIMIT ?
         """,
-        (ticker.upper(), cutoff_timestamp, limit),
+        (ticker.upper(), limit),
     )
 
     rows = cursor.fetchall()
@@ -344,17 +344,17 @@ def get_recent_finnhub_articles(
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    cutoff_time = datetime.now() - timedelta(days=days_back)
-    cutoff_timestamp = int(cutoff_time.timestamp())
+    # cutoff_time = datetime.now() - timedelta(days=days_back)
+    # cutoff_timestamp = int(cutoff_time.timestamp())
 
     _ = cursor.execute(
         """
         SELECT * FROM finnhub_articles 
-        WHERE ticker = ? AND published_at >= ?
+        WHERE ticker = ?
         ORDER BY published_at DESC
         LIMIT ?
         """,
-        (ticker.upper(), cutoff_timestamp, limit),
+        (ticker.upper(), limit),
     )
 
     rows = cursor.fetchall()
@@ -405,17 +405,17 @@ def get_recent_yfinance_news(
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    cutoff_time = datetime.now() - timedelta(days=days_back)
-    cutoff_timestamp = int(cutoff_time.timestamp())
+    # cutoff_time = datetime.now() - timedelta(days=days_back)
+    # cutoff_timestamp = int(cutoff_time.timestamp())
 
     _ = cursor.execute(
         """
         SELECT * FROM yfinance_news 
-        WHERE ticker = ? AND published_at >= ?
+        WHERE ticker = ?
         ORDER BY published_at DESC
         LIMIT ?
         """,
-        (ticker.upper(), cutoff_timestamp, limit),
+        (ticker.upper(), limit),
     )
 
     rows = cursor.fetchall()
@@ -452,8 +452,8 @@ def get_reddit_stats(ticker: str, days_back: int = 7) -> dict[str, Any]:
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    cutoff_time = datetime.now() - timedelta(days=days_back)
-    cutoff_timestamp = int(cutoff_time.timestamp())
+    # cutoff_time = datetime.now() - timedelta(days=days_back)
+    # cutoff_timestamp = int(cutoff_time.timestamp())
 
     _ = cursor.execute(
         """
@@ -462,9 +462,9 @@ def get_reddit_stats(ticker: str, days_back: int = 7) -> dict[str, Any]:
             AVG(sentiment_score) as avg_confidence,
             MAX(analyzed_at) as last_update
         FROM reddit_posts 
-        WHERE ticker = ? AND created_utc >= ?
+        WHERE ticker = ?
         """,
-        (ticker.upper(), cutoff_timestamp),
+        (ticker.upper(),),
     )
 
     row = cursor.fetchone()
@@ -482,8 +482,8 @@ def get_finnhub_stats(ticker: str, days_back: int = 7) -> dict[str, Any]:
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    cutoff_time = datetime.now() - timedelta(days=days_back)
-    cutoff_timestamp = int(cutoff_time.timestamp())
+    # cutoff_time = datetime.now() - timedelta(days=days_back)
+    # cutoff_timestamp = int(cutoff_time.timestamp())
 
     _ = cursor.execute(
         """
@@ -492,9 +492,9 @@ def get_finnhub_stats(ticker: str, days_back: int = 7) -> dict[str, Any]:
             AVG(sentiment_score) as avg_confidence,
             MAX(analyzed_at) as last_update
         FROM finnhub_articles 
-        WHERE ticker = ? AND published_at >= ?
+        WHERE ticker = ?
         """,
-        (ticker.upper(), cutoff_timestamp),
+        (ticker.upper(),),
     )
 
     row = cursor.fetchone()
@@ -512,8 +512,8 @@ def get_yfinance_stats(ticker: str, days_back: int = 7) -> dict[str, Any]:
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    cutoff_time = datetime.now() - timedelta(days=days_back)
-    cutoff_timestamp = int(cutoff_time.timestamp())
+    # cutoff_time = datetime.now() - timedelta(days=days_back)
+    # cutoff_timestamp = int(cutoff_time.timestamp())
 
     _ = cursor.execute(
         """
@@ -522,9 +522,9 @@ def get_yfinance_stats(ticker: str, days_back: int = 7) -> dict[str, Any]:
             AVG(sentiment_score) as avg_confidence,
             MAX(analyzed_at) as last_update
         FROM yfinance_news 
-        WHERE ticker = ? AND published_at >= ?
+        WHERE ticker = ?
         """,
-        (ticker.upper(), cutoff_timestamp),
+        (ticker.upper(),),
     )
 
     row = cursor.fetchone()

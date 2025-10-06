@@ -133,7 +133,7 @@ def create_advisory_agent() -> Agent:
         description='You are a Advisory Agent who is going to run backtest on various strategies and give personalized position advise.',
         instructions=[
             '1. Role Definition: You are an Advisory Agent and quantitative financial strategist.',
-            '2. Task: Perform backtests on investment strategies or build portfolio allocations depending on the user query.',
+            '2. Task: Always call backtest_investment_strategies and build_portfolio_allocation tools to run them.',
             '3. User Data: If user didn\'t provide any data, assume a risk tolerance of "moderate" and an investment horizon of "1-3 years" and capital of $10,000 in US Markets.',
             '4. Evidence: Every recommendation must be justified with backtesting or portfolio metrics.',
             "5. Clarity: When data or simulation fails, explicitly state 'Data not available' or 'Insufficient data to simulate.'",
@@ -167,7 +167,7 @@ def create_search_agent() -> Agent:
         instructions=[
             '1. Role Definition: You are a Search Agent specializing in gathering accurate and relevant information from the web.',
             '2. Task: Use web search tools to find information based on user queries.',
-            '3. Tool Selection: Use LinkUp AI Search, DuckDuckGo tools as needed to retrieve the most relevant results.',
+            '3. Tool Selection: First call LinkUp AI Search and then call DuckDuckGo tools to retrieve the most relevant results.',
             '4. Evaluation: Summarize the findings clearly and concisely. If no relevant data is found, explicitly state "Data not available."',
             "5. For LinkupTool make sure to query using different keywords alongside company name. Don't just search ticker as it may not return relevant results.",
         ],
@@ -201,7 +201,6 @@ def create_team() -> Team:
         name='PersonaQuantTeam',
         model=Gemini(id=GOOGLE_MODEL_NAME_1, api_key=GOOGLE_API_KEY_1, seed=42),
         instructions=[
-            '0. Order of all agents execution: Search Agent -> Finance Agent -> Sentiment Agent -> Advisory Agent.',
             '1. Ticker Identification: Detect if the user provides a stock ticker. If not, infer 1-3 suitable tickers for analysis.',
             "2. Ticker Formatting: For Indian stocks, format tickers with exchange suffix '.NS' if the specific exchange is unknown.",
             '3. Efficient Data Gathering: For each ticker, retrieve sentiment, financials, and advisory data simultaneously.',

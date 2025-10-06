@@ -32,6 +32,9 @@ class YFinanceSentimentAnalyzer(SentimentAnalysisBase):
             stats = get_yfinance_stats(ticker, days_back)
 
             if stats['total_articles'] == 0:
+                logger.info(
+                    f'No YFinance news found for {ticker} in the last {days_back} days.'
+                )
                 return {
                     'tool': 'YFinance News Sentiment',
                     'description': 'This tool fetches pre-computed sentiment scores for a particular ticker from YFinance news',

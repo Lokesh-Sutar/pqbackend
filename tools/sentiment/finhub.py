@@ -4,6 +4,7 @@ from typing import Any, List
 
 from agno.tools import tool
 
+from core.ticker_store import ticker_store
 from tools.helper import SentimentAnalysisBase, logger_hook
 from tools.sentiment.db_utils import get_finnhub_stats, get_recent_finnhub_articles
 
@@ -127,7 +128,7 @@ def get_finnhub_news_sentiment(ticker: str, days_back: int = 7):
         return temp_analyzer.create_error_response(
             'FinHub News Sentiment', 'Invalid ticker provided'
         )
-
+    ticker_store.add_ticker(ticker)
     days_back = max(1, min(days_back, 90))
 
     ticker = ticker.upper().strip()

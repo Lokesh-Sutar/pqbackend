@@ -175,7 +175,9 @@ def create_search_agent() -> Agent:
         # parser_model_prompt='You must strictly follow the expected_output format exactly as shown. Do not add commentary, markdown, or omit any section. Keep identical headers and indentation.',
         expected_output=SEARCH_AGENT_OUTPUT,
         tools=[
-            LinkupTools(api_key=LINKUP_API_KEY, cache_results=True),
+            LinkupTools(
+                api_key=LINKUP_API_KEY, depth='standard', output_type='searchResults'
+            ),
             DuckDuckGoTools(
                 enable_search=True, enable_news=True, fixed_max_results=10, timeout=30
             ),

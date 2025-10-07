@@ -7,6 +7,7 @@ from fastapi.responses import StreamingResponse
 
 from config import DEFAULT_SESSION_ID, DEFAULT_USER_ID
 from core.agents import get_team
+from core.ticker_store import ticker_store
 from utils.event_processor import process_event
 
 chat_router = APIRouter()
@@ -17,6 +18,9 @@ logger = logging.getLogger(__name__)
 @chat_router.get(path='/api/chat')
 async def chat(prompt: str) -> StreamingResponse:
     import time
+
+    ticker_store.clear()
+    logger.info('Cleared previous tickers for new prompt')
 
     async def event_generator() -> AsyncGenerator:
         start_time = time.time()
@@ -41,11 +45,12 @@ async def chat(prompt: str) -> StreamingResponse:
 
             total_duration = end_time - start_time
 
+            final_tickers = ticker_store.get_tickers()
             logger.info(f'Completed in {total_duration:.2f} seconds')
-
             end_event_data = json.dumps(
                 {
                     'message': 'All tools and agents have completed their runs.',
+                    'tickers_used': final_tickers,
                     'execution_time': {
                         'start_time': start_time,
                         'end_time': end_time,

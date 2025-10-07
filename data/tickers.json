@@ -1,0 +1,9 @@
+{
+  "tickers": [
+    "INTC",
+    "NVDA",
+    "TATAMOTORS.NS",
+    "^VIX"
+  ],
+  "count": 4
+}

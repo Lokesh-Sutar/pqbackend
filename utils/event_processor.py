@@ -2,6 +2,7 @@ import json
 from dataclasses import asdict, is_dataclass
 from typing import Any, Callable
 
+from core.ticker_store import ticker_store
 from utils import event_handler as event_handlers
 
 HANDLER_MAP: dict[str, Callable[[str, dict[str, Any]], dict[str, Any]]] = {
@@ -52,6 +53,7 @@ def process_event(event) -> str:
         cleaned_payload = event_handlers.clean_payload(raw_payload)
         processed_data = handler(event_name, cleaned_payload)
 
+        current_tickers = ticker_store.get_tickers()
         sse_data = {
             'event': cleaned_payload.pop('event', event_name),
             'type': processed_data.get('type', 'log'),
@@ -60,6 +62,8 @@ def process_event(event) -> str:
                 'sessionId': cleaned_payload.pop('session_id', None),
             },
             'payload': processed_data.get('payload', {}),
+            'tickers': current_tickers,
+            'ticker_count': len(current_tickers),
         }
 
         json_data = json.dumps(sse_data)

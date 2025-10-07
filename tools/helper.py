@@ -7,6 +7,8 @@ import pandas as pd
 import yfinance as yf
 from pandas import DataFrame
 
+from core.ticker_store import ticker_store
+
 logger = logging.getLogger(__name__)
 
 
@@ -20,6 +22,9 @@ def logger_hook(function_name: str, function_call: Callable, arguments: dict[str
 
 def get_ticker(ticker: str) -> pd.DataFrame:
     """Load ticker data from CSV file"""
+
+    ticker_store.add_ticker(ticker)
+    logger.info(f'Called ticker_store.add_ticker({ticker})')
     data_dir = Path(__file__).resolve().parent.parent / 'data' / 'cache'
     df_file = data_dir / f'{ticker}.csv'
 

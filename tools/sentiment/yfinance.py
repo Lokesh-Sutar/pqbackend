@@ -3,6 +3,7 @@ from typing import Any
 
 from agno.tools import tool
 
+from core.ticker_store import ticker_store
 from tools.helper import SentimentAnalysisBase, logger_hook
 from tools.sentiment.db_utils import get_recent_yfinance_news, get_yfinance_stats
 
@@ -130,9 +131,10 @@ def get_yfinance_news_sentiment(ticker: str, days_back: int = 7):
             'YFinance News Sentiment', 'Invalid ticker provided'
         )
 
-    days_back = max(1, min(days_back, 90))
 
     ticker = ticker.upper().strip()
+    ticker_store.add_ticker(ticker)
+    days_back = max(1, min(days_back, 90))
     analyzer = get_analyzer()
     logger.info('YFinance Sentiment Generated!!')
 

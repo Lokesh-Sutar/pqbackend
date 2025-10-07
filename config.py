@@ -40,7 +40,7 @@ SEARCH_AGENT_ID = 'agent_4'
 
 TEAM_NAME_ID = 'team_1'
 
-DEBUG_MODE = True
+DEBUG_MODE = False
 DEBUG_LEVEL = 2  # 1 or 2
 
 REASONING_MODE = False

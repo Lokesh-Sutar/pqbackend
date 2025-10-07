@@ -21,22 +21,23 @@ def logger_hook(function_name: str, function_call: Callable, arguments: dict[str
 
 
 def get_ticker(ticker: str) -> pd.DataFrame:
-    """Load ticker data from CSV file"""
+    """Load ticker data from Yahoo Finance, fallback to CSV file"""
 
     ticker_store.add_ticker(ticker)
     logger.info(f'Called ticker_store.add_ticker({ticker})')
-    data_dir = Path(__file__).resolve().parent.parent / 'data' / 'cache'
-    df_file = data_dir / f'{ticker}.csv'
 
     try:
-        df: pd.DataFrame = pd.read_csv(df_file)
-        logger.info(f'Loaded {ticker} from CSV')
-        return df
-    except FileNotFoundError:
-        logger.info(f'CSV not found for {ticker}, fetching from yfinance')
+        logger.info(f'Fetching {ticker} from yfinance')
         ticker_obj = yf.Ticker(ticker)
         df = ticker_obj.history(period='2y')
         df.columns = df.columns.str.lower()
+        return df
+    except Exception as e:
+        logger.warning(f'Failed to fetch {ticker} from yfinance: {e}, trying local CSV')
+        data_dir = Path(__file__).resolve().parent.parent / 'data' / 'cache'
+        df_file = data_dir / f'{ticker}.csv'
+        df: pd.DataFrame = pd.read_csv(df_file)
+        logger.info(f'Loaded {ticker} from CSV')
         return df
 
 

@@ -1,18 +1,19 @@
 import json
 import logging
 from collections.abc import AsyncGenerator
+from logging import Logger
 
 from fastapi import APIRouter
 from fastapi.responses import StreamingResponse
 
 from config import DEFAULT_SESSION_ID, DEFAULT_USER_ID
 from core.agents import get_team
-from core.ticker_store import ticker_store
+from utils.ticker_store import ticker_store
 from utils.event_processor import process_event
 
 chat_router = APIRouter()
 
-logger = logging.getLogger(__name__)
+logger: Logger = logging.getLogger(__name__)
 
 
 @chat_router.get(path='/api/chat')
@@ -24,8 +25,7 @@ async def chat(prompt: str) -> StreamingResponse:
 
     async def event_generator() -> AsyncGenerator:
         start_time = time.time()
-        logger.info(f"Starting agent run for prompt: '{prompt[:50]}...'")
-
+        logger.info("Starting team run now!'")
         try:
             team = get_team()
             for event in team.run(
@@ -41,13 +41,13 @@ async def chat(prompt: str) -> StreamingResponse:
                 yield process_event(event)
                 time.sleep(0.01)
 
-            end_time = time.time()
+            end_time: float = time.time()
 
-            total_duration = end_time - start_time
+            total_duration: float = end_time - start_time
 
-            final_tickers = ticker_store.get_tickers()
+            final_tickers: list[str] = ticker_store.get_tickers()
             logger.info(f'Completed in {total_duration:.2f} seconds')
-            end_event_data = json.dumps(
+            end_event_data: str = json.dumps(
                 {
                     'message': 'All tools and agents have completed their runs.',
                     'tickers_used': final_tickers,
@@ -67,7 +67,7 @@ async def chat(prompt: str) -> StreamingResponse:
                 'An error occurred during agent execution. Please check debug logs.',
                 exc_info=True,
             )
-            error_data = json.dumps({'error': str(e)})
+            error_data: str = json.dumps({'error': str(e)})
             yield f'event: error\ndata: {error_data}\n\n'
 
     return StreamingResponse(content=event_generator(), media_type='text/event-stream')

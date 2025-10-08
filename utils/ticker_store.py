@@ -25,7 +25,9 @@ class TickerStore:
         try:
             with open(self.file_path, 'w') as f:
                 json.dump(
-                    {'tickers': sorted(list(tickers)), 'count': len(tickers)}, f, indent=2
+                    {'tickers': sorted(list(tickers)), 'count': len(tickers)},
+                    f,
+                    indent=2,
                 )
                 f.flush()
                 os.fsync(f.fileno())

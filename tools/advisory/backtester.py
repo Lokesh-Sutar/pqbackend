@@ -1,11 +1,11 @@
-from typing import Any, Callable, List
+from typing import Any, List
 
 from agno.tools import tool
 from backtesting import Backtest
 
 from tools.advisory.data_handler import align_multiple_tickers, get_period_days
 from tools.advisory.fee_calculator import estimate_round_trip_cost
-from tools.advisory.risk_manager import RISK_PROFILES, get_risk_parameters
+from tools.advisory.risk_manager import get_risk_parameters
 from tools.advisory.strategies import STRATEGY_REGISTRY
 from tools.advisory.tax_estimator import estimate_tax_impact
 from tools.helper import logger_hook
@@ -145,11 +145,15 @@ def backtest_investment_strategies(
                         fee_estimate = estimate_round_trip_cost(
                             broker, 'delivery', 10, avg_price, avg_price * 1.1, market
                         )
-                        total_fees += fee_estimate.get('total_fees', 0) * (num_trades / 2)
+                        total_fees += fee_estimate.get('total_fees', 0) * (
+                            num_trades / 2
+                        )
 
                 total_gains = total_final_value - investable_capital
                 avg_holding_days = 365 if strategy_name == 'buy_and_hold' else 180
-                tax_estimate = estimate_tax_impact(total_gains, avg_holding_days, market)
+                tax_estimate = estimate_tax_impact(
+                    total_gains, avg_holding_days, market
+                )
 
                 all_results[strategy_name] = {
                     'strategy': strategy_name.replace('_', ' ').title(),

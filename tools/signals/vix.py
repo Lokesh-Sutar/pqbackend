@@ -1,13 +1,9 @@
 from typing import Any
 
-import numpy as np
-import pandas as pd
-import talib
 import yfinance as yf
 from agno.tools import tool
-from pandas import DataFrame
 
-from tools.helper import get_ticker, logger_hook, validate_data
+from tools.helper import get_ticker, logger_hook
 
 
 @tool(

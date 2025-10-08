@@ -6,7 +6,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from api.chat import chat_router
-from config import APP_HOST, APP_PORT
 
 logging.basicConfig(
     level=logging.INFO,

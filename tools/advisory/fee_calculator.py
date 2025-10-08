@@ -191,7 +191,9 @@ def calculate_indian_broker_fees(
         'sebi_charges': round(sebi, 2),
         'stamp_duty': round(stamp_duty, 2),
         'total_cost': round(total_cost, 2),
-        'cost_pct': round((total_cost / trade_value) * 100, 4) if trade_value > 0 else 0,
+        'cost_pct': round((total_cost / trade_value) * 100, 4)
+        if trade_value > 0
+        else 0,
         'effective_price': round(
             price + (total_cost / quantity)
             if trade_side == 'buy'
@@ -250,7 +252,9 @@ def calculate_us_broker_fees(
         'sec_fee': round(sec_fee, 2),
         'finra_taf': round(finra_taf, 2),
         'total_cost': round(total_cost, 2),
-        'cost_pct': round((total_cost / trade_value) * 100, 4) if trade_value > 0 else 0,
+        'cost_pct': round((total_cost / trade_value) * 100, 4)
+        if trade_value > 0
+        else 0,
         'effective_price': round(
             price + (total_cost / quantity)
             if trade_side == 'buy'

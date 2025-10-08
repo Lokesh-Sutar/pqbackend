@@ -185,7 +185,9 @@ def diversification_check(
         )
 
     for ticker, allocation in allocations.items():
-        allocation_pct = (allocation / total_invested) * 100 if total_invested > 0 else 0
+        allocation_pct = (
+            (allocation / total_invested) * 100 if total_invested > 0 else 0
+        )
         if allocation_pct > 40:
             warnings.append(
                 f'{ticker} represents {allocation_pct:.1f}% of portfolio - high concentration risk'

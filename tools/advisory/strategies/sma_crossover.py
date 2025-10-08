@@ -1,7 +1,6 @@
 """SMA Crossover strategy using TA-Lib"""
 
 import talib
-from backtesting import Strategy
 from backtesting.lib import crossover
 
 from tools.advisory.strategies.base_strategy import BasePortfolioStrategy

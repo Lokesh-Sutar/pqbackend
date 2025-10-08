@@ -1,7 +1,6 @@
 from typing import Any
 
 import numpy as np
-import pandas as pd
 import talib
 from agno.tools import tool
 from pandas import DataFrame
@@ -69,7 +68,9 @@ def get_bollinger_bands_signal(ticker: str) -> dict[str, Any]:
         upper_proximity = np.mean(
             [
                 (upper - closes) / (upper - lower)
-                for closes, upper, lower in zip(recent_closes, recent_upper, recent_lower)
+                for closes, upper, lower in zip(
+                    recent_closes, recent_upper, recent_lower
+                )
             ]
         )
 
@@ -86,7 +87,9 @@ def get_bollinger_bands_signal(ticker: str) -> dict[str, Any]:
         volatility_justification = f'Bands are expanding (bandwidth: {bandwidth:.2f}% vs avg: {avg_bandwidth:.2f}%), indicating active trend or high volatility period.'
     else:
         volatility_signal = 'Normal Volatility'
-        volatility_justification = f'Bandwidth ({bandwidth:.2f}%) is near normal levels.'
+        volatility_justification = (
+            f'Bandwidth ({bandwidth:.2f}%) is near normal levels.'
+        )
 
     if percent_b > 100:
         price_position = 'Above Upper Band (Extreme Overbought)'

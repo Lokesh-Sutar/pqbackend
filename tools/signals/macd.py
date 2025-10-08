@@ -1,7 +1,6 @@
 from typing import Any
 
 import numpy as np
-import pandas as pd
 import talib
 from agno.tools import tool
 from pandas import DataFrame
@@ -111,7 +110,9 @@ def get_macd_signal(ticker: str) -> dict[str, Any]:
     )
 
     if divergence_signal:
-        justification += f' Note: {divergence_signal} detected over the last 20 periods.'
+        justification += (
+            f' Note: {divergence_signal} detected over the last 20 periods.'
+        )
 
     return {
         'tool': 'MACD',

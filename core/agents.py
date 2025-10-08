@@ -14,12 +14,8 @@ from config import (
     GOOGLE_API_KEY_0,
     GOOGLE_API_KEY_1,
     GOOGLE_API_KEY_2,
-    GOOGLE_MODEL_NAME_0,
     GOOGLE_MODEL_NAME_1,
-    GROQ_API_KEY,
     LINKUP_API_KEY,
-    OPENROUTER_MODEL_API,
-    OPENROUTER_MODEL_NORMAL,
     REASONING_MODE,
     db,
 )
@@ -52,7 +48,7 @@ def create_finance_agent() -> Agent:
         name='Finance_Agent',
         id='agent_1',
         description='You are a Finance Agent who is going to analyze the key financials and technical indicators of a company.',
-        model=Gemini(id=GOOGLE_MODEL_NAME_1, api_key=GOOGLE_API_KEY_2, seed=42),
+        model=Gemini(id=GOOGLE_MODEL_NAME_1, api_key=GOOGLE_API_KEY_1, seed=42),
         instructions=[
             '1. Role Definition: You are a Finance Agent specializing in technical and quantitative stock analysis.',
             '2. Task: Analyze the key financial and technical indicators of a company using the available tools.',
@@ -61,8 +57,6 @@ def create_finance_agent() -> Agent:
             '5. Scope: Do not give investment advice; interpret technicals objectively.',
             '6. Output Format Rule: You must strictly follow the expected_output format exactly as shown. Do not add commentary, markdown, or omit any section. Keep identical headers and indentation.',
         ],
-        # parser_model=Gemini(id=GOOGLE_MODEL_NAME_0, api_key=GOOGLE_API_KEY_1, seed=42),
-        # parser_model_prompt='You must strictly follow the expected_output format exactly as shown. Do not add commentary, markdown, or omit any section. Keep identical headers and indentation.',
         expected_output=FINANCE_AGENT_OUTPUT,
         tools=[
             get_sma_crossover_signal,
@@ -74,7 +68,10 @@ def create_finance_agent() -> Agent:
             get_ichimoku_cloud_signal,
             get_obv_signal,
             YFinanceTools(
-                exclude_tools=['get_technical_indicators', 'get_historical_stock_prices']
+                exclude_tools=[
+                    'get_technical_indicators',
+                    'get_historical_stock_prices',
+                ]
             ),
             CalculatorTools(),
         ],
@@ -85,6 +82,7 @@ def create_finance_agent() -> Agent:
         session_id=DEFAULT_SESSION_ID,
         debug_mode=DEBUG_MODE,
         debug_level=DEBUG_LEVEL,
+        db=db,
     )
 
 
@@ -93,7 +91,7 @@ def create_sentiment_agent() -> Agent:
         name='Sentiment_Agent',
         id='agent_2',
         description='You are a Sentiment Market Agent who is going to fetch public movements and sentiment of a company or ticker.',
-        model=Gemini(id=GOOGLE_MODEL_NAME_1, api_key=GOOGLE_API_KEY_1, seed=42),
+        model=Gemini(id=GOOGLE_MODEL_NAME_1, api_key=GOOGLE_API_KEY_2, seed=42),
         instructions=[
             '1. Role Definition: You are a Sentiment Market Agent analyzing public and media sentiment for a company or stock ticker.',
             '2. Task: Gather sentiment data from Reddit, financial news (Finnhub), YFinance news, and general web searches.',
@@ -103,8 +101,6 @@ def create_sentiment_agent() -> Agent:
             '6. Restriction: Do not invent or assume sentiment data.',
             '7. Output Format Rule: Strictly follow the expected_output format. Preserve structure, indentation, and section headers exactly.',
         ],
-        # parser_model=Gemini(id=GOOGLE_MODEL_NAME_0, api_key=GOOGLE_API_KEY_2, seed=42),
-        # parser_model_prompt='You must strictly follow the expected_output format exactly as shown. Do not add commentary, markdown, or omit any section. Keep identical headers and indentation.',
         expected_output=SENTIMENT_AGENT_OUTPUT,
         tools=[
             get_reddit_sentiment,
@@ -113,7 +109,6 @@ def create_sentiment_agent() -> Agent:
             # DuckDuckGoTools(
             #     enable_search=True, enable_news=True, fixed_max_results=10, timeout=30
             # ),
-            # GoogleSearchTools(fixed_max_results=10, timeout=30),
         ],
         markdown=True,
         exponential_backoff=True,
@@ -122,6 +117,7 @@ def create_sentiment_agent() -> Agent:
         session_id=DEFAULT_SESSION_ID,
         debug_mode=DEBUG_MODE,
         debug_level=DEBUG_LEVEL,
+        db=db,
     )
 
 
@@ -140,8 +136,6 @@ def create_advisory_agent() -> Agent:
             '6. Guidance: Provide analysis, not investment advice.',
             '7. Output Format Rule: You must match the expected_output format exactly — same headers, indentation, and labels.',
         ],
-        # parser_model=Gemini(id=GOOGLE_MODEL_NAME_0, api_key=GOOGLE_API_KEY_0, seed=42),
-        # parser_model_prompt='You must strictly follow the expected_output format exactly as shown. Do not add commentary, markdown, or omit any section. Keep identical headers and indentation.',
         expected_output=ADVISOR_AGENT_OUTPUT,
         tools=[
             backtest_investment_strategies,
@@ -155,6 +149,7 @@ def create_advisory_agent() -> Agent:
         session_id=DEFAULT_SESSION_ID,
         debug_mode=DEBUG_MODE,
         debug_level=DEBUG_LEVEL,
+        db=db,
     )
 
 
@@ -162,7 +157,7 @@ def create_search_agent() -> Agent:
     return Agent(
         name='Search_Agent',
         id='agent_4',
-        model=Gemini(id=GOOGLE_MODEL_NAME_1, api_key=GOOGLE_API_KEY_1, seed=42),
+        model=Gemini(id=GOOGLE_MODEL_NAME_1, api_key=GOOGLE_API_KEY_0, seed=42),
         description='You are a Search Agent who is going to fetch latest, new and relevant information from the web.',
         instructions=[
             '1. Role Definition: You are a Search Agent specializing in gathering accurate and relevant information from the web.',
@@ -171,8 +166,6 @@ def create_search_agent() -> Agent:
             '4. Evaluation: Summarize the findings clearly and concisely. If no relevant data is found, explicitly state "Data not available."',
             "5. For LinkupTool make sure to query using different keywords alongside company name. Don't just search ticker as it may not return relevant results.",
         ],
-        # parser_model=Gemini(id=GOOGLE_MODEL_NAME_1, api_key=GOOGLE_API_KEY_2, seed=42),
-        # parser_model_prompt='You must strictly follow the expected_output format exactly as shown. Do not add commentary, markdown, or omit any section. Keep identical headers and indentation.',
         expected_output=SEARCH_AGENT_OUTPUT,
         tools=[
             LinkupTools(
@@ -189,6 +182,7 @@ def create_search_agent() -> Agent:
         session_id=DEFAULT_SESSION_ID,
         debug_mode=DEBUG_MODE,
         debug_level=DEBUG_LEVEL,
+        db=db,
     )
 
 
@@ -197,7 +191,6 @@ def create_team() -> Team:
     sentiment_agent: Agent = create_sentiment_agent()
     advisory_agent: Agent = create_advisory_agent()
     search_agent: Agent = create_search_agent()
-
     return Team(
         id='team_1',
         name='PersonaQuantTeam',
@@ -205,23 +198,28 @@ def create_team() -> Team:
         instructions=[
             '1. Ticker Identification: Detect if the user provides a stock ticker. If not, infer 1-3 suitable tickers for analysis.',
             "2. Ticker Formatting: For Indian stocks, format tickers with exchange suffix '.NS' if the specific exchange is unknown.",
-            '3. Efficient Data Gathering: For each ticker, retrieve sentiment, financials, and advisory data simultaneously.',
-            "4. Missing Data Handling: If any agent returns incomplete data, keep the process running and label the missing fields clearly as 'Data not available'.",
-            '5. Output Integration: Merge all agent results into a unified final report.',
-            '6. Format Enforcement: The final report must strictly follow FINAL_OUTPUT_FORMAT. Use identical section headers, markdown dividers, and indentation. Do not add explanations or narrative text outside the structure.',
+            '3. Multi-Agent Workflow: ALWAYS follow this exact sequence:',
+            '   a) First, call Search_Agent to gather latest news and web information',
+            '   b) Then, call Finance_Agent to analyze technical indicators and financials',
+            '   c) Next, call Sentiment_Agent to gather sentiment data from multiple sources',
+            '   d) Then, call Advisory_Agent to generate position strategies and recommendations',
+            '4. Data Collection: Wait for all agent responses before compiling the final report. Collect outputs from all agents that were called.',
+            "5. Missing Data Handling: If any agent returns incomplete data, keep the process running and label the missing fields clearly as 'Data not available'.",
+            '6. Format Enforcement: The final output must strictly follow FINAL_OUTPUT_FORMAT with identical section headers, markdown dividers, and indentation.',
         ],
-        parser_model=Gemini(id=GOOGLE_MODEL_NAME_0, api_key=GOOGLE_API_KEY_1, seed=42),
-        parser_model_prompt='You must strictly follow the expected_output format exactly as shown. Do not add commentary, markdown, or omit any section. Keep identical headers and indentation.',
         expected_output=FINAL_OUTPUT_FORMAT,
         exponential_backoff=True,
         delay_between_retries=3,
         reasoning=REASONING_MODE,
         markdown=True,
-        members=[search_agent, finance_agent, sentiment_agent, advisory_agent],
+        members=[finance_agent, sentiment_agent, advisory_agent, search_agent],
         user_id=DEFAULT_USER_ID,
         session_id=DEFAULT_SESSION_ID,
         debug_mode=DEBUG_MODE,
         debug_level=DEBUG_LEVEL,
+        db=db,
+        add_history_to_context=True,
+        num_history_runs=2,
     )
 
 

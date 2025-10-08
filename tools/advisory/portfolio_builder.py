@@ -1,6 +1,5 @@
 from typing import Any, List
 
-import yfinance as yf
 from agno.tools import tool
 
 from tools.advisory.data_handler import load_ticker_data
@@ -210,7 +209,9 @@ def build_portfolio_allocation(
             else [],
             'next_steps': [
                 f'Open account with {broker} if not already done',
-                'Fund account with at least ₹{:,.2f}'.format(total_allocated + total_fees)
+                'Fund account with at least ₹{:,.2f}'.format(
+                    total_allocated + total_fees
+                )
                 if market == 'india'
                 else 'Fund account with at least ${:,.2f}'.format(
                     total_allocated + total_fees

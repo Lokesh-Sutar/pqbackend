@@ -61,7 +61,13 @@ def get_ichimoku_cloud_signal(ticker: str) -> dict[str, Any]:
 
     if any(
         np.isnan(
-            [current_span_a, current_span_b, current_tenkan, current_kijun, latest_close]
+            [
+                current_span_a,
+                current_span_b,
+                current_tenkan,
+                current_kijun,
+                latest_close,
+            ]
         )
     ):
         return {

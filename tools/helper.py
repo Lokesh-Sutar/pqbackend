@@ -7,7 +7,7 @@ import pandas as pd
 import yfinance as yf
 from pandas import DataFrame
 
-from core.ticker_store import ticker_store
+from utils.ticker_store import ticker_store
 
 logger = logging.getLogger(__name__)
 
@@ -85,7 +85,9 @@ class SentimentAnalysisBase:
         global _shared_finbert_model
         with _model_lock:
             if _shared_finbert_model is None:
-                logger.info('Loading FinBERT model (first time only, may take 10-15s)...')
+                logger.info(
+                    'Loading FinBERT model (first time only, may take 10-15s)...'
+                )
                 try:
                     from transformers import (
                         AutoModelForSequenceClassification,

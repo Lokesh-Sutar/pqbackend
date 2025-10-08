@@ -17,7 +17,7 @@ REDDIT_USER_AGENT: str | None = os.getenv('REDDIT_USER_AGENT')
 FINNHUB_API_KEY: str | None = os.getenv('FINNHUB_API_KEY')
 LINKUP_API_KEY: str | None = os.getenv('LINKUP_API_KEY')
 HF_API_KEY: str | None = os.getenv('HF_API_KEY')
-
+CEREBRAS_API_KEY: str | None = os.getenv('CEREBRAS_API_KEY')
 
 GOOGLE_MODEL_NAME_0 = 'gemini-2.5-pro'
 GOOGLE_MODEL_NAME_1 = 'gemini-2.5-flash'
@@ -41,7 +41,7 @@ SEARCH_AGENT_ID = 'agent_4'
 TEAM_NAME_ID = 'team_1'
 
 DEBUG_MODE = False
-DEBUG_LEVEL = 2  # 1 or 2
+DEBUG_LEVEL = 1  # 1 or 2
 
 REASONING_MODE = False
 

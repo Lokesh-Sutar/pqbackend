@@ -2,8 +2,9 @@ import json
 from dataclasses import asdict, is_dataclass
 from typing import Any, Callable
 
-from core.ticker_store import ticker_store
 from utils import event_handler as event_handlers
+from utils.ticker_store import ticker_store
+from utils.token_tracker import token_tracker
 
 HANDLER_MAP: dict[str, Callable[[str, dict[str, Any]], dict[str, Any]]] = {
     'Tool': event_handlers.handle_tool_event,
@@ -30,6 +31,48 @@ def event_to_dict(event: Any) -> dict[str, Any]:
     return vars(event)
 
 
+def _track_token_metrics(
+    event_name: str, cleaned_payload: dict[str, Any], processed_data: dict[str, Any]
+) -> None:
+    """
+    Extract and track token metrics from run events.
+
+    Args:
+        event_name: Name of the event (RunCompleted, TeamRunCompleted, etc.)
+        cleaned_payload: Cleaned payload from the event
+        processed_data: Processed data from the event handler
+    """
+    try:
+        payload = processed_data.get('payload', {})
+
+        metrics = payload.get('metrics')
+        if not metrics:
+            return
+
+        agent_id = payload.get('agent_id')
+        agent_name = payload.get('agent_name')
+        team_name = payload.get('team_name')
+        run_id = cleaned_payload.get('run_id')
+        session_id = cleaned_payload.get('session_id')
+        parent_run_id = payload.get('parent_run_id')
+
+        token_tracker.track_event(
+            event_name=event_name,
+            agent_id=agent_id,
+            agent_name=agent_name,
+            team_name=team_name,
+            metrics=metrics,
+            run_id=run_id,
+            session_id=session_id,
+            parent_run_id=parent_run_id,
+        )
+    except Exception as e:
+        import logging
+
+        logger = logging.getLogger(__name__)
+        logger.warning(f'Failed to track token metrics: {e}')
+
+
 def process_event(event) -> str:
     """
     Processes an agent event and formats it for Server-Sent Events (SSE).
@@ -52,6 +95,8 @@ def process_event(event) -> str:
 
         cleaned_payload = event_handlers.clean_payload(raw_payload)
         processed_data = handler(event_name, cleaned_payload)
+        if 'RunCompleted' in event_name or 'TeamRunCompleted' in event_name:
+            _track_token_metrics(event_name, cleaned_payload, processed_data)
 
         current_tickers = ticker_store.get_tickers()
         sse_data = {

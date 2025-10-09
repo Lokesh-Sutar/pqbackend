@@ -22,19 +22,21 @@ def get_vix_market_fear_signal() -> dict[str, Any]:
     try:
         try:
             vix_df = get_ticker('^VIX')
+            if 'close' not in vix_df.columns or len(vix_df) < 6:
+                raise ValueError('Insufficient VIX data')
         except Exception:
             vix = yf.Ticker('^VIX')
             vix_df = vix.history(period='1y')
             vix_df.columns = vix_df.columns.str.lower()
 
-        if 'close' not in vix_df.columns or len(vix_df) < 6:
-            return {
-                'tool': 'VIX (Market Fear Gauge)',
-                'description': 'This tool analyzes VIX data for market sentiment signals.',
-                'signal': 'Insufficient Data',
-                'justification': 'Requires at least 6 data points for the VIX.',
-                'details': {},
-            }
+            if 'close' not in vix_df.columns or len(vix_df) < 6:
+                return {
+                    'tool': 'VIX (Market Fear Gauge)',
+                    'description': 'This tool analyzes VIX data for market sentiment signals.',
+                    'signal': 'Insufficient Data',
+                    'justification': 'Requires at least 6 data points for the VIX.',
+                    'details': {},
+                }
 
     except Exception as e:
         return {
@@ -45,7 +47,7 @@ def get_vix_market_fear_signal() -> dict[str, Any]:
             'details': {},
         }
 
-    latest_vix = vix_df['close'].iloc[-1]
+    latest_vix = float(vix_df['close'].iloc[-1])
 
     if latest_vix < 12:
         signal = 'Extremely Low Fear (Complacency Risk)'
@@ -63,8 +65,15 @@ def get_vix_market_fear_signal() -> dict[str, Any]:
         signal = 'Extreme Fear (Panic Mode)'
         justification = f'VIX at {latest_vix:.1f} indicates extreme fear and panic selling. May present contrarian opportunity.'
 
-    roc_5d = vix_df['close'].pct_change(periods=5).iloc[-1] * 100
-    roc_20d = vix_df['close'].pct_change(periods=20).iloc[-1] * 100
+    if len(vix_df) >= 6:
+        roc_5d = float(vix_df['close'].pct_change(periods=5).iloc[-1] * 100)
+    else:
+        roc_5d = 0.0
+
+    if len(vix_df) >= 21:
+        roc_20d = float(vix_df['close'].pct_change(periods=20).iloc[-1] * 100)
+    else:
+        roc_20d = 0.0
 
     volatility_of_fear = 'Stable'
     if roc_5d > 50:

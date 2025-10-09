@@ -1,1 +1,596 @@
-[]
+[
+  {
+    "timestamp": "2025-10-09T09:44:24.656861",
+    "event_type": "RunCompletedEvent",
+    "run_id": "91df8ca8-c852-41c5-b1f4-4029d55c2d13",
+    "session_id": "session_user_1234",
+    "parent_run_id": null,
+    "team_name": "PersonaQuantTeam",
+    "agent_id": null,
+    "agent_name": null,
+    "metrics": {
+      "input_tokens": 2799,
+      "output_tokens": 33,
+      "total_tokens": 2832,
+      "cache_read_tokens": 0,
+      "time_to_first_token": 0,
+      "duration": 6.281393671000842
+    }
+  },
+  {
+    "timestamp": "2025-10-09T09:45:02.836233",
+    "event_type": "RunCompletedEvent",
+    "run_id": "06aa75f3-c367-486f-9c80-333af179710b",
+    "session_id": "session_user_1234",
+    "parent_run_id": "5ca72154-6f77-48a5-b74b-66bcbc499688",
+    "team_name": null,
+    "agent_id": "agent_1",
+    "agent_name": "Finance_Agent",
+    "metrics": {
+      "input_tokens": 4517,
+      "output_tokens": 354,
+      "total_tokens": 4871,
+      "cache_read_tokens": 0,
+      "time_to_first_token": 13.294734594004694,
+      "duration": 15.671066397000686
+    }
+  },
+  {
+    "timestamp": "2025-10-09T09:45:05.309671",
+    "event_type": "RunCompletedEvent",
+    "run_id": "5ca72154-6f77-48a5-b74b-66bcbc499688",
+    "session_id": "session_user_1234",
+    "parent_run_id": null,
+    "team_name": "PersonaQuantTeam",
+    "agent_id": null,
+    "agent_name": null,
+    "metrics": {
+      "input_tokens": 5994,
+      "output_tokens": 351,
+      "total_tokens": 6345,
+      "cache_read_tokens": 2693,
+      "time_to_first_token": 0,
+      "duration": 4.225416992994724
+    }
+  },
+  {
+    "timestamp": "2025-10-09T09:49:42.290310",
+    "event_type": "RunCompletedEvent",
+    "run_id": "1eb5f520-1400-40cf-bde9-975571c8d39c",
+    "session_id": "session_user_1234",
+    "parent_run_id": "a8658a42-e90a-4579-bbb0-6911db7344ec",
+    "team_name": null,
+    "agent_id": "agent_4",
+    "agent_name": "Search_Agent",
+    "metrics": {
+      "input_tokens": 39146,
+      "output_tokens": 951,
+      "total_tokens": 40097,
+      "cache_read_tokens": 1012,
+      "time_to_first_token": 43.428049260008265,
+      "duration": 50.380248814995866
+    }
+  },
+  {
+    "timestamp": "2025-10-09T09:50:02.976210",
+    "event_type": "RunCompletedEvent",
+    "run_id": "363b6141-247e-45f9-9708-e5f908e9455a",
+    "session_id": "session_user_1234",
+    "parent_run_id": "a8658a42-e90a-4579-bbb0-6911db7344ec",
+    "team_name": null,
+    "agent_id": "agent_1",
+    "agent_name": "Finance_Agent",
+    "metrics": {
+      "input_tokens": 11409,
+      "output_tokens": 1305,
+      "total_tokens": 12714,
+      "cache_read_tokens": 2913,
+      "time_to_first_token": 14.183316597001976,
+      "duration": 20.653253141004825
+    }
+  },
+  {
+    "timestamp": "2025-10-09T09:50:12.703114",
+    "event_type": "RunCompletedEvent",
+    "run_id": "29e6cbb9-4da7-446b-833f-20e42b585583",
+    "session_id": "session_user_1234",
+    "parent_run_id": "a8658a42-e90a-4579-bbb0-6911db7344ec",
+    "team_name": null,
+    "agent_id": "agent_2",
+    "agent_name": "Sentiment_Agent",
+    "metrics": {
+      "input_tokens": 5902,
+      "output_tokens": 1524,
+      "total_tokens": 7426,
+      "cache_read_tokens": 940,
+      "time_to_first_token": 2.083493197002099,
+      "duration": 9.693787116004387
+    }
+  },
+  {
+    "timestamp": "2025-10-09T09:50:24.726926",
+    "event_type": "RunCompletedEvent",
+    "run_id": "a8658a42-e90a-4579-bbb0-6911db7344ec",
+    "session_id": "session_user_1234",
+    "parent_run_id": null,
+    "team_name": "PersonaQuantTeam",
+    "agent_id": null,
+    "agent_name": null,
+    "metrics": {
+      "input_tokens": 7997,
+      "output_tokens": 1979,
+      "total_tokens": 9976,
+      "cache_read_tokens": 2796,
+      "time_to_first_token": 0,
+      "duration": 14.313857473011012
+    }
+  },
+  {
+    "timestamp": "2025-10-09T10:37:30.378293",
+    "event_type": "RunCompletedEvent",
+    "run_id": "23cfb4c3-b43e-45df-9dce-b69cf0fab36a",
+    "session_id": "session_user_1234",
+    "parent_run_id": "488efd99-30fb-43b9-8375-edf8c5b6fc4d",
+    "team_name": null,
+    "agent_id": "agent_4",
+    "agent_name": "Search_Agent",
+    "metrics": {
+      "input_tokens": 111485,
+      "output_tokens": 2044,
+      "total_tokens": 113529,
+      "cache_read_tokens": 38664,
+      "time_to_first_token": 52.33718999099801,
+      "duration": 62.976141274004476
+    }
+  },
+  {
+    "timestamp": "2025-10-09T10:37:52.393292",
+    "event_type": "RunCompletedEvent",
+    "run_id": "b9a13afa-4df8-462f-9efb-e89e56ed9871",
+    "session_id": "session_user_1234",
+    "parent_run_id": "488efd99-30fb-43b9-8375-edf8c5b6fc4d",
+    "team_name": null,
+    "agent_id": "agent_1",
+    "agent_name": "Finance_Agent",
+    "metrics": {
+      "input_tokens": 22547,
+      "output_tokens": 1224,
+      "total_tokens": 23771,
+      "cache_read_tokens": 8897,
+      "time_to_first_token": 14.184297359999618,
+      "duration": 21.981925558007788
+    }
+  },
+  {
+    "timestamp": "2025-10-09T10:38:02.224127",
+    "event_type": "RunCompletedEvent",
+    "run_id": "39f68eb9-8af8-4684-8ee7-7a5df1f74f1f",
+    "session_id": "session_user_1234",
+    "parent_run_id": "488efd99-30fb-43b9-8375-edf8c5b6fc4d",
+    "team_name": null,
+    "agent_id": "agent_2",
+    "agent_name": "Sentiment_Agent",
+    "metrics": {
+      "input_tokens": 11688,
+      "output_tokens": 1227,
+      "total_tokens": 12915,
+      "cache_read_tokens": 4789,
+      "time_to_first_token": 2.9782167759985896,
+      "duration": 9.797737703003804
+    }
+  },
+  {
+    "timestamp": "2025-10-09T10:38:22.484298",
+    "event_type": "RunCompletedEvent",
+    "run_id": "488efd99-30fb-43b9-8375-edf8c5b6fc4d",
+    "session_id": "session_user_1234",
+    "parent_run_id": null,
+    "team_name": "PersonaQuantTeam",
+    "agent_id": null,
+    "agent_name": null,
+    "metrics": {
+      "input_tokens": 12873,
+      "output_tokens": 3785,
+      "total_tokens": 16658,
+      "cache_read_tokens": 5760,
+      "time_to_first_token": 0,
+      "duration": 33.07544005700038
+    }
+  },
+  {
+    "timestamp": "2025-10-09T10:40:22.167707",
+    "event_type": "RunCompletedEvent",
+    "run_id": "f93c1958-023c-4928-ba5c-8de0474876cf",
+    "session_id": "session_user_1234",
+    "parent_run_id": null,
+    "team_name": "PersonaQuantTeam",
+    "agent_id": null,
+    "agent_name": null,
+    "metrics": {
+      "input_tokens": 7900,
+      "output_tokens": 2243,
+      "total_tokens": 10143,
+      "cache_read_tokens": 0,
+      "time_to_first_token": 0,
+      "duration": 14.127562966998084
+    }
+  },
+  {
+    "timestamp": "2025-10-09T10:57:31.142216",
+    "event_type": "RunCompletedEvent",
+    "run_id": "90c8b486-6454-41d9-8b61-893615a9e0ab",
+    "session_id": "session_user_1234",
+    "parent_run_id": "9e9dcf76-9bf5-43ea-a57c-f352894d24b9",
+    "team_name": null,
+    "agent_id": "agent_1",
+    "agent_name": "Finance_Agent",
+    "metrics": {
+      "input_tokens": 28290,
+      "output_tokens": 281,
+      "total_tokens": 28571,
+      "cache_read_tokens": 13837,
+      "time_to_first_token": 7.392317648002063,
+      "duration": 9.931746820002445
+    }
+  },
+  {
+    "timestamp": "2025-10-09T10:57:33.259218",
+    "event_type": "RunCompletedEvent",
+    "run_id": "9e9dcf76-9bf5-43ea-a57c-f352894d24b9",
+    "session_id": "session_user_1234",
+    "parent_run_id": null,
+    "team_name": "PersonaQuantTeam",
+    "agent_id": null,
+    "agent_name": null,
+    "metrics": {
+      "input_tokens": 13787,
+      "output_tokens": 217,
+      "total_tokens": 14004,
+      "cache_read_tokens": 6726,
+      "time_to_first_token": 0,
+      "duration": 4.052236007002648
+    }
+  },
+  {
+    "timestamp": "2025-10-09T11:33:34.273028",
+    "event_type": "RunCompletedEvent",
+    "run_id": "7f74a31a-be1a-458f-88f7-db5a55bdeae4",
+    "session_id": "session_user_1234",
+    "parent_run_id": "d8e2e7e2-c57a-46aa-a7ae-7480e0df75b7",
+    "team_name": null,
+    "agent_id": "agent_4",
+    "agent_name": "Search_Agent",
+    "metrics": {
+      "input_tokens": 217669,
+      "output_tokens": 1257,
+      "total_tokens": 218926,
+      "cache_read_tokens": 0,
+      "time_to_first_token": 76.18569524699706,
+      "duration": 83.55589513599989
+    }
+  },
+  {
+    "timestamp": "2025-10-09T11:33:57.716336",
+    "event_type": "RunCompletedEvent",
+    "run_id": "f008761a-f649-4147-b244-4c3e7d1b2db7",
+    "session_id": "session_user_1234",
+    "parent_run_id": "d8e2e7e2-c57a-46aa-a7ae-7480e0df75b7",
+    "team_name": null,
+    "agent_id": "agent_1",
+    "agent_name": "Finance_Agent",
+    "metrics": {
+      "input_tokens": 32239,
+      "output_tokens": 1411,
+      "total_tokens": 33650,
+      "cache_read_tokens": 12954,
+      "time_to_first_token": 15.590948091004975,
+      "duration": 23.409747046011034
+    }
+  },
+  {
+    "timestamp": "2025-10-09T11:34:11.348826",
+    "event_type": "RunCompletedEvent",
+    "run_id": "e46a0047-9465-459a-b573-9afa8c713c3b",
+    "session_id": "session_user_1234",
+    "parent_run_id": "d8e2e7e2-c57a-46aa-a7ae-7480e0df75b7",
+    "team_name": null,
+    "agent_id": "agent_2",
+    "agent_name": "Sentiment_Agent",
+    "metrics": {
+      "input_tokens": 14969,
+      "output_tokens": 1728,
+      "total_tokens": 16697,
+      "cache_read_tokens": 6774,
+      "time_to_first_token": 5.647562238998944,
+      "duration": 13.598782870001742
+    }
+  },
+  {
+    "timestamp": "2025-10-09T11:34:35.091351",
+    "event_type": "RunCompletedEvent",
+    "run_id": "4ab2358c-b633-4b70-ba8f-2975e521ba61",
+    "session_id": "session_user_1234",
+    "parent_run_id": "d8e2e7e2-c57a-46aa-a7ae-7480e0df75b7",
+    "team_name": null,
+    "agent_id": "agent_3",
+    "agent_name": "Advisory_Agent",
+    "metrics": {
+      "input_tokens": 1377,
+      "output_tokens": 2877,
+      "total_tokens": 4254,
+      "cache_read_tokens": 0,
+      "time_to_first_token": 0.027192730995011516,
+      "duration": 18.728906760996324
+    }
+  },
+  {
+    "timestamp": "2025-10-09T11:34:44.173477",
+    "event_type": "RunCompletedEvent",
+    "run_id": "d8e2e7e2-c57a-46aa-a7ae-7480e0df75b7",
+    "session_id": "session_user_1234",
+    "parent_run_id": null,
+    "team_name": "PersonaQuantTeam",
+    "agent_id": null,
+    "agent_name": null,
+    "metrics": {
+      "input_tokens": 13673,
+      "output_tokens": 3149,
+      "total_tokens": 16822,
+      "cache_read_tokens": 7507,
+      "time_to_first_token": 0,
+      "duration": 28.371355731011136
+    }
+  },
+  {
+    "timestamp": "2025-10-09T12:28:21.975434",
+    "event_type": "RunCompletedEvent",
+    "run_id": "58134481-491f-4814-8463-ac37ded80ea4",
+    "session_id": "session_user_1234",
+    "parent_run_id": "95451299-f7d3-440a-ae54-a6329694fd4e",
+    "team_name": null,
+    "agent_id": "agent_2",
+    "agent_name": "Sentiment_Agent",
+    "metrics": {
+      "input_tokens": 19619,
+      "output_tokens": 1938,
+      "total_tokens": 21557,
+      "cache_read_tokens": 7844,
+      "time_to_first_token": 1.9244655019865604,
+      "duration": 15.152955469995504
+    }
+  },
+  {
+    "timestamp": "2025-10-09T12:28:42.912016",
+    "event_type": "RunCompletedEvent",
+    "run_id": "004543ea-d340-445b-bc89-28b926a00222",
+    "session_id": "session_user_1234",
+    "parent_run_id": "95451299-f7d3-440a-ae54-a6329694fd4e",
+    "team_name": null,
+    "agent_id": "agent_2",
+    "agent_name": "Sentiment_Agent",
+    "metrics": {
+      "input_tokens": 17494,
+      "output_tokens": 2481,
+      "total_tokens": 19975,
+      "cache_read_tokens": 0,
+      "time_to_first_token": 1.7488927569938824,
+      "duration": 20.902488413994433
+    }
+  },
+  {
+    "timestamp": "2025-10-09T12:28:50.353284",
+    "event_type": "RunCompletedEvent",
+    "run_id": "dabf48a2-c675-4261-a4af-4bac5d66170a",
+    "session_id": "session_user_1234",
+    "parent_run_id": "95451299-f7d3-440a-ae54-a6329694fd4e",
+    "team_name": null,
+    "agent_id": "agent_2",
+    "agent_name": "Sentiment_Agent",
+    "metrics": {
+      "input_tokens": 20178,
+      "output_tokens": 706,
+      "total_tokens": 20884,
+      "cache_read_tokens": 7852,
+      "time_to_first_token": 2.2438214750000043,
+      "duration": 7.408067021009629
+    }
+  },
+  {
+    "timestamp": "2025-10-09T12:28:53.503621",
+    "event_type": "RunCompletedEvent",
+    "run_id": "95451299-f7d3-440a-ae54-a6329694fd4e",
+    "session_id": "session_user_1234",
+    "parent_run_id": null,
+    "team_name": "PersonaQuantTeam",
+    "agent_id": null,
+    "agent_name": null,
+    "metrics": {
+      "input_tokens": 9402,
+      "output_tokens": 635,
+      "total_tokens": 10037,
+      "cache_read_tokens": 0,
+      "time_to_first_token": 0,
+      "duration": 11.126329313992755
+    }
+  },
+  {
+    "timestamp": "2025-10-09T12:35:12.196197",
+    "event_type": "RunCompletedEvent",
+    "run_id": "31659e19-c1e6-4df7-b99e-931a2e49d57a",
+    "session_id": "session_user_1234",
+    "parent_run_id": "d4a2b8c7-204c-4ac0-a165-57d478f73648",
+    "team_name": null,
+    "agent_id": "agent_1",
+    "agent_name": "Finance_Agent",
+    "metrics": {
+      "input_tokens": 35462,
+      "output_tokens": 747,
+      "total_tokens": 36209,
+      "cache_read_tokens": 13012,
+      "time_to_first_token": 14.45932463799545,
+      "duration": 22.31985648299451
+    }
+  },
+  {
+    "timestamp": "2025-10-09T12:35:19.611833",
+    "event_type": "RunCompletedEvent",
+    "run_id": "ec663a91-4233-45fe-8526-ac0e1992bd99",
+    "session_id": "session_user_1234",
+    "parent_run_id": "d4a2b8c7-204c-4ac0-a165-57d478f73648",
+    "team_name": null,
+    "agent_id": "agent_1",
+    "agent_name": "Finance_Agent",
+    "metrics": {
+      "input_tokens": 45331,
+      "output_tokens": 655,
+      "total_tokens": 45986,
+      "cache_read_tokens": 17101,
+      "time_to_first_token": 2.568301336010336,
+      "duration": 7.381588700009161
+    }
+  },
+  {
+    "timestamp": "2025-10-09T13:54:01.718238",
+    "event_type": "RunCompletedEvent",
+    "run_id": "b7127625-376a-42c8-801a-dfabd73e6eb7",
+    "session_id": "session_user_1234",
+    "parent_run_id": "a38cdf91-b4b0-45a7-9587-91030b7fe7c7",
+    "team_name": null,
+    "agent_id": "agent_3",
+    "agent_name": "Advisory_Agent",
+    "metrics": {
+      "input_tokens": 4337,
+      "output_tokens": 1712,
+      "total_tokens": 6049,
+      "cache_read_tokens": 0,
+      "time_to_first_token": 15.49798877700232,
+      "duration": 25.723508727009175
+    }
+  },
+  {
+    "timestamp": "2025-10-09T13:54:30.360804",
+    "event_type": "RunCompletedEvent",
+    "run_id": "a38cdf91-b4b0-45a7-9587-91030b7fe7c7",
+    "session_id": "session_user_1234",
+    "parent_run_id": null,
+    "team_name": "PersonaQuantTeam",
+    "agent_id": null,
+    "agent_name": null,
+    "metrics": {
+      "input_tokens": 10881,
+      "output_tokens": 4815,
+      "total_tokens": 15696,
+      "cache_read_tokens": 4712,
+      "time_to_first_token": 0,
+      "duration": 39.55074646399589
+    }
+  },
+  {
+    "timestamp": "2025-10-09T13:57:02.150085",
+    "event_type": "RunCompletedEvent",
+    "run_id": "32afaace-d216-4736-891f-47e3ce5d845c",
+    "session_id": "session_user_1234",
+    "parent_run_id": "1affae79-7f39-4d10-84d5-a1c10c3de7a2",
+    "team_name": null,
+    "agent_id": "agent_3",
+    "agent_name": "Advisory_Agent",
+    "metrics": {
+      "input_tokens": 7673,
+      "output_tokens": 1520,
+      "total_tokens": 9193,
+      "cache_read_tokens": 0,
+      "time_to_first_token": 13.296624986003735,
+      "duration": 17.70673390600132
+    }
+  },
+  {
+    "timestamp": "2025-10-09T13:57:17.163124",
+    "event_type": "RunCompletedEvent",
+    "run_id": "1affae79-7f39-4d10-84d5-a1c10c3de7a2",
+    "session_id": "session_user_1234",
+    "parent_run_id": null,
+    "team_name": "PersonaQuantTeam",
+    "agent_id": null,
+    "agent_name": null,
+    "metrics": {
+      "input_tokens": 9311,
+      "output_tokens": 2308,
+      "total_tokens": 11619,
+      "cache_read_tokens": 3735,
+      "time_to_first_token": 0,
+      "duration": 18.636638622017927
+    }
+  },
+  {
+    "timestamp": "2025-10-09T14:09:20.456603",
+    "event_type": "RunCompletedEvent",
+    "run_id": "44e16c37-0869-437f-a21e-ed47fa50f567",
+    "session_id": "session_user_1234",
+    "parent_run_id": "d4e00782-e167-4c8d-8b4e-f0b9743ac7d7",
+    "team_name": null,
+    "agent_id": "agent_3",
+    "agent_name": "Advisory_Agent",
+    "metrics": {
+      "input_tokens": 11118,
+      "output_tokens": 1628,
+      "total_tokens": 12746,
+      "cache_read_tokens": 4765,
+      "time_to_first_token": 18.109032130989362,
+      "duration": 26.510270953993313
+    }
+  },
+  {
+    "timestamp": "2025-10-09T14:09:29.154727",
+    "event_type": "RunCompletedEvent",
+    "run_id": "d4e00782-e167-4c8d-8b4e-f0b9743ac7d7",
+    "session_id": "session_user_1234",
+    "parent_run_id": null,
+    "team_name": "PersonaQuantTeam",
+    "agent_id": null,
+    "agent_name": null,
+    "metrics": {
+      "input_tokens": 9360,
+      "output_tokens": 1366,
+      "total_tokens": 10726,
+      "cache_read_tokens": 3739,
+      "time_to_first_token": 0,
+      "duration": 17.19031635299325
+    }
+  },
+  {
+    "timestamp": "2025-10-09T14:25:22.734687",
+    "event_type": "RunCompletedEvent",
+    "run_id": "999d70ca-9a77-47fb-878c-64a39a809f0f",
+    "session_id": "session_user_1234",
+    "parent_run_id": "3933a566-6950-4e74-8e9b-503f9965ec83",
+    "team_name": null,
+    "agent_id": "agent_3",
+    "agent_name": "Advisory_Agent",
+    "metrics": {
+      "input_tokens": 18262,
+      "output_tokens": 6040,
+      "total_tokens": 24302,
+      "cache_read_tokens": 6857,
+      "time_to_first_token": 18.12901258499187,
+      "duration": 57.34216561399808
+    }
+  },
+  {
+    "timestamp": "2025-10-09T14:25:41.465972",
+    "event_type": "RunCompletedEvent",
+    "run_id": "3933a566-6950-4e74-8e9b-503f9965ec83",
+    "session_id": "session_user_1234",
+    "parent_run_id": null,
+    "team_name": "PersonaQuantTeam",
+    "agent_id": null,
+    "agent_name": null,
+    "metrics": {
+      "input_tokens": 10798,
+      "output_tokens": 2824,
+      "total_tokens": 13622,
+      "cache_read_tokens": 3810,
+      "time_to_first_token": 0,
+      "duration": 30.112598106992664
+    }
+  }
+]

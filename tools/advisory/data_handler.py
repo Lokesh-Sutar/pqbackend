@@ -72,28 +72,33 @@ def validate_ohlcv_data(
     """
     if df.empty:
         return False, f'{ticker}: DataFrame is empty'
+
     required_columns = ['open', 'high', 'low', 'close', 'volume']
     missing_columns = [col for col in required_columns if col not in df.columns]
 
     if missing_columns:
         return False, f'{ticker}: Missing required columns: {missing_columns}'
+
     if len(df) < min_periods:
         return (
             False,
             f'{ticker}: Insufficient data - has {len(df)} rows, needs at least {min_periods}',
         )
+
     critical_cols = ['open', 'high', 'low', 'close']
     null_counts = df[critical_cols].isnull().sum()
 
     if null_counts.any():
         null_info = null_counts[null_counts > 0].to_dict()
         return False, f'{ticker}: Null values found in columns: {null_info}'
+
     for col in critical_cols:
         if (df[col] <= 0).any():
             return (
                 False,
                 f'{ticker}: Invalid (zero/negative) prices found in column: {col}',
             )
+
     if (df['high'] < df['low']).any():
         return False, f'{ticker}: High price is less than low price in some rows'
 
@@ -220,11 +225,16 @@ def calculate_data_quality_score(df: pd.DataFrame) -> dict[str, Any]:
     issues = []
     if isinstance(df.index, pd.DatetimeIndex):
         date_diff = df.index.to_series().diff()
-        avg_gap = date_diff.dt.days.median()
+        # Convert to days, handling potential NaT values
+        days_diff = date_diff.dt.days
+        days_diff_clean = days_diff.dropna()
 
-        if avg_gap > 3:
-            score -= 10
-            issues.append(f'Data has gaps (avg {avg_gap:.1f} days between records)')
+        if len(days_diff_clean) > 0:
+            avg_gap = days_diff_clean.median()
+
+            if avg_gap > 3:
+                score -= 10
+                issues.append(f'Data has gaps (avg {avg_gap:.1f} days between records)')
     if 'volume' in df.columns or 'Volume' in df.columns:
         vol_col = 'volume' if 'volume' in df.columns else 'Volume'
         zero_volume_pct = (df[vol_col] == 0).sum() / len(df) * 100

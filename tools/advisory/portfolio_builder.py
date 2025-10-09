@@ -180,6 +180,26 @@ def build_portfolio_allocation(
             'method': 'Sell overweight positions and buy underweight positions to restore target allocations',
         }
 
+        currency_symbol = '₹' if market == 'india' else '$'
+        next_steps = [
+            f'Open account with {broker} if not already done',
+            f'Fund account with at least {currency_symbol}{total_allocated + total_fees:,.2f}',
+            'Review allocation and adjust if needed',
+            'Place orders according to entry strategy',
+            'Set alerts for stop-loss levels',
+            'Schedule first rebalancing review',
+        ]
+
+        currency_symbol = '₹' if market == 'india' else '$'
+        next_steps = [
+            f'Open account with {broker} if not already done',
+            f'Fund account with at least {currency_symbol}{total_allocated + total_fees:,.2f}',
+            'Review allocation and adjust if needed',
+            'Place orders according to entry strategy',
+            'Set alerts for stop-loss levels',
+            'Schedule first rebalancing review',
+        ]
+
         return {
             'tool': 'Portfolio Allocator',
             'signal': 'Allocation Complete',
@@ -207,20 +227,7 @@ def build_portfolio_allocation(
             'warnings': [f'Could not process: {ticker}' for ticker in failed_tickers]
             if failed_tickers
             else [],
-            'next_steps': [
-                f'Open account with {broker} if not already done',
-                'Fund account with at least ₹{:,.2f}'.format(
-                    total_allocated + total_fees
-                )
-                if market == 'india'
-                else 'Fund account with at least ${:,.2f}'.format(
-                    total_allocated + total_fees
-                ),
-                'Review allocation and adjust if needed',
-                'Place orders according to entry strategy',
-                'Set alerts for stop-loss levels',
-                'Schedule first rebalancing review',
-            ],
+            'next_steps': next_steps,
             'disclaimers': [
                 'This is educational guidance, not financial advice',
                 'Past performance does not guarantee future results',

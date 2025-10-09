@@ -53,8 +53,10 @@ def get_fibonacci_retracement(ticker: str) -> dict[str, Any]:
             local_min_indices = argrelextrema(low_values, np.less, order=5)[0]
 
             if len(local_max_indices) > 0 and len(local_min_indices) > 0:
-                price_max = float(high_values[local_max_indices[-1]])
-                price_min = float(low_values[local_min_indices[-1]])
+                max_idx = local_max_indices[-1]
+                min_idx = local_min_indices[-1]
+                price_max = float(high_values[max_idx])
+                price_min = float(low_values[min_idx])
             else:
                 price_max = float(period_df['high'].max())
                 price_min = float(period_df['low'].min())

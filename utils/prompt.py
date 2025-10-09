@@ -1,189 +1,125 @@
 FINAL_OUTPUT_FORMAT: str = """
-# 📊 Investment Analysis Report
+# Investment Analysis: {tickers}
+
+## Recommendation
+**Action:** {BUY / SELL / HOLD / MIXED}  
+**Confidence:** {High / Medium / Low}
+
+{2-3 sentences synthesizing all findings: What's the opportunity? What does the data show? What's the recommended strategy?}
+
+## Summary
+| Ticker | Technical | Sentiment | News | Best Strategy | Expected Return |
+|--------|-----------|-----------|------|---------------|-----------------|
+| {ticker} | {BUY/SELL/HOLD} | {Bullish/Bearish/Neutral} | {Positive/Negative/Neutral} | {strategy} | {X}% annual |
+
+**Key Points:**
+- Technical analysis shows: {1 sentence}
+- Market sentiment is: {1 sentence}
+- Recent news indicates: {1 sentence}
+- Backtesting suggests: {1 sentence - which strategy won and why}
+
+## Action Plan
+| Ticker | What to Do | Entry Price | Stop Loss | Target | Timeline |
+|--------|------------|-------------|-----------|--------|----------|
+| {ticker} | {specific action} | ${X} | ${X} | ${X} | {period} |
+
+**Next Steps:**  
+{1-2 sentences with specific instructions - e.g., "Start Dollar Cost Averaging with $500 monthly investments. Set alerts at $150 and $135 levels."}
+
+## Risk Warning
+- Maximum potential loss: {X}% (observed in backtesting)
+- Use stop-losses to limit downside
+- {Any ticker-specific risks}
 
 ---
-
-## 🎯 Executive Summary
-
-| Metric | Value |
-|--------|-------|
-| **Analyzed Tickers** | {comma-separated list} |
-| **Overall Recommendation** | {BUY / SELL / HOLD / MIXED} |
-| **Confidence Level** | {High / Medium / Low} |
-| **Primary Signal** | {What's driving the recommendation} |
-
----
-
-## 💡 Bottom Line
-
-{2-3 sentences: Direct, actionable conclusion. What should the investor do and why? Synthesize all agent insights into one clear directive.}
-
----
-
-## 📊 Multi-Ticker Overview
-
-| Ticker | Recommendation | Entry | Stop Loss | Target | Risk | Confidence |
-|--------|----------------|-------|-----------|--------|------|------------|
-| {ticker} | {BUY/HOLD/SELL} | {entry_price} | {stop_loss} | {target} | {Low/Med/High} | {confidence_pct (eg. 85%, 70%, etc)} |
-
-_Just use this for your understanding, dont include this in response (Include only analyzed tickers. For single ticker, this becomes a single row.)_
-
----
-
-## 🤖 Agent Signals
-
-| Agent | {Ticker 1} | {Ticker 2} | {Ticker 3} | Key Insight |
-|-------|------------|------------|------------|-------------|
-| **🔍 Search** | {signal} | {signal} | {signal} | {1 sentence summarizing search findings} |
-| **💭 Sentiment** | {score} | {score} | {score} | {Overall sentiment trend} |
-| **📈 Finance** | {outlook} | {outlook} | {outlook} | {Technical outlook summary} |
-| **🎯 Advisor** | {action} | {action} | {action} | {Investment strategy summary} |
-
-_Just use this for your understanding, dont include this in response (For single ticker, use single column. Skip agent rows with no data.)_
-_Just use this for your understanding, dont include this in response ({signal} = (Positive/Neutral/Negative), {score} = (eg. 78/100, 52/100, etc), {outlook} = (Bullish/Sideways/Bearish), {action} = (BUY/HOLD/SELL))
-
----
-
-## 📈 Technical Snapshot
-
-| Ticker | Price Trend | RSI | MACD | MA Trend | Support | Resistance |
-|--------|-------------|-----|------|----------|---------|------------|
-| {ticker} | {trend_direction} | {rsi_value} | {macd_signal} | {ma_position} | {support_price} | {resistance_price} |
-
-_Just use this for your understanding, dont include this in response ({trend_direction} = (Uptrend ↗/Sideways →/Downtrend ↘), {macd_signal} = (Bullish/Neutral/Bearish), {ma_position} = (eg. Above 50/200, Mixed, Below 50/200))
-
----
-
-## 💭 Sentiment Breakdown
-
-| Ticker | Score | Source | Interpretation | Top Signal |
-|--------|-------|--------|----------------|------------|
-| {ticker} | {score (eg. 78, 52, etc)}/100 | {data_sources} | {sentiment_interpretation} | {key_driver} |
-
-_Just use this for your understanding, dont include this in response ({sentiment_interpretation} = (Strongly Bullish/Bullish/Weakly Bullish/Neutral/Weakly Bearish/Bearish/Strongly Bearish))
-
-**Recent Headlines:**
-1. {Most impactful headline 1}
-2. {Most impactful headline 2}
-3. {Most impactful headline 3}
-
----
-
-## 🎯 Position Strategy
-
-| Ticker | Action | Position Size | Time Horizon | Risk/Reward | Max Loss | Expected Gain |
-|--------|--------|---------------|--------------|-------------|----------|---------------|
-| {ticker} | {action} | {position_size} | {time_horizon} | {risk_reward_ratio} | {max_loss_pct} | {expected_gain_pct} |
-
-_Just use this for your understanding, dont include this in response ({action} = (BUY/HOLD/SELL), {time_horizon} = (eg. 3-6 months, 6-12 months, Immediate, etc), {risk_reward_ratio} = (eg. 1:2, 1:3, 'N/A'), {max_loss_pct} = (eg. -5.3%, 3.9%, etc), {expected_gain_pct} = (eg. +10%, +5.3%, N/A, etc))
-
----
-
-## 🔍 Recent Developments
-
-| Ticker | Key Developments |
-|--------|------------------|
-| {ticker 1} | • {Development 1}|
-|            | • {Development 2}|
-| {ticker 2} | • {Development 1}|
-|            | • {Development 2}|
-
----
-
-## ⚠️ Risk Assessment
-
-| Risk Factor | {Ticker 1} | {Ticker 2} | {Ticker 3} | Mitigation |
-|-------------|------------|------------|------------|------------|
-| **Market Risk** | {risk_level} | {risk_level} | {risk_level} | {mitigation_strategy} |
-| **Sector Risk** | {risk_level} | {risk_level} | {risk_level} | {mitigation_strategy} |
-| **Company Risk** | {risk_level} | {risk_level} | {risk_level} | {mitigation_strategy} |
-| **Volatility** | {risk_level} | {risk_level} | {risk_level} | {mitigation_strategy} |
-
-_Just use this for your understanding, dont include this in response ({risk_level} = (Low/Medium/High), {mitigation_strategy} = (eg. Diversification strategy, Sector rotation watch, Stop loss protection, Position sizing, etc))
-
----
-
-## 📋 Action Checklist
-
-| Priority | Action | Ticker(s) | Deadline |
-|----------|--------|-----------|----------|
-| {priority_level} | {action_item} | {ticker 1/ticker 2,..} | {timeframe} |
-
-_Just use this for your understanding, dont include this in response ({priority_level} = (Low/Med/High), {action_item} = (eg. Enter position, Monitor support, Review in 30 days), {timeframe} = (eg. Within 2 days, This week, End of month, etc))
-
----
-
-## 📌 Key Takeaways
-
-| # | Insight |
-|---|---------|
-| 1 | {Most important finding from all agents} |
-| 2 | {Second most important consideration} |
-| 3 | {Third key point for decision making} |
-
-
+_If any data is missing (technical/sentiment/news/backtesting), state which agent had incomplete data. Confidence level is reduced if critical backtesting data is unavailable._
 """
 
 SEARCH_AGENT_OUTPUT: str = """
-# 🔍 Search Report
+# Recent News & Developments
 
-| Ticker | Key Developments | Signal |
-|--------|------------------|--------|
-| {ticker 1} | • {Development 1} | {signal} |
-|            | • {Development 2} |          |
-|            | • {Development 3} |          |
-| {ticker 2} | • {Development 1} | {signal} |
-|            | • {Development 2} |          |
-|            | • {Development 3} |          |
+## Latest Updates
+| Ticker | Recent News | Impact | When |
+|--------|-------------|--------|------|
+| {ticker} | {Development 1} | {Positive/Negative/Neutral} | {timeframe if available} |
+|          | {Development 2} | {Positive/Negative/Neutral} | {timeframe} |
+|          | {Development 3} | {Positive/Negative/Neutral} | {timeframe} |
 
-_Just use this for your understanding, dont include this in response ({signal} = (Positive/Neutral/Negative))
+**Key Takeaway:** {1 sentence on what matters most from the news - focus on catalysts that could move the stock}
 
-**Conclusion:** {1 sentence summary of web research findings}
+_Note: If web search returns limited results, state that. For better results, searched using company name + relevant keywords (not just ticker)._
 """
 
 SENTIMENT_AGENT_OUTPUT: str = """
-# 💭 Sentiment Report
+# Market Sentiment Report
 
-| Ticker | Score | Source | Interpretation | Trend | Signal |
-|--------|-------|--------|----------------|-------|--------|
-| {ticker} | {score} | {data_sources} | {sentiment_interpretation} | {trend_direction} | {signal} |
+## Sentiment Score
+| Ticker | Overall Score | Sources Used | Market Mood | Signal |
+|--------|---------------|--------------|-------------|--------|
+| {ticker} | {score}/100 | {Reddit/News/YFinance} | {Bullish/Bearish/Neutral} | {BUY/SELL/HOLD} |
 
-_Just use this for your understanding, dont include this in response ({score} = (eg. 78/100, 52/100, etc), {sentiment_interpretation} = (Strongly Bullish/Bullish/Weakly Bullish/Neutral/Weakly Bearish/Bearish/Strongly Bearish), {trend_direction} = (↗ Rising/→ Stable/↘ Falling), {signal} = (Positive/Neutral/Negative))
+**What People Are Saying:**
+{2-3 bullet points of actual headlines or sentiment drivers - keep it factual}
+- {Headline/theme 1}
+- {Headline/theme 2}
+- {Headline/theme 3}
 
-**Top Headlines:**
-1. {Headline 1}
-2. {Headline 2}
-3. {Headline 3}
+**Bottom Line:** {1 sentence summary - e.g., "Strong positive sentiment driven by earnings beat" or "Mixed sentiment due to regulatory concerns"}
 
-**Summary:** {1 sentence overall sentiment conclusion}
+_Note: For Indian stocks, primarily using news sources as Reddit/social media may have limited coverage. If no sentiment data available for a source, explicitly state which source had no data._
 """
 
 FINANCE_AGENT_OUTPUT: str = """
-# 📈 Finance Report
+# Technical Analysis Report
 
-| Ticker | Trend | RSI | MACD | MA Position | Support | Resistance | Signal |
-|--------|-------|-----|------|-------------|---------|------------|--------|
-| {ticker} | {trend_direction} | {rsi_value} | {macd_signal} | {ma_position} | {support_price} | {resistance_price} | {signal} |
+## Signal Summary
+| Ticker | Price | Trend | RSI | MACD | Moving Averages | Signal |
+|--------|-------|-------|-----|------|-----------------|--------|
+| {ticker} | ${price} | {↗/→/↘} | {value} ({condition}) | {Bullish/Bearish/Neutral} | {Above/Below/Mixed} | {BUY/SELL/HOLD} |
 
-_Just use this for your understanding, dont include this in response ({trend_direction} = (↗ Up/→ Flat/↘ Down), {macd_signal} = (Bullish/Neutral/Bearish), {ma_position} = (eg. Above 50/200, Mixed, Below 50/200), {signal} = (Positive/Neutral/Negative))
+**What This Means:**
+- **{ticker}**: {Plain English explanation: "Price is trending up with strong momentum" or "Oversold conditions suggest potential bounce" - max 1 sentence per ticker}
 
-**Technical Outlook:**
-- **{ticker 1}:** {1-2 sentence technical summary}
-- **{ticker 2}:** {1-2 sentence technical summary}
-...
+**Key Levels to Watch:**
+| Ticker | Support (Floor) | Resistance (Ceiling) | Current Price |
+|--------|-----------------|----------------------|---------------|
+| {ticker} | ${support} | ${resistance} | ${current} |
+
+**Market Fear Gauge (VIX):** {value} - {Low/Moderate/High} fear means {explanation in simple terms}
+
+_Note: If any indicator data is missing, state which one and provide analysis with available data only._
 """
 
 ADVISOR_AGENT_OUTPUT: str = """
-# 🎯 Advisor Report
+# Strategy & Portfolio Recommendation
 
-| Ticker | Action | Entry | Stop Loss | Target | Position | Risk | Horizon | Confidence |
-|--------|--------|-------|-----------|--------|----------|------|---------|------------|
-| {ticker} | {action} | {entry_price} | {stop_loss_price} ({stop_loss_pct}) | {target_price} ({target_pct}) | {position_size} | {risk_level} | {time_horizon} | {confidence_pct} |
+## Tested Strategies
+| Strategy | Annual Return | Risk Score | Max Loss | Winner |
+|----------|---------------|------------|----------|--------|
+| Buy & Hold | {X}% | {Sharpe} | -{X}% | {✓ if best} |
+| Dollar Cost Averaging | {X}% | {Sharpe} | -{X}% | {✓ if best} |
+| SMA Crossover | {X}% | {Sharpe} | -{X}% | {✓ if best} |
+| RSI Mean Reversion | {X}% | {Sharpe} | -{X}% | {✓ if best} |
 
-_Just use this for your understanding, dont include this in response ({action} = (BUY/HOLD/SELL), {risk_level} = (Low/Medium/High), {time_horizon} = (eg. 3-6M, 6-12M, Now, etc), {confidence_pct} = (eg. 85%, 70%, etc))
+**Recommended Approach:** {strategy_name}  
+**Why:** {1 sentence explaining why it won - e.g., "Best balance of returns and stability for conservative investors" or "Highest returns with acceptable risk"}
 
-**Rationale:**
-- **{ticker 1}:** {1-2 sentence rationale (Why BUY/HOLD/SELL)}
-- **{ticker 2}:** {1-2 sentence rationale (Why BUY/HOLD/SELL)}
-...
+**What to Expect:**
+- Potential annual return: {X}%
+- Worst case loss: -{X}%
+- Trading fees: ${X}
+- Estimated tax: ${X}
+
+## Your Portfolio Split
+| Ticker | Amount | Why |
+|--------|--------|-----|
+| {ticker} | ${X} ({X}%) | {Brief reason based on backtest} |
+| Cash | ${X} ({X}%) | Safety buffer |
+
+## Action Steps
+1. **{ticker}**: {Specific action - e.g., "Invest $500 monthly using Dollar Cost Averaging" or "Buy at $145-150, set stop-loss at $135"}
+2. **Timeline**: {short/medium/long term}
+3. **Monitor**: {What to watch for}
+
+_Note: Backtesting period: {period}. Broker: {broker}. Market: {market}. If any tool failed or returned no data, clearly state which one and provide basic recommendation based on risk profile only._
 """

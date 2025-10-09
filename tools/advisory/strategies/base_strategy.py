@@ -68,11 +68,10 @@ class BasePortfolioStrategy(Strategy):
         if not self.position:
             return False
 
-        entry_price = self.position.close
-        current_price = self.data.Close[-1]
-        loss_pct = (entry_price - current_price) / entry_price
+        # Calculate actual loss from current position using pl_pct
+        current_loss_pct = abs(self.position.pl_pct) if self.position.pl < 0 else 0
 
-        return loss_pct >= self.stop_loss_pct
+        return current_loss_pct >= self.stop_loss_pct
 
     def should_take_profit(self) -> bool:
         """
@@ -84,8 +83,7 @@ class BasePortfolioStrategy(Strategy):
         if not self.position or self.take_profit_pct is None:
             return False
 
-        entry_price = self.position.close
-        current_price = self.data.Close[-1]
-        profit_pct = (current_price - entry_price) / entry_price
+        # Use pl_pct to check if profit target is reached
+        current_profit_pct = self.position.pl_pct if self.position.pl > 0 else 0
 
-        return profit_pct >= self.take_profit_pct
+        return current_profit_pct >= self.take_profit_pct

@@ -17,27 +17,27 @@ class FinHubSentimentAnalyzer(SentimentAnalysisBase):
         super().__init__()
 
     def analyze_ticker_news_sentiment(
-        self, ticker: str, days_back: int = 7
+        self, ticker: str, limit: int = 10
     ) -> dict[str, Any]:
         """
         Retrieve and analyze pre-computed FinHub news sentiment for a ticker.
 
         Args:
             ticker: Stock ticker symbol
-            days_back: Number of days to look back (default: 7)
+            limit: Number of recent articles to retrieve (default: 10)
 
         Returns:
             Dictionary with sentiment analysis results
         """
         try:
-            stats = get_finnhub_stats(ticker, days_back)
+            stats = get_finnhub_stats(ticker)
 
             if stats['total_articles'] == 0:
                 return {
                     'tool': 'FinHub News Sentiment',
                     'description': 'This tool fetches pre-computed sentiment scores for a particular ticker from FinHub news',
                     'signal': 'No Data',
-                    'justification': f'No FinHub articles found for {ticker} in the last {days_back} days. Please run fetch_sentiment_data.py to collect data.',
+                    'justification': f'No FinHub articles found for {ticker}. Please run fetch_sentiment_data.py to collect data.',
                     'details': {
                         'items_analyzed': 0,
                         'last_update': stats['last_update'],
@@ -45,7 +45,7 @@ class FinHubSentimentAnalyzer(SentimentAnalysisBase):
                     },
                 }
 
-            articles = get_recent_finnhub_articles(ticker, days_back, limit=10)
+            articles = get_recent_finnhub_articles(ticker, limit=limit)
 
             article_data = {'positive': [], 'negative': [], 'neutral': []}
             analyzed_articles = []
@@ -84,7 +84,7 @@ class FinHubSentimentAnalyzer(SentimentAnalysisBase):
 
             return self.generate_trading_signal(
                 ticker=ticker,
-                description=f'This tool fetches pre-computed sentiment scores for {ticker} from FinHub news (last {days_back} days). Data last updated: {stats["last_update"]}',
+                description=f'This tool fetches pre-computed sentiment scores for {ticker} from FinHub news (recent {len(analyzed_articles)} articles). Data last updated: {stats["last_update"]}',
                 tool_name='FinHub News Sentiment',
                 total_items=len(analyzed_articles),
                 sentiments=sentiments,
@@ -118,13 +118,13 @@ def get_analyzer():
     description='Returns a JSON object with trading signal, confidence, justification, and top news article headlines for a given stock ticker. Uses pre-computed sentiment analysis from database (updated every 12 hours). Output includes percentages, average confidence, and up to 10 articles for positive, negative, and neutral sentiment categories.',
     tool_hooks=[logger_hook],
 )
-def get_finnhub_news_sentiment(ticker: str, days_back: int = 7):
+def get_finnhub_news_sentiment(ticker: str, limit: int = 10):
     """
     Retrieve pre-computed FinHub news sentiment for a stock ticker from database.
 
     Args:
         ticker: Stock ticker symbol (e.g., 'AAPL', 'TSLA')
-        days_back: Number of days to look back (default: 7)
+        limit: Number of recent articles to retrieve (default: 10)
 
     Returns:
         Dictionary with sentiment analysis results and top articles
@@ -135,10 +135,10 @@ def get_finnhub_news_sentiment(ticker: str, days_back: int = 7):
             'FinHub News Sentiment', 'Invalid ticker provided'
         )
     ticker_store.add_ticker(ticker)
-    days_back = max(1, min(days_back, 90))
+    limit = max(1, min(limit, 50))
 
     ticker = ticker.upper().strip()
     analyzer = get_analyzer()
     logger.info('Finhub Sentiment Generated!!')
 
-    return analyzer.analyze_ticker_news_sentiment(ticker, days_back)
+    return analyzer.analyze_ticker_news_sentiment(ticker, limit)

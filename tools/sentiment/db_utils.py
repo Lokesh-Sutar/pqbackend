@@ -33,6 +33,7 @@ def initialize_database():
             subreddit TEXT NOT NULL,
             score INTEGER,
             created_utc INTEGER,
+            created_at_iso TEXT,
             url TEXT,
             sentiment_label TEXT NOT NULL,
             sentiment_score REAL NOT NULL,
@@ -51,6 +52,7 @@ def initialize_database():
             source TEXT,
             url TEXT,
             published_at INTEGER,
+            published_at_iso TEXT,
             sentiment_label TEXT NOT NULL,
             sentiment_score REAL NOT NULL,
             analyzed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -67,6 +69,7 @@ def initialize_database():
             publisher TEXT,
             link TEXT,
             published_at INTEGER,
+            published_at_iso TEXT,
             sentiment_label TEXT NOT NULL,
             sentiment_score REAL NOT NULL,
             analyzed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -118,6 +121,7 @@ def insert_reddit_post(
     subreddit: str,
     score: int,
     created_utc: int,
+    created_at_iso: str,
     url: str,
     sentiment_label: str,
     sentiment_score: float,
@@ -137,9 +141,9 @@ def insert_reddit_post(
         cursor.execute(
             """
             INSERT INTO reddit_posts 
-            (ticker, post_id, title, content, subreddit, score, created_utc, url, 
+            (ticker, post_id, title, content, subreddit, score, created_utc, created_at_iso, url, 
              sentiment_label, sentiment_score, analyzed_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 ticker.upper(),
@@ -149,6 +153,7 @@ def insert_reddit_post(
                 subreddit,
                 score,
                 created_utc,
+                created_at_iso,
                 url,
                 sentiment_label,
                 sentiment_score,
@@ -173,6 +178,7 @@ def insert_finnhub_article(
     source: str,
     url: str,
     published_at: int,
+    published_at_iso: str,
     sentiment_label: str,
     sentiment_score: float,
 ) -> bool:
@@ -193,9 +199,9 @@ def insert_finnhub_article(
         cursor.execute(
             """
             INSERT INTO finnhub_articles 
-            (ticker, article_id, headline, summary, source, url, published_at, 
+            (ticker, article_id, headline, summary, source, url, published_at, published_at_iso, 
              sentiment_label, sentiment_score, analyzed_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 ticker.upper(),
@@ -205,6 +211,7 @@ def insert_finnhub_article(
                 source,
                 url,
                 published_at,
+                published_at_iso,
                 sentiment_label,
                 sentiment_score,
                 datetime.now().isoformat(),
@@ -227,6 +234,7 @@ def insert_yfinance_news(
     publisher: str,
     link: str,
     published_at: int,
+    published_at_iso: str,
     sentiment_label: str,
     sentiment_score: float,
 ) -> bool:
@@ -247,9 +255,9 @@ def insert_yfinance_news(
         cursor.execute(
             """
             INSERT INTO yfinance_news 
-            (ticker, title, summary, publisher, link, published_at, 
+            (ticker, title, summary, publisher, link, published_at, published_at_iso, 
              sentiment_label, sentiment_score, analyzed_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 ticker.upper(),
@@ -258,6 +266,7 @@ def insert_yfinance_news(
                 publisher,
                 link,
                 published_at,
+                published_at_iso,
                 sentiment_label,
                 sentiment_score,
                 datetime.now().isoformat(),
@@ -272,25 +281,19 @@ def insert_yfinance_news(
         return False
 
 
-def get_recent_reddit_posts(
-    ticker: str, days_back: int = 7, limit: int = 100
-) -> list[dict[str, Any]]:
+def get_recent_reddit_posts(ticker: str, limit: int = 15) -> list[dict[str, Any]]:
     """
     Retrieve recent Reddit posts for a ticker from database.
 
     Args:
         ticker: Stock ticker symbol
-        days_back: Number of days to look back (default: 7)
-        limit: Maximum number of posts to retrieve (default: 100)
+        limit: Maximum number of posts to retrieve (default: 15)
 
     Returns:
         List of dictionaries containing post data and sentiment
     """
     conn = get_db_connection()
     cursor = conn.cursor()
-
-    # cutoff_time = datetime.now() - timedelta(days=days_back)
-    # cutoff_timestamp = int(cutoff_time.timestamp())
 
     _ = cursor.execute(
         """
@@ -327,25 +330,19 @@ def get_recent_reddit_posts(
     return posts
 
 
-def get_recent_finnhub_articles(
-    ticker: str, days_back: int = 7, limit: int = 100
-) -> list[dict[str, Any]]:
+def get_recent_finnhub_articles(ticker: str, limit: int = 15) -> list[dict[str, Any]]:
     """
     Retrieve recent FinHub articles for a ticker from database.
 
     Args:
         ticker: Stock ticker symbol
-        days_back: Number of days to look back (default: 7)
-        limit: Maximum number of articles to retrieve (default: 100)
+        limit: Maximum number of articles to retrieve (default: 15)
 
     Returns:
         List of dictionaries containing article data and sentiment
     """
     conn = get_db_connection()
     cursor = conn.cursor()
-
-    # cutoff_time = datetime.now() - timedelta(days=days_back)
-    # cutoff_timestamp = int(cutoff_time.timestamp())
 
     _ = cursor.execute(
         """
@@ -388,25 +385,19 @@ def get_recent_finnhub_articles(
     return articles
 
 
-def get_recent_yfinance_news(
-    ticker: str, days_back: int = 7, limit: int = 100
-) -> list[dict[str, Any]]:
+def get_recent_yfinance_news(ticker: str, limit: int = 15) -> list[dict[str, Any]]:
     """
     Retrieve recent YFinance news for a ticker from database.
 
     Args:
         ticker: Stock ticker symbol
-        days_back: Number of days to look back (default: 7)
-        limit: Maximum number of articles to retrieve (default: 100)
+        limit: Maximum number of articles to retrieve (default: 15)
 
     Returns:
         List of dictionaries containing article data and sentiment
     """
     conn = get_db_connection()
     cursor = conn.cursor()
-
-    # cutoff_time = datetime.now() - timedelta(days=days_back)
-    # cutoff_timestamp = int(cutoff_time.timestamp())
 
     _ = cursor.execute(
         """
@@ -447,13 +438,10 @@ def get_recent_yfinance_news(
     return articles
 
 
-def get_reddit_stats(ticker: str, days_back: int = 7) -> dict[str, Any]:
+def get_reddit_stats(ticker: str) -> dict[str, Any]:
     """Get statistics about Reddit posts for a ticker"""
     conn = get_db_connection()
     cursor = conn.cursor()
-
-    # cutoff_time = datetime.now() - timedelta(days=days_back)
-    # cutoff_timestamp = int(cutoff_time.timestamp())
 
     _ = cursor.execute(
         """
@@ -477,13 +465,10 @@ def get_reddit_stats(ticker: str, days_back: int = 7) -> dict[str, Any]:
     }
 
 
-def get_finnhub_stats(ticker: str, days_back: int = 7) -> dict[str, Any]:
+def get_finnhub_stats(ticker: str) -> dict[str, Any]:
     """Get statistics about FinHub articles for a ticker"""
     conn = get_db_connection()
     cursor = conn.cursor()
-
-    # cutoff_time = datetime.now() - timedelta(days=days_back)
-    # cutoff_timestamp = int(cutoff_time.timestamp())
 
     _ = cursor.execute(
         """
@@ -507,13 +492,10 @@ def get_finnhub_stats(ticker: str, days_back: int = 7) -> dict[str, Any]:
     }
 
 
-def get_yfinance_stats(ticker: str, days_back: int = 7) -> dict[str, Any]:
+def get_yfinance_stats(ticker: str) -> dict[str, Any]:
     """Get statistics about YFinance news for a ticker"""
     conn = get_db_connection()
     cursor = conn.cursor()
-
-    # cutoff_time = datetime.now() - timedelta(days=days_back)
-    # cutoff_timestamp = int(cutoff_time.timestamp())
 
     _ = cursor.execute(
         """

@@ -17,27 +17,27 @@ class RedditSentimentAnalyzer(SentimentAnalysisBase):
         super().__init__()
 
     def analyze_ticker_sentiment(
-        self, ticker: str, days_back: int = 7
+        self, ticker: str, limit: int = 10
     ) -> dict[str, Any]:
         """
         Retrieve and analyze pre-computed Reddit sentiment for a ticker.
 
         Args:
             ticker: Stock ticker symbol
-            days_back: Number of days to look back (default: 7)
+            limit: Number of recent posts to retrieve (default: 10)
 
         Returns:
             Dictionary with sentiment analysis results
         """
         try:
-            stats = get_reddit_stats(ticker, days_back)
+            stats = get_reddit_stats(ticker)
 
             if stats['total_posts'] == 0:
                 return {
                     'tool': 'Reddit Sentiment',
                     'description': 'This tool fetches pre-computed sentiment scores for a particular ticker from Reddit',
                     'signal': 'No Data',
-                    'justification': f'No Reddit posts found for {ticker} in the last {days_back} days. Please run fetch_sentiment_data.py to collect data.',
+                    'justification': f'No Reddit posts found for {ticker}. Please run fetch_sentiment_data.py to collect data.',
                     'details': {
                         'items_analyzed': 0,
                         'last_update': stats['last_update'],
@@ -45,7 +45,7 @@ class RedditSentimentAnalyzer(SentimentAnalysisBase):
                     },
                 }
 
-            posts = get_recent_reddit_posts(ticker, days_back, limit=10)
+            posts = get_recent_reddit_posts(ticker, limit=limit)
 
             post_headlines = {'positive': [], 'negative': [], 'neutral': []}
             analyzed_posts = []
@@ -85,7 +85,7 @@ class RedditSentimentAnalyzer(SentimentAnalysisBase):
             logger.info('Generating Reddit Sentiment...')
             return self.generate_trading_signal(
                 ticker=ticker,
-                description=f'This tool fetches pre-computed sentiment scores for {ticker} from Reddit (last {days_back} days). Data last updated: {stats["last_update"]}',
+                description=f'This tool fetches pre-computed sentiment scores for {ticker} from Reddit (recent {len(analyzed_posts)} posts). Data last updated: {stats["last_update"]}',
                 tool_name='Reddit Sentiment',
                 total_items=len(analyzed_posts),
                 sentiments=sentiments,
@@ -123,13 +123,13 @@ def get_analyzer() -> RedditSentimentAnalyzer:
     description='Returns a JSON object with a trading signal, confidence, justification, and top Reddit post headlines for a given stock ticker. Uses pre-computed sentiment analysis from database (updated every 12 hours). Output includes percentages, average confidence, and up to 10 headlines for positive, negative, and neutral sentiment.',
     tool_hooks=[logger_hook],
 )
-def get_reddit_sentiment(ticker: str, days_back: int = 7) -> dict[str, Any]:
+def get_reddit_sentiment(ticker: str, limit: int = 10) -> dict[str, Any]:
     """
     Retrieve pre-computed Reddit sentiment for a stock ticker from database.
 
     Args:
         ticker: Stock ticker symbol (e.g., 'AAPL', 'TSLA')
-        days_back: Number of days to look back (default: 7)
+        limit: Number of recent posts to retrieve (default: 10)
 
     Returns:
         Dictionary with sentiment analysis results
@@ -141,9 +141,9 @@ def get_reddit_sentiment(ticker: str, days_back: int = 7) -> dict[str, Any]:
         )
     ticker = ticker.upper().strip()
     ticker_store.add_ticker(ticker)
-    days_back = max(1, min(days_back, 90))
+    limit = max(1, min(limit, 50))
 
     analyzer: RedditSentimentAnalyzer = get_analyzer()
     logger.info('Reddit Sentiment Generated!!')
 
-    return analyzer.analyze_ticker_sentiment(ticker, days_back)
+    return analyzer.analyze_ticker_sentiment(ticker, limit)

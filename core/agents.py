@@ -1,21 +1,18 @@
 from agno.agent import Agent
 from agno.models.google import Gemini
 from agno.team import Team
-from agno.tools.calculator import CalculatorTools
 from agno.tools.duckduckgo import DuckDuckGoTools
 from agno.tools.yfinance import YFinanceTools
 
 from config import (
-    DEBUG_LEVEL,
-    DEBUG_MODE,
-    DEFAULT_SESSION_ID,
-    DEFAULT_USER_ID,
+    COMMON_AGENT_USER_SETTINGS,
+    COMMON_RETRY_SETTINGS,
     GOOGLE_API_KEY_0,
     GOOGLE_API_KEY_1,
     GOOGLE_API_KEY_2,
     GOOGLE_MODEL_NAME_1,
     REASONING_MODE,
-    db,
+    TEAM_USER_SETTINGS,
 )
 from tools.advisory.backtester import backtest_investment_strategies
 from tools.advisory.portfolio_builder import build_portfolio_allocation
@@ -23,12 +20,17 @@ from tools.sentiment.finhub import get_finnhub_news_sentiment
 from tools.sentiment.reddit import get_reddit_sentiment
 from tools.sentiment.yfinance import get_yfinance_news_sentiment
 from tools.signals import (
+    analyze_options_flow,
+    check_earnings_calendar,
+    check_portfolio_correlation,
+    detect_market_regime,
     get_bollinger_bands_signal,
     get_fibonacci_retracement,
     get_ichimoku_cloud_signal,
     get_macd_signal,
     get_obv_signal,
     get_rsi_signal,
+    get_sector_performance,
     get_sma_crossover_signal,
     get_vix_market_fear_signal,
 )
@@ -49,20 +51,41 @@ def create_finance_agent() -> Agent:
         model=Gemini(id=GOOGLE_MODEL_NAME_1, api_key=GOOGLE_API_KEY_1, seed=42),
         instructions=[
             '1. Role: Analyze technical indicators and translate them into plain English.',
-            '2. Tools: Use SMA, RSI, MACD, Bollinger Bands, Ichimoku, Fibonacci, OBV, and VIX.',
-            '3. Think Strategically: Technical signals can be misleading. A stock showing "oversold" might be falling for good reasons (bad fundamentals). Always consider:',
+            '2. Tools Available:',
+            '   Core Indicators: SMA, RSI, MACD, Bollinger Bands, Ichimoku, Fibonacci, OBV, VIX',
+            '   Context Tools:',
+            '   - detect_market_regime: Check if bull/bear/sideways/volatile (ALWAYS USE THIS FIRST)',
+            '   - check_earnings_calendar: Warn about upcoming earnings volatility',
+            '   - get_sector_performance: Compare to sector benchmark',
+            '   - analyze_options_flow: Check institutional sentiment from options',
+            '   - check_portfolio_correlation: For multi-stock portfolios (use in Advisory)',
+            '3. Analysis Workflow:',
+            '   Step 1: detect_market_regime → Understand current market conditions',
+            '   Step 2: check_earnings_calendar → Check for imminent volatility',
+            '   Step 3: Run technical indicators (RSI, MACD, etc.)',
+            '   Step 4: get_sector_performance → Is stock leading or lagging sector?',
+            '   Step 5: analyze_options_flow → What are smart money doing?',
+            '   Step 6: Synthesize all signals into clear recommendation',
+            '4. Think Strategically: Technical signals can be misleading. A stock showing "oversold" might be falling for good reasons (bad fundamentals). Always consider:',
             '   - Are all indicators aligned or conflicting?',
             '   - Is this a short-term fluctuation or a trend reversal?',
             '   - Does high volatility suggest opportunity or danger?',
-            '4. Keep It Simple: Avoid jargon. Say "price trending up" not "bullish momentum". Say "oversold" as "potentially undervalued".',
-            '5. For Each Ticker: Provide clear BUY/SELL/HOLD signal based on indicators, but note any conflicting signals.',
-            '6. Key Levels: Always show support (floor price) and resistance (ceiling price) in dollars.',
-            '7. Market Context: Explain VIX in simple terms - "Low fear = stable market" or "High fear = volatile market".',
-            '8. Missing Data: If indicator unavailable, state which one and work with what you have.',
-            '9. Format: Follow FINANCE_AGENT_OUTPUT exactly - keep table concise.',
+            '   - Is market regime appropriate for this strategy? (e.g., dont buy dips in bear markets)',
+            '   - Are we near earnings? (high risk window)',
+            '   - Is stock outperforming or underperforming sector?',
+            '5. Keep It Simple: Avoid jargon. Say "price trending up" not "bullish momentum". Say "oversold" as "potentially undervalued".',
+            '6. For Each Ticker: Provide clear BUY/SELL/HOLD signal based on indicators, but note any conflicting signals.',
+            '7. Key Levels: Always show support (floor price) and resistance (ceiling price) in dollars.',
+            '8. Market Context: Explain VIX in simple terms - "Low fear = stable market" or "High fear = volatile market".',
+            '9. Missing Data: If indicator unavailable, state which one and work with what you have.',
+            '10. Format: Follow FINANCE_AGENT_OUTPUT exactly - keep table concise.',
         ],
         expected_output=FINANCE_AGENT_OUTPUT,
         tools=[
+            detect_market_regime,
+            check_earnings_calendar,
+            get_sector_performance,
+            analyze_options_flow,
             get_sma_crossover_signal,
             get_rsi_signal,
             get_macd_signal,
@@ -78,16 +101,9 @@ def create_finance_agent() -> Agent:
                     'get_income_statements',
                 ]
             ),
-            CalculatorTools(),
         ],
-        exponential_backoff=True,
-        delay_between_retries=3,
-        markdown=True,
-        user_id=DEFAULT_USER_ID,
-        session_id=DEFAULT_SESSION_ID,
-        debug_mode=DEBUG_MODE,
-        debug_level=DEBUG_LEVEL,
-        db=db,
+        **COMMON_AGENT_USER_SETTINGS,
+        **COMMON_RETRY_SETTINGS,
     )
 
 
@@ -116,18 +132,9 @@ def create_sentiment_agent() -> Agent:
             get_reddit_sentiment,
             get_finnhub_news_sentiment,
             get_yfinance_news_sentiment,
-            # DuckDuckGoTools(
-            #     enable_search=True, enable_news=True, fixed_max_results=10, timeout=30
-            # ),
         ],
-        markdown=True,
-        exponential_backoff=True,
-        delay_between_retries=3,
-        user_id=DEFAULT_USER_ID,
-        session_id=DEFAULT_SESSION_ID,
-        debug_mode=DEBUG_MODE,
-        debug_level=DEBUG_LEVEL,
-        db=db,
+        **COMMON_AGENT_USER_SETTINGS,
+        **COMMON_RETRY_SETTINGS,
     )
 
 
@@ -140,36 +147,33 @@ def create_advisory_agent() -> Agent:
         instructions=[
             '1. Role: Test multiple investment strategies and recommend the best one based on data.',
             '2. Always Call: backtest_investment_strategies AND build_portfolio_allocation (both tools).',
-            '3. Think Strategically: Past performance ≠ Future results. Consider:',
+            '3. Context Tool: check_portfolio_correlation - Use this to check if portfolio is too concentrated.',
+            '4. Think Strategically: Past performance ≠ Future results. Consider:',
             '   - Does the winning strategy fit the current market conditions?',
             '   - Is high past return due to luck or repeatable patterns?',
             '   - Does the strategy align with user risk tolerance even if not highest return?',
             '   - Are we in a different market regime (bull vs bear) than the backtest period?',
-            '4. Extract From User Query:',
+            '   - Are the stocks too correlated? (use check_portfolio_correlation)',
+            '5. Extract From User Query:',
             '   - Capital: ₹50,000 or $10k → extract amount',
             '   - Risk: "minimal/low risk" → conservative, "moderate" → moderate, "aggressive/high growth" → aggressive',
             '   - Timeline: "short" → 1yr, "medium" → 3yr, "long" → 5yr',
             '   - Broker: zerodha, groww, upstox, robinhood, fidelity, etc.',
-            '5. Show All 4 Strategies: Buy & Hold, DCA, SMA Crossover, RSI Mean Reversion with their performance.',
-            '6. Explain Simply: "Risk Score" instead of "Sharpe Ratio", "Max Loss" instead of "Max Drawdown".',
-            '7. Be Specific: Give exact dollar amounts, percentages, and action steps.',
-            '8. Handle Failures: If tool fails, state which one and provide basic guidance based on risk profile.',
-            '9. Format: Follow ADVISOR_AGENT_OUTPUT - keep it concise and actionable.',
+            '6. Show All 4 Strategies: Buy & Hold, DCA, SMA Crossover, RSI Mean Reversion with their performance.',
+            '7. Diversification Check: If multiple stocks, use check_portfolio_correlation to warn about concentration risk.',
+            '8. Explain Simply: "Risk Score" instead of "Sharpe Ratio", "Max Loss" instead of "Max Drawdown".',
+            '9. Be Specific: Give exact dollar amounts, percentages, and action steps.',
+            '10. Handle Failures: If tool fails, state which one and provide basic guidance based on risk profile.',
+            '11. Format: Follow ADVISOR_AGENT_OUTPUT - keep it concise and actionable.',
         ],
         expected_output=ADVISOR_AGENT_OUTPUT,
         tools=[
             backtest_investment_strategies,
             build_portfolio_allocation,
-            CalculatorTools(),
+            check_portfolio_correlation,
         ],
-        markdown=True,
-        exponential_backoff=True,
-        delay_between_retries=3,
-        user_id=DEFAULT_USER_ID,
-        session_id=DEFAULT_SESSION_ID,
-        debug_mode=DEBUG_MODE,
-        debug_level=DEBUG_LEVEL,
-        db=db,
+        **COMMON_AGENT_USER_SETTINGS,
+        **COMMON_RETRY_SETTINGS,
     )
 
 
@@ -203,14 +207,8 @@ def create_search_agent() -> Agent:
                 enable_search=True, enable_news=True, fixed_max_results=100, timeout=30
             )
         ],
-        markdown=True,
-        exponential_backoff=True,
-        delay_between_retries=3,
-        user_id=DEFAULT_USER_ID,
-        session_id=DEFAULT_SESSION_ID,
-        debug_mode=DEBUG_MODE,
-        debug_level=DEBUG_LEVEL,
-        db=db,
+        **COMMON_AGENT_USER_SETTINGS,
+        **COMMON_RETRY_SETTINGS,
     )
 
 
@@ -244,23 +242,18 @@ def create_team() -> Team:
             '   - Specific action steps based on the complete picture',
             '   - Simple language (avoid jargon)',
             '   - Note any risks or caveats (e.g., "High sentiment may mean already priced in")',
+            '   - Transparency: If claims were corrected, explicitly state what was wrong',
             '7. Handle Missing Data:',
             '   - If agent fails, note which one in final report',
             '   - Provide best recommendation with available data',
             '   - Lower confidence if critical data missing',
-            '8. Follow FINAL_OUTPUT_FORMAT exactly - keep it concise and actionable.',
+            '8. Follow format exactly - keep it concise and actionable.',
         ],
         expected_output=FINAL_OUTPUT_FORMAT,
-        exponential_backoff=True,
-        delay_between_retries=3,
         reasoning=REASONING_MODE,
-        markdown=True,
         members=[finance_agent, sentiment_agent, advisory_agent, search_agent],
-        user_id=DEFAULT_USER_ID,
-        session_id=DEFAULT_SESSION_ID,
-        debug_mode=DEBUG_MODE,
-        debug_level=DEBUG_LEVEL,
-        db=db,
+        **COMMON_RETRY_SETTINGS,
+        **TEAM_USER_SETTINGS,
     )
 
 

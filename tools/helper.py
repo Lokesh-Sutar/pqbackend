@@ -12,6 +12,25 @@ from utils.ticker_store import ticker_store
 logger = logging.getLogger(__name__)
 
 
+def get_currency_symbol(ticker: str) -> str:
+    """
+    Detect currency symbol based on ticker suffix.
+    Returns ₹ for Indian stocks (.NS, .BO, .BSE), $ for US stocks.
+
+    Args:
+        ticker: Stock ticker symbol (e.g., 'AAPL', 'RELIANCE.NS')
+
+    Returns:
+        Currency symbol string ('₹' or '$')
+    """
+    indian_suffixes = ['.NS', '.BSE', '.BO']
+    ticker_upper = ticker.upper()
+    for suffix in indian_suffixes:
+        if ticker_upper.endswith(suffix):
+            return '₹'
+    return '$'
+
+
 def logger_hook(function_name: str, function_call: Callable, arguments: dict[str, Any]):
     """Hook function that wraps the tool execution"""
     logger.info(f'Calling {function_name} with arguments: {arguments}')
@@ -21,7 +40,10 @@ def logger_hook(function_name: str, function_call: Callable, arguments: dict[str
 
 
 def get_ticker(ticker: str) -> pd.DataFrame:
-    """Load ticker data from Yahoo Finance, fallback to CSV file"""
+    """Load ticker data from Yahoo Finance, fallback to CSV file
+
+    Always returns DataFrame with lowercase column names for consistency.
+    """
 
     ticker_store.add_ticker(ticker)
     logger.info(f'Called ticker_store.add_ticker({ticker})')
@@ -31,13 +53,15 @@ def get_ticker(ticker: str) -> pd.DataFrame:
         ticker_obj = yf.Ticker(ticker)
         df = ticker_obj.history(period='2y')
         df.columns = df.columns.str.lower()
+        logger.info(f'Loaded {ticker} from yfinance with columns: {list(df.columns)}')
         return df
     except Exception as e:
         logger.warning(f'Failed to fetch {ticker} from yfinance: {e}, trying local CSV')
         data_dir = Path(__file__).resolve().parent.parent / 'data' / 'cache'
         df_file = data_dir / f'{ticker}.csv'
         df: pd.DataFrame = pd.read_csv(df_file)
-        logger.info(f'Loaded {ticker} from CSV')
+        df.columns = df.columns.str.lower()
+        logger.info(f'Loaded {ticker} from CSV with columns: {list(df.columns)}')
         return df
 
 
@@ -224,7 +248,7 @@ class SentimentAnalysisBase:
         """Create standardized error response"""
         return {
             'tool': tool_name,
-            'description': 'An error occured by a tool. Please check.',
+            'description': 'An error occurred in a tool. Please check.',
             'signal': 'error',
             'justification': message,
             'details': {},

@@ -3,9 +3,9 @@ from typing import Any
 
 from agno.tools import tool
 
-from utils.ticker_store import ticker_store
 from tools.helper import SentimentAnalysisBase, logger_hook
 from tools.sentiment.db_utils import get_finnhub_stats, get_recent_finnhub_articles
+from utils.ticker_store import ticker_store
 
 logger = logging.getLogger(__name__)
 
@@ -52,7 +52,14 @@ class FinHubSentimentAnalyzer(SentimentAnalysisBase):
 
             for article in articles:
                 sentiment = article['sentiment']
-                label = sentiment['label']
+                label = sentiment.get('label', 'neutral')
+                if label not in article_data:
+                    logger.debug(
+                        'Unknown sentiment label %s for article %s, defaulting to neutral',
+                        label,
+                        article.get('article_id') or article.get('headline'),
+                    )
+                    label = 'neutral'
 
                 article_info = {
                     'headline': article['headline'],

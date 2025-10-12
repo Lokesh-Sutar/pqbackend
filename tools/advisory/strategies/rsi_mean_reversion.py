@@ -1,5 +1,3 @@
-"""RSI Mean Reversion strategy"""
-
 import talib
 
 from tools.advisory.strategies.base_strategy import BasePortfolioStrategy
@@ -33,23 +31,28 @@ class RSIMeanReversionStrategy(BasePortfolioStrategy):
     def next(self):
         """Execute trading logic based on RSI mean reversion"""
 
-        # Skip if RSI not yet calculated (need enough data points)
-        if len(self.rsi) < self.rsi_period or self.rsi[-1] is None:
+        if len(self.rsi) < self.rsi_period:
             return
 
         current_rsi = self.rsi[-1]
 
-        # Entry logic: Buy when oversold
+        if current_rsi is None or (
+            hasattr(current_rsi, '__iter__') and len(current_rsi) == 0
+        ):
+            return
+
+        try:
+            current_rsi = float(current_rsi)
+        except (ValueError, TypeError):
+            return
+
         if not self.position and current_rsi < self.oversold_threshold:
-            # Calculate position size based on risk management
             size = self.calculate_position_size(self.data.Close[-1])
             if size > 0:
                 self.buy(size=size)
 
-        # Exit logic: Sell when overbought
         elif self.position and current_rsi > self.overbought_threshold:
             self.position.close()
 
-        # Risk management: Stop loss check
         elif self.position and self.use_stop_loss and self.should_stop_out():
             self.position.close()

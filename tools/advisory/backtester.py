@@ -1,3 +1,5 @@
+import math
+import warnings as warning_module
 from typing import Any, List
 
 from agno.tools import tool
@@ -9,6 +11,38 @@ from tools.advisory.risk_manager import get_risk_parameters
 from tools.advisory.strategies import STRATEGY_REGISTRY
 from tools.advisory.tax_estimator import estimate_tax_impact
 from tools.helper import logger_hook
+
+
+def safe_float(value, default=0.0):
+    """Safely convert value to float, handling NaN and None"""
+    if value is None:
+        return default
+    try:
+        float_val = float(value)
+        if math.isnan(float_val):
+            return default
+        return float_val
+    except (ValueError, TypeError):
+        return default
+
+
+def get_currency_symbol(tickers: List[str]) -> str:
+    """
+    Detect currency symbol based on ticker suffixes.
+    Returns ₹ for Indian stocks (.NS, .BO, .BSE), $ for US stocks.
+
+    Args:
+        tickers: List of ticker symbols
+
+    Returns:
+        Currency symbol string ('₹' or '$')
+    """
+    indian_suffixes = ['.NS', '.BSE', '.BO']
+    has_indian_ticker = any(
+        any(ticker.upper().endswith(suffix) for suffix in indian_suffixes)
+        for ticker in tickers
+    )
+    return '₹' if has_indian_ticker else '$'
 
 
 @tool(
@@ -39,9 +73,23 @@ def backtest_investment_strategies(
         dict with strategy comparison, best recommendation, costs, and tax analysis
     """
 
-    # Auto-detect market from ticker format if not provided
+    if capital <= 0:
+        return {
+            'tool': 'Strategy Backtester',
+            'signal': 'Error',
+            'justification': f'Capital must be positive (received: {capital})',
+            'strategies': {},
+        }
+
+    if not tickers or len(tickers) == 0:
+        return {
+            'tool': 'Strategy Backtester',
+            'signal': 'Error',
+            'justification': 'No tickers provided',
+            'strategies': {},
+        }
+
     if market is None:
-        # Check if any ticker has Indian exchange suffix
         indian_suffixes = ['.NS', '.BSE', '.BO']
         has_indian_ticker = any(
             any(ticker.upper().endswith(suffix) for suffix in indian_suffixes)
@@ -49,12 +97,13 @@ def backtest_investment_strategies(
         )
         market = 'india' if has_indian_ticker else 'us'
 
-    # Auto-detect broker based on market if not provided
     if broker is None:
         broker = 'zerodha' if market == 'india' else 'robinhood'
 
-    horizon_map = {'short': '1y', 'medium': '3y', 'long': '5y'}
-    period = horizon_map.get(time_horizon.lower(), '5y')
+    currency = get_currency_symbol(tickers)
+
+    horizon_map = {'short': '1y', 'medium': '5y', 'long': '10y'}
+    period = horizon_map.get(time_horizon.lower(), '7y')
     min_periods = 252
 
     risk_params = get_risk_parameters(risk_profile)
@@ -88,6 +137,15 @@ def backtest_investment_strategies(
                     f'Limited historical data available ({actual_days} days vs {expected_days} expected for {time_horizon} period). Results based on available data.'
                 )
 
+            if actual_days < 200:
+                warnings.append(
+                    'Data may be insufficient for SMA Crossover strategy (requires 200+ periods for slow SMA initialization). Consider using shorter timeframes or other strategies.'
+                )
+            if actual_days < 21:
+                warnings.append(
+                    'Data is too short for Dollar Cost Averaging strategy (requires at least 21 days for monthly intervals).'
+                )
+
         all_results = {}
         strategies_to_test = [
             'buy_and_hold',
@@ -106,14 +164,37 @@ def backtest_investment_strategies(
             investable_capital = capital * (1 - cash_reserve)
             capital_per_ticker = investable_capital / len(valid_tickers)
 
+            if capital_per_ticker < 100:
+                warnings.append(
+                    f'Capital per ticker ({currency}{capital_per_ticker:.2f}) is very low for {strategy_name}. Consider increasing total capital or reducing number of tickers.'
+                )
+
             ticker_results = []
 
             for ticker in valid_tickers:
                 df = ticker_data[ticker]
 
+                if df.empty or len(df) == 0:
+                    warnings.append(
+                        f'{ticker}: Empty dataframe for {strategy_name}, skipping'
+                    )
+                    continue
+
                 try:
+                    avg_price = df['Close'].mean()
+                    price_scale = 1.0
+
+                    if avg_price > (capital_per_ticker * 0.05):
+                        price_scale = (capital_per_ticker * 0.02) / avg_price
+                        df_scaled = df.copy()
+                        for col in ['Open', 'High', 'Low', 'Close']:
+                            df_scaled[col] = df[col] * price_scale
+                    else:
+                        df_scaled = df
+                        price_scale = 1.0
+
                     bt = Backtest(
-                        df,
+                        df_scaled,
                         strategy_class,
                         cash=capital_per_ticker,
                         commission=0.0,
@@ -121,7 +202,15 @@ def backtest_investment_strategies(
                         exclusive_orders=True,
                     )
 
-                    stats = bt.run()
+                    with warning_module.catch_warnings():
+                        warning_module.filterwarnings(
+                            'ignore', message='.*Broker canceled.*insufficient margin.*'
+                        )
+                        warning_module.filterwarnings(
+                            'ignore',
+                            message='.*Some prices are larger than initial cash.*',
+                        )
+                        stats = bt.run()
 
                     result = {
                         'ticker': ticker,
@@ -129,12 +218,16 @@ def backtest_investment_strategies(
                         'annual_return_pct': float(
                             round(stats.get('Return (Ann.) [%]', 0), 2)
                         ),
-                        'sharpe_ratio': float(round(stats.get('Sharpe Ratio', 0), 2)),
+                        'sharpe_ratio': float(
+                            round(safe_float(stats.get('Sharpe Ratio', 0)), 2)
+                        ),
                         'max_drawdown_pct': float(
                             round(stats.get('Max. Drawdown [%]', 0), 2)
                         ),
                         'num_trades': int(stats.get('# Trades', 0)),
-                        'win_rate_pct': float(round(stats.get('Win Rate [%]', 0), 2)),
+                        'win_rate_pct': float(
+                            round(safe_float(stats.get('Win Rate [%]', 0)), 2)
+                        ),
                         'final_value': float(round(stats['Equity Final [$]'], 2)),
                     }
 
@@ -180,14 +273,22 @@ def backtest_investment_strategies(
                     'annual_return_pct': round(
                         (
                             (
-                                (total_final_value / investable_capital)
-                                ** (1 / (int(period[0]) if period[0].isdigit() else 5))
+                                (total_final_value / max(investable_capital, 1))
+                                ** (
+                                    1
+                                    / max(
+                                        (int(period[0]) if period[0].isdigit() else 5),
+                                        1,
+                                    )
+                                )
                             )
                             - 1
                         )
                         * 100,
                         2,
-                    ),
+                    )
+                    if investable_capital > 0
+                    else 0.0,
                     'sharpe_ratio': round(avg_sharpe, 2),
                     'max_drawdown_pct': round(worst_drawdown, 2),
                     'num_trades': total_trades,
@@ -205,27 +306,18 @@ def backtest_investment_strategies(
                 }
 
         if all_results:
-            # Calculate composite score for each strategy based on multiple factors
-            # This provides a more balanced recommendation than just Sharpe ratio
             for strategy_name, stats in all_results.items():
-                # Normalize metrics (0-100 scale)
-                sharpe_score = max(
-                    0, min(100, (stats['sharpe_ratio'] + 2) * 25)
-                )  # -2 to 2 range → 0-100
-                return_score = max(
-                    0, min(100, stats['annual_return_pct'])
-                )  # Already percentage
-                drawdown_score = max(
-                    0, 100 + stats['max_drawdown_pct']
-                )  # Less negative is better
+                if stats['num_trades'] == 0:
+                    stats['composite_score'] = 0.0
+                    continue
 
-                # Calculate net profit percentage for better comparison
+                sharpe_score = max(0, min(100, (stats['sharpe_ratio'] + 2) * 25))
+                return_score = max(0, min(100, stats['annual_return_pct']))
+                drawdown_score = max(0, 100 + stats['max_drawdown_pct'])
                 net_profit_pct = (stats['net_profit'] / investable_capital) * 100
                 profit_score = max(0, min(100, net_profit_pct))
 
-                # Composite score with weights based on risk profile
                 if risk_profile == 'conservative':
-                    # Conservative: prioritize low risk (drawdown) and consistent returns (Sharpe)
                     composite_score = (
                         (sharpe_score * 0.40)
                         + (drawdown_score * 0.35)
@@ -233,15 +325,13 @@ def backtest_investment_strategies(
                         + (profit_score * 0.10)
                     )
                 elif risk_profile == 'aggressive':
-                    # Aggressive: prioritize returns and net profit
                     composite_score = (
                         (return_score * 0.40)
                         + (profit_score * 0.30)
                         + (sharpe_score * 0.20)
                         + (drawdown_score * 0.10)
                     )
-                else:  # moderate
-                    # Moderate: balanced approach
+                else:
                     composite_score = (
                         (sharpe_score * 0.30)
                         + (return_score * 0.30)
@@ -251,16 +341,29 @@ def backtest_investment_strategies(
 
                 stats['composite_score'] = round(composite_score, 2)
 
-            # Rank by composite score
             ranked = sorted(
                 all_results.items(),
                 key=lambda x: x[1].get('composite_score', 0),
                 reverse=True,
             )
 
-            best_strategy = ranked[0][1]
+            valid_strategies = [s for s in ranked if s[1].get('composite_score', 0) > 0]
 
-            # Create ranking explanation based on risk profile
+            if not valid_strategies:
+                return {
+                    'tool': 'Strategy Backtester',
+                    'signal': 'Error',
+                    'justification': 'All strategies failed to execute trades or returned invalid results',
+                    'strategies': all_results,
+                    'warnings': warnings,
+                    'disclaimers': [
+                        'This may be due to insufficient historical data, incompatible strategy parameters, or market conditions',
+                        'Consider using a different time horizon or adjusting the capital allocation',
+                    ],
+                }
+
+            best_strategy = valid_strategies[0][1]
+
             if risk_profile == 'conservative':
                 ranking_basis = 'stability and risk-adjusted returns'
             elif risk_profile == 'aggressive':
@@ -283,7 +386,7 @@ def backtest_investment_strategies(
                     'rationale': f'Best {ranking_basis} (Score: {best_strategy["composite_score"]}, Sharpe: {best_strategy["sharpe_ratio"]}, Return: {best_strategy["annual_return_pct"]}%) for {risk_profile} investor',
                     'expected_return': f'{best_strategy["annual_return_pct"]}% annually',
                     'max_drawdown': f'{best_strategy["max_drawdown_pct"]}%',
-                    'net_profit': f'${best_strategy["net_profit"]}',
+                    'net_profit': f'{currency}{best_strategy["net_profit"]}',
                 },
                 'cost_analysis': {
                     'broker': broker,

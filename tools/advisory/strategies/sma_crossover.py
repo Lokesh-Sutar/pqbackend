@@ -29,14 +29,27 @@ class SMACrossoverStrategy(BasePortfolioStrategy):
 
     def next(self):
         """Execute trading logic based on SMA crossover"""
+        if (
+            len(self.sma_fast) < self.slow_period
+            or len(self.sma_slow) < self.slow_period
+        ):
+            return
+
+        if len(self.sma_fast) < 2 or len(self.sma_slow) < 2:
+            return
+
+        if self.sma_fast[-1] is None or self.sma_slow[-1] is None:
+            return
+
+        if self.sma_fast[-2] is None or self.sma_slow[-2] is None:
+            return
+
         if crossover(self.sma_fast, self.sma_slow):  # pyright: ignore[reportArgumentType]
-            # Fast MA crosses above slow MA - BUY
             if not self.position:
                 self.buy()
         elif crossover(self.sma_slow, self.sma_fast):  # pyright: ignore[reportArgumentType]
             if self.position:
                 self.position.close()
 
-        # Optional: Implement stop loss
         elif self.position and self.should_stop_out():
             self.position.close()

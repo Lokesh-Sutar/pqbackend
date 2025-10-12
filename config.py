@@ -41,8 +41,31 @@ SEARCH_AGENT_ID = 'agent_4'
 TEAM_NAME_ID = 'team_1'
 
 DEBUG_MODE = False
-DEBUG_LEVEL = 1  # 1 or 2
+DEBUG_LEVEL = 1
 
 REASONING_MODE = False
 
+COMMON_RETRY_SETTINGS = {
+    'exponential_backoff': True,
+    'delay_between_retries': 3,
+    'retries': 5,
+}
 db = SqliteDb(db_file=DB_FILE)
+
+COMMON_AGENT_USER_SETTINGS = {
+    'markdown': True,
+    'user_id': DEFAULT_USER_ID,
+    'session_id': DEFAULT_SESSION_ID,
+    'debug_mode': DEBUG_MODE,
+    'debug_level': DEBUG_LEVEL,
+    'db': db,
+}
+
+TEAM_USER_SETTINGS = {
+    'markdown': True,
+    'user_id': DEFAULT_USER_ID,
+    'session_id': DEFAULT_SESSION_ID,
+    'debug_mode': DEBUG_MODE,
+    'debug_level': DEBUG_LEVEL,
+    'db': db,
+}

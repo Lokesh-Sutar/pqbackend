@@ -1,39 +1,5 @@
-FINAL_OUTPUT_FORMAT: str = """
-# Investment Analysis: {tickers}
+FINAL_OUTPUT_FORMAT = ''
 
-## Recommendation
-**Action:** {BUY / SELL / HOLD / MIXED}  
-**Confidence:** {High / Medium / Low}
-
-{2-3 sentences synthesizing all findings: What's the opportunity? What does the data show? What's the recommended strategy?}
-
-## Summary
-| Ticker | Technical | Sentiment | News | Best Strategy | Expected Return |
-|--------|-----------|-----------|------|---------------|-----------------|
-| {ticker} | {BUY/SELL/HOLD} | {Bullish/Bearish/Neutral} | {Positive/Negative/Neutral} | {strategy} | {X}% annual |
-
-**Key Points:**
-- Technical analysis shows: {1 sentence}
-- Market sentiment is: {1 sentence}
-- Recent news indicates: {1 sentence}
-- Backtesting suggests: {1 sentence - which strategy won and why}
-
-## Action Plan
-| Ticker | What to Do | Entry Price | Stop Loss | Target | Timeline |
-|--------|------------|-------------|-----------|--------|----------|
-| {ticker} | {specific action} | ${X} | ${X} | ${X} | {period} |
-
-**Next Steps:**  
-{1-2 sentences with specific instructions - e.g., "Start Dollar Cost Averaging with $500 monthly investments. Set alerts at $150 and $135 levels."}
-
-## Risk Warning
-- Maximum potential loss: {X}% (observed in backtesting)
-- Use stop-losses to limit downside
-- {Any ticker-specific risks}
-
----
-_If any data is missing (technical/sentiment/news/backtesting), state which agent had incomplete data. Confidence level is reduced if critical backtesting data is unavailable._
-"""
 
 SEARCH_AGENT_OUTPUT: str = """
 # Recent News & Developments
@@ -46,6 +12,9 @@ SEARCH_AGENT_OUTPUT: str = """
 |          | {Development 3} | {Positive/Negative/Neutral} | {timeframe} |
 
 **Key Takeaway:** {1 sentence on what matters most from the news - focus on catalysts that could move the stock}
+
+## Conclusion:
+_Give the overall search outlook in 1-2 sentences and giving a summary to the user._
 
 _Note: If web search returns limited results, state that. For better results, searched using company name + relevant keywords (not just ticker)._
 """
@@ -64,7 +33,10 @@ SENTIMENT_AGENT_OUTPUT: str = """
 - {Headline/theme 2}
 - {Headline/theme 3}
 
-**Bottom Line:** {1 sentence summary - e.g., "Strong positive sentiment driven by earnings beat" or "Mixed sentiment due to regulatory concerns"}
+**Overall Trend:** (Hype/Fear/Neutral) - {1 sentence explaining the broader market sentiment context}
+
+## Conclusion:
+_Give the overall sentiment outlook in 1-2 sentences, combining all indicators together and giving a summary to the user._
 
 _Note: For Indian stocks, primarily using news sources as Reddit/social media may have limited coverage. If no sentiment data available for a source, explicitly state which source had no data._
 """
@@ -86,6 +58,9 @@ FINANCE_AGENT_OUTPUT: str = """
 | {ticker} | ${support} | ${resistance} | ${current} |
 
 **Market Fear Gauge (VIX):** {value} - {Low/Moderate/High} fear means {explanation in simple terms}
+
+## Conclusion:
+_Give the overall technical outlook in 1-2 sentences, combining all indicators together and giving a summary to the user._
 
 _Note: If any indicator data is missing, state which one and provide analysis with available data only._
 """
@@ -121,5 +96,7 @@ ADVISOR_AGENT_OUTPUT: str = """
 2. **Timeline**: {short/medium/long term}
 3. **Monitor**: {What to watch for}
 
+## Conclusion:
+_Give the overall advisory outlook in 1-2 sentences, combining all indicators together and giving a summary to the user._
 _Note: Backtesting period: {period}. Broker: {broker}. Market: {market}. If any tool failed or returned no data, clearly state which one and provide basic recommendation based on risk profile only._
 """

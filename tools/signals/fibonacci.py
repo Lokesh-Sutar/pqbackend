@@ -5,9 +5,8 @@ import talib
 from agno.tools import tool
 from pandas import DataFrame
 
-from tools.helper import get_ticker, logger_hook, validate_data
+from tools.helper import get_currency_symbol, get_ticker, logger_hook, validate_data
 
-# Try to import scipy, but provide fallback if not available
 try:
     from scipy.signal import argrelextrema
 
@@ -33,6 +32,7 @@ def get_fibonacci_retracement(ticker: str) -> dict[str, Any]:
         key support/resistance levels, and justification
     """
     df: DataFrame = get_ticker(ticker=ticker)
+    currency = get_currency_symbol(ticker)
 
     period = 63
 
@@ -90,13 +90,13 @@ def get_fibonacci_retracement(ticker: str) -> dict[str, Any]:
         justification = ''
 
         if is_uptrend:
-            justification = f'The market is in an uptrend (current: ${current_price:.2f}). These levels represent commonly-watched support zones where traders may look for pullback entries. Price MAY find support at these levels.'
+            justification = f'The market is in an uptrend (current: {currency}{current_price:.2f}). These levels represent commonly-watched support zones where traders may look for pullback entries. Price MAY find support at these levels.'
             levels['23.6%'] = round(price_max - (price_range * 0.236), 2)
             levels['38.2%'] = round(price_max - (price_range * 0.382), 2)
             levels['50.0%'] = round(price_max - (price_range * 0.5), 2)
             levels['61.8%'] = round(price_max - (price_range * 0.618), 2)
         else:
-            justification = f'The market is in a downtrend (current: ${current_price:.2f}). These levels represent commonly-watched resistance zones where traders may look for rally entries. Price MAY find resistance at these levels.'
+            justification = f'The market is in a downtrend (current: {currency}{current_price:.2f}). These levels represent commonly-watched resistance zones where traders may look for rally entries. Price MAY find resistance at these levels.'
             levels['23.6%'] = round(price_min + (price_range * 0.236), 2)
             levels['38.2%'] = round(price_min + (price_range * 0.382), 2)
             levels['50.0%'] = round(price_min + (price_range * 0.5), 2)

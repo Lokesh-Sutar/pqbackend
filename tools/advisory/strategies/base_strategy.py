@@ -30,6 +30,12 @@ class BasePortfolioStrategy(Strategy):
         Returns:
             Fraction of capital to risk (0.0 to 1.0)
         """
+        if price <= 0:
+            return 0.0
+
+        if self.equity <= 0:
+            return 0.0
+
         if stop_loss is None:
             stop_loss = price * (1 - self.stop_loss_pct)
 
@@ -68,10 +74,11 @@ class BasePortfolioStrategy(Strategy):
         if not self.position:
             return False
 
-        # Calculate actual loss from current position using pl_pct
-        current_loss_pct = abs(self.position.pl_pct) if self.position.pl < 0 else 0
-
-        return current_loss_pct >= self.stop_loss_pct
+        try:
+            current_loss_pct = abs(self.position.pl_pct) if self.position.pl < 0 else 0
+            return current_loss_pct >= self.stop_loss_pct
+        except (AttributeError, TypeError, ZeroDivisionError):
+            return False
 
     def should_take_profit(self) -> bool:
         """
@@ -83,7 +90,8 @@ class BasePortfolioStrategy(Strategy):
         if not self.position or self.take_profit_pct is None:
             return False
 
-        # Use pl_pct to check if profit target is reached
-        current_profit_pct = self.position.pl_pct if self.position.pl > 0 else 0
-
-        return current_profit_pct >= self.take_profit_pct
+        try:
+            current_profit_pct = self.position.pl_pct if self.position.pl > 0 else 0
+            return current_profit_pct >= self.take_profit_pct
+        except (AttributeError, TypeError, ZeroDivisionError):
+            return False

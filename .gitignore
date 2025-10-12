@@ -212,3 +212,5 @@ agno.db
 temp/
 logs/
 stock_data_raw_parquet/
+tickers.json
+token_metrics.json

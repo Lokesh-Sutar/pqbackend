@@ -225,7 +225,6 @@ def calculate_data_quality_score(df: pd.DataFrame) -> dict[str, Any]:
     issues = []
     if isinstance(df.index, pd.DatetimeIndex):
         date_diff = df.index.to_series().diff()
-        # Convert to days, handling potential NaT values
         days_diff = date_diff.dt.days
         days_diff_clean = days_diff.dropna()
 

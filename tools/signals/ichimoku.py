@@ -5,7 +5,7 @@ import talib
 from agno.tools import tool
 from pandas import DataFrame
 
-from tools.helper import get_ticker, logger_hook, validate_data
+from tools.helper import get_currency_symbol, get_ticker, logger_hook, validate_data
 
 
 @tool(
@@ -25,6 +25,7 @@ def get_ichimoku_cloud_signal(ticker: str) -> dict[str, Any]:
         cloud position, and trend strength
     """
     df: DataFrame = get_ticker(ticker=ticker)
+    currency = get_currency_symbol(ticker)
 
     min_periods = 52 + 26
 
@@ -85,33 +86,33 @@ def get_ichimoku_cloud_signal(ticker: str) -> dict[str, Any]:
     tk_cross_bullish = current_tenkan > current_kijun
 
     signal = 'Neutral / In Cloud'
-    justification = f'The price (${latest_close:.2f}) is currently trading inside the Ichimoku Cloud (${cloud_bottom:.2f} - ${cloud_top:.2f}), indicating a period of indecision or consolidation. The trend is unclear.'
+    justification = f'The price ({currency}{latest_close:.2f}) is currently trading inside the Ichimoku Cloud ({currency}{cloud_bottom:.2f} - {currency}{cloud_top:.2f}), indicating a period of indecision or consolidation. The trend is unclear.'
 
     if latest_close > cloud_top:
         distance_pct = ((latest_close - cloud_top) / cloud_top) * 100
 
         if distance_pct > 5 and tk_cross_bullish:
             signal = 'Very Strong Bullish'
-            justification = f'The price (${latest_close:.2f}) is trading {distance_pct:.1f}% above the Ichimoku Cloud (${cloud_top:.2f}), with Tenkan-sen above Kijun-sen. This is a very strong bullish signal. The cloud is expected to act as a support zone.'
+            justification = f'The price ({currency}{latest_close:.2f}) is trading {distance_pct:.1f}% above the Ichimoku Cloud ({currency}{cloud_top:.2f}), with Tenkan-sen above Kijun-sen. This is a very strong bullish signal. The cloud is expected to act as a support zone.'
         elif distance_pct > 2:
             signal = 'Strong Bullish'
-            justification = f'The price (${latest_close:.2f}) is trading {distance_pct:.1f}% above the Ichimoku Cloud (${cloud_top:.2f}), which is a strong bullish signal. The cloud is expected to act as a support zone.'
+            justification = f'The price ({currency}{latest_close:.2f}) is trading {distance_pct:.1f}% above the Ichimoku Cloud ({currency}{cloud_top:.2f}), which is a strong bullish signal. The cloud is expected to act as a support zone.'
         else:
             signal = 'Bullish'
-            justification = f'The price (${latest_close:.2f}) has just moved above the Ichimoku Cloud (${cloud_top:.2f}). This is a bullish signal, though proximity to the cloud suggests caution.'
+            justification = f'The price ({currency}{latest_close:.2f}) has just moved above the Ichimoku Cloud ({currency}{cloud_top:.2f}). This is a bullish signal, though proximity to the cloud suggests caution.'
 
     elif latest_close < cloud_bottom:
         distance_pct = ((cloud_bottom - latest_close) / cloud_bottom) * 100
 
         if distance_pct > 5 and not tk_cross_bullish:
             signal = 'Very Strong Bearish'
-            justification = f'The price (${latest_close:.2f}) is trading {distance_pct:.1f}% below the Ichimoku Cloud (${cloud_bottom:.2f}), with Tenkan-sen below Kijun-sen. This is a very strong bearish signal. The cloud is expected to act as a resistance zone.'
+            justification = f'The price ({currency}{latest_close:.2f}) is trading {distance_pct:.1f}% below the Ichimoku Cloud ({currency}{cloud_bottom:.2f}), with Tenkan-sen below Kijun-sen. This is a very strong bearish signal. The cloud is expected to act as a resistance zone.'
         elif distance_pct > 2:
             signal = 'Strong Bearish'
-            justification = f'The price (${latest_close:.2f}) is trading {distance_pct:.1f}% below the Ichimoku Cloud (${cloud_bottom:.2f}), which is a strong bearish signal. The cloud is expected to act as a resistance zone.'
+            justification = f'The price ({currency}{latest_close:.2f}) is trading {distance_pct:.1f}% below the Ichimoku Cloud ({currency}{cloud_bottom:.2f}), which is a strong bearish signal. The cloud is expected to act as a resistance zone.'
         else:
             signal = 'Bearish'
-            justification = f'The price (${latest_close:.2f}) has just moved below the Ichimoku Cloud (${cloud_bottom:.2f}). This is a bearish signal, though proximity to the cloud suggests caution.'
+            justification = f'The price ({currency}{latest_close:.2f}) has just moved below the Ichimoku Cloud ({currency}{cloud_bottom:.2f}). This is a bearish signal, though proximity to the cloud suggests caution.'
 
     cloud_color = (
         'Bullish (Green)' if current_span_a > current_span_b else 'Bearish (Red)'

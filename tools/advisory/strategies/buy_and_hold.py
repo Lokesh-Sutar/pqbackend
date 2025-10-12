@@ -1,5 +1,3 @@
-"""Buy and Hold strategy - simplest baseline"""
-
 from tools.advisory.strategies.base_strategy import BasePortfolioStrategy
 
 
@@ -15,9 +13,10 @@ class BuyAndHoldStrategy(BasePortfolioStrategy):
 
     def init(self):
         """No indicators needed for buy and hold"""
-        pass
+        self.bought = False
 
     def next(self):
         """Buy once at the beginning and hold"""
-        if not self.position:
+        if not self.position and not self.bought:
             self.buy()
+            self.bought = True

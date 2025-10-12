@@ -3,9 +3,9 @@ from typing import Any
 
 from agno.tools import tool
 
-from utils.ticker_store import ticker_store
 from tools.helper import SentimentAnalysisBase, logger_hook
 from tools.sentiment.db_utils import get_recent_reddit_posts, get_reddit_stats
+from utils.ticker_store import ticker_store
 
 logger = logging.getLogger(__name__)
 
@@ -52,7 +52,14 @@ class RedditSentimentAnalyzer(SentimentAnalysisBase):
 
             for post in posts:
                 sentiment = post['sentiment']
-                label = sentiment['label']
+                label = sentiment.get('label', 'neutral')
+                if label not in post_headlines:
+                    logger.debug(
+                        'Unknown sentiment label %s for reddit post %s, defaulting to neutral',
+                        label,
+                        post.get('post_id'),
+                    )
+                    label = 'neutral'
 
                 post_data = {
                     'sentiment': sentiment,

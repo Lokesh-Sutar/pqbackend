@@ -89,6 +89,85 @@ def build_portfolio_allocation(
 
                 stop_loss_price = current_price * (1 - stop_loss_pct)
 
+                atr_value = vol_info.get('atr', 0)
+                if atr_value > 0:
+                    target_1 = current_price + (1.5 * atr_value)
+                    target_2 = current_price + (2.5 * atr_value)
+                    target_3 = current_price + (4.0 * atr_value)
+
+                    target_1_gain = ((target_1 - current_price) / current_price) * 100
+                    target_2_gain = ((target_2 - current_price) / current_price) * 100
+                    target_3_gain = ((target_3 - current_price) / current_price) * 100
+
+                    risk_amount = current_price - stop_loss_price
+                    rr_1 = (
+                        (target_1 - current_price) / risk_amount
+                        if risk_amount > 0
+                        else 0
+                    )
+                    rr_2 = (
+                        (target_2 - current_price) / risk_amount
+                        if risk_amount > 0
+                        else 0
+                    )
+                    rr_3 = (
+                        (target_3 - current_price) / risk_amount
+                        if risk_amount > 0
+                        else 0
+                    )
+
+                    take_profit_targets = {
+                        'target_1': {
+                            'price': float(round(target_1, 2)),
+                            'gain_pct': float(round(target_1_gain, 2)),
+                            'risk_reward_ratio': float(round(rr_1, 2)),
+                            'exit_suggestion': '33% of position',
+                            'level': 'Conservative',
+                        },
+                        'target_2': {
+                            'price': float(round(target_2, 2)),
+                            'gain_pct': float(round(target_2_gain, 2)),
+                            'risk_reward_ratio': float(round(rr_2, 2)),
+                            'exit_suggestion': '33% of position',
+                            'level': 'Moderate',
+                        },
+                        'target_3': {
+                            'price': float(round(target_3, 2)),
+                            'gain_pct': float(round(target_3_gain, 2)),
+                            'risk_reward_ratio': float(round(rr_3, 2)),
+                            'exit_suggestion': '34% of position',
+                            'level': 'Aggressive',
+                        },
+                    }
+                else:
+                    target_1 = current_price * 1.10
+                    target_2 = current_price * 1.20
+                    target_3 = current_price * 1.35
+
+                    take_profit_targets = {
+                        'target_1': {
+                            'price': float(round(target_1, 2)),
+                            'gain_pct': 10.0,
+                            'risk_reward_ratio': 0,
+                            'exit_suggestion': '33% of position',
+                            'level': 'Conservative',
+                        },
+                        'target_2': {
+                            'price': float(round(target_2, 2)),
+                            'gain_pct': 20.0,
+                            'risk_reward_ratio': 0,
+                            'exit_suggestion': '33% of position',
+                            'level': 'Moderate',
+                        },
+                        'target_3': {
+                            'price': float(round(target_3, 2)),
+                            'gain_pct': 35.0,
+                            'risk_reward_ratio': 0,
+                            'exit_suggestion': '34% of position',
+                            'level': 'Aggressive',
+                        },
+                    }
+
                 buy_cost = calculate_transaction_cost(
                     broker, 'delivery', shares, current_price, 'buy', market
                 )
@@ -102,6 +181,7 @@ def build_portfolio_allocation(
                     ),
                     'stop_loss_price': float(round(stop_loss_price, 2)),
                     'stop_loss_pct': float(round(stop_loss_pct * 100, 2)),
+                    'take_profit_targets': take_profit_targets,
                     'volatility_pct': float(round(vol_info.get('atr_pct', 0), 2)),
                     'transaction_fees': float(round(buy_cost.get('total_cost', 0), 2)),
                     'effective_price': float(
@@ -187,16 +267,8 @@ def build_portfolio_allocation(
             'Review allocation and adjust if needed',
             'Place orders according to entry strategy',
             'Set alerts for stop-loss levels',
-            'Schedule first rebalancing review',
-        ]
-
-        currency_symbol = '₹' if market == 'india' else '$'
-        next_steps = [
-            f'Open account with {broker} if not already done',
-            f'Fund account with at least {currency_symbol}{total_allocated + total_fees:,.2f}',
-            'Review allocation and adjust if needed',
-            'Place orders according to entry strategy',
-            'Set alerts for stop-loss levels',
+            'Set alerts for take-profit target levels',
+            'Consider staged exits: sell 33% at each target level',
             'Schedule first rebalancing review',
         ]
 

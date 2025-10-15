@@ -1,6 +1,3 @@
-FINAL_OUTPUT_FORMAT = ''
-
-
 SEARCH_AGENT_OUTPUT: str = """
 # Recent News & Developments
 
@@ -86,17 +83,55 @@ ADVISOR_AGENT_OUTPUT: str = """
 - Estimated tax: ${X}
 
 ## Your Portfolio Split
-| Ticker | Amount | Why |
-|--------|--------|-----|
-| {ticker} | ${X} ({X}%) | {Brief reason based on backtest} |
-| Cash | ${X} ({X}%) | Safety buffer |
+| Ticker | Current Price | Amount | Shares | Why |
+|--------|---------------|--------|--------|-----|
+| {ticker} | ${current_price} | ${X} ({X}%) | {N} shares | {Brief reason based on backtest} |
+| Cash | - | ${X} ({X}%) | - | Safety buffer |
 
 ## Action Steps
-1. **{ticker}**: {Specific action - e.g., "Invest $500 monthly using Dollar Cost Averaging" or "Buy at $145-150, set stop-loss at $135"}
-2. **Timeline**: {short/medium/long term}
-3. **Monitor**: {What to watch for}
+1. **Execute Trade**: Based on the recommended strategy, the following action is advised:
+   - **Ticker**: {ticker}
+   - **Current Market Price**: ${current_price} (CRITICAL: This is the ACTUAL price right now)
+   - **Action**: {BUY/SELL}
+   - **Entry Price Range**: ${lower_range} - ${upper_range} (should be close to current price)
+   - **Recommended Shares**: {N} shares
+   - **Position Size**: ${total_investment}
+   - **Stop-Loss**: ${stop_loss_price} (exit if drops below this)
+   - **Take-Profit Target 1**: ${take_profit_price_1} (first exit target)
+   - **Take-Profit Target 2**: ${take_profit_price_2} (second exit target)
+2. **Timeline**: This recommendation is for a {short/medium/long term} holding period.
+3. **Monitor**: Keep an eye on {key metric or event to watch}.
 
 ## Conclusion:
 _Give the overall advisory outlook in 1-2 sentences, combining all indicators together and giving a summary to the user._
 _Note: Backtesting period: {period}. Broker: {broker}. Market: {market}. If any tool failed or returned no data, clearly state which one and provide basic recommendation based on risk profile only._
+"""
+
+TEAM_CONVERSATIONAL_OUTPUT = """
+# PersonaQuant Analysis for {ticker_or_query}
+
+## Executive Summary
+_{A 2-3 sentence summary synthesizing the findings from all agents. It should balance the different perspectives and give a high-level conclusion. Example: "While technical indicators for NVDA suggest a short-term buying opportunity, negative sentiment from recent news warrants a cautious approach. The recommended strategy is to wait for a clear trend."}_
+
+## Overall Recommendation
+**Decision:** {BUY | SELL | HOLD}
+**Confidence:** {High | Medium | Low}
+**Reasoning:** _{A brief explanation for the recommendation, highlighting the most critical factors. Example: "Confidence is medium because the bullish technical signals are in conflict with bearish news sentiment."}_
+
+## Agent Findings
+| Agent | Signal/Strategy | Key Finding |
+|---|---|---|
+| **Search** | _{Positive/Negative/Neutral}_ | _{Brief summary of key news}_ |
+| **Sentiment** | _{Bullish/Bearish/Neutral}_ | _{Overall market mood and score}_ |
+| **Finance** | _{BUY/SELL/HOLD}_ | _{Summary of technical indicators}_ |
+| **Advisory** | _{Recommended Strategy}_ | _{Backtest winner with expected returns}_ |
+
+## Recommended Action Plan
+_Give a concise action plan based on the overall information from all the agents. Write them properly in sections, steps, or in bullet points._
+
+
+## Risks & Caveats
+- _{List any conflicting signals, e.g., "Technicals are bullish, but news sentiment is negative due to recent regulatory concerns."}_
+- _{Mention any other risks, e.g., "High volatility expected around the upcoming earnings report."}_
+- _{Note if any agent failed or data was missing.}_
 """

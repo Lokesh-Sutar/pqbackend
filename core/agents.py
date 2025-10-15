@@ -2,7 +2,7 @@ from agno.agent import Agent
 from agno.models.google import Gemini
 from agno.team import Team
 from agno.tools.duckduckgo import DuckDuckGoTools
-from agno.tools.yfinance import YFinanceTools
+from agno.tools.linkup import LinkupTools
 
 from config import (
     COMMON_AGENT_USER_SETTINGS,
@@ -11,6 +11,7 @@ from config import (
     GOOGLE_API_KEY_1,
     GOOGLE_API_KEY_2,
     GOOGLE_MODEL_NAME_1,
+    LINKUP_API_KEY,
     REASONING_MODE,
     TEAM_USER_SETTINGS,
 )
@@ -36,10 +37,10 @@ from tools.signals import (
 )
 from utils.prompt import (
     ADVISOR_AGENT_OUTPUT,
-    FINAL_OUTPUT_FORMAT,
     FINANCE_AGENT_OUTPUT,
     SEARCH_AGENT_OUTPUT,
     SENTIMENT_AGENT_OUTPUT,
+    TEAM_CONVERSATIONAL_OUTPUT,
 )
 
 
@@ -94,13 +95,13 @@ def create_finance_agent() -> Agent:
             get_fibonacci_retracement,
             get_ichimoku_cloud_signal,
             get_obv_signal,
-            YFinanceTools(
-                exclude_tools=[
-                    'get_technical_indicators',
-                    'get_historical_stock_prices',
-                    'get_income_statements',
-                ]
-            ),
+            # YFinanceTools(
+            #     exclude_tools=[
+            #         'get_technical_indicators',
+            #         'get_historical_stock_prices',
+            #         'get_income_statements',
+            #     ]
+            # ),
         ],
         **COMMON_AGENT_USER_SETTINGS,
         **COMMON_RETRY_SETTINGS,
@@ -155,10 +156,12 @@ def create_advisory_agent() -> Agent:
             '   - Are we in a different market regime (bull vs bear) than the backtest period?',
             '   - Are the stocks too correlated? (use check_portfolio_correlation)',
             '5. Extract From User Query:',
-            '   - Capital: ₹50,000 or $10k → extract amount',
+            '   - Capital: ₹50,000 or $10k → extract amount (default: 10000)',
             '   - Risk: "minimal/low risk" → conservative, "moderate" → moderate, "aggressive/high growth" → aggressive',
-            '   - Timeline: "short" → 1yr, "medium" → 3yr, "long" → 5yr',
-            '   - Broker: zerodha, groww, upstox, robinhood, fidelity, etc.',
+            '   - Broker: zerodha, groww, upstox, robinhood, fidelity, etc. (default: zerodha for Indian stocks, robinhood for US stocks)',
+            '   - Market: Infer from ticker (.NS suffix = india, no suffix = us)',
+            '   IMPORTANT: When calling build_portfolio_allocation, ONLY use these parameters: tickers, capital, risk_profile, selected_strategy, broker, market',
+            '   DO NOT pass time_horizon to build_portfolio_allocation - it does not accept this parameter.',
             '6. Show All 4 Strategies: Buy & Hold, DCA, SMA Crossover, RSI Mean Reversion with their performance.',
             '7. Diversification Check: If multiple stocks, use check_portfolio_correlation to warn about concentration risk.',
             '8. Explain Simply: "Risk Score" instead of "Sharpe Ratio", "Max Loss" instead of "Max Drawdown".',
@@ -200,12 +203,12 @@ def create_search_agent() -> Agent:
         ],
         expected_output=SEARCH_AGENT_OUTPUT,
         tools=[
-            # LinkupTools(
-            #     api_key=LINKUP_API_KEY, depth='standard', output_type='searchResults'
-            # ),
+            LinkupTools(
+                api_key=LINKUP_API_KEY, depth='standard', output_type='searchResults'
+            ),
             DuckDuckGoTools(
                 enable_search=True, enable_news=True, fixed_max_results=100, timeout=30
-            )
+            ),
         ],
         **COMMON_AGENT_USER_SETTINGS,
         **COMMON_RETRY_SETTINGS,
@@ -249,7 +252,7 @@ def create_team() -> Team:
             '   - Lower confidence if critical data missing',
             '8. Follow format exactly - keep it concise and actionable.',
         ],
-        expected_output=FINAL_OUTPUT_FORMAT,
+        expected_output=TEAM_CONVERSATIONAL_OUTPUT,
         reasoning=REASONING_MODE,
         members=[finance_agent, sentiment_agent, advisory_agent, search_agent],
         **COMMON_RETRY_SETTINGS,

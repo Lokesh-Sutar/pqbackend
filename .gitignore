@@ -216,3 +216,4 @@ tickers.json
 token_metrics.json
 news_articles/
 .logfire/
+.github

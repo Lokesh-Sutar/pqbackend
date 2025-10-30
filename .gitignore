@@ -217,3 +217,7 @@ token_metrics.json
 news_articles/
 .logfire/
 .github
+other/
+evaluation/
+conversation/
+report/

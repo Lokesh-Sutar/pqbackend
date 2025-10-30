@@ -9,6 +9,7 @@ GOOGLE_API_KEY_0: str | None = os.getenv('GOOGLE_API_KEY_0')
 GOOGLE_API_KEY_1: str | None = os.getenv('GOOGLE_API_KEY_1')
 GOOGLE_API_KEY_2: str | None = os.getenv('GOOGLE_API_KEY_2')
 GOOGLE_API_KEY_3: str | None = os.getenv('GOOGLE_API_KEY_3')
+GOOGLE_API_KEY_4: str | None = os.getenv('GOOGLE_API_KEY_4')
 GROQ_API_KEY: str | None = os.getenv('GROQ_API_KEY')
 OPENROUTER_MODEL_API: str | None = os.getenv('OPENROUTER_MODEL_API')
 REDDIT_CLIENT_ID: str | None = os.getenv('REDDIT_CLIENT_ID')
@@ -19,8 +20,10 @@ LINKUP_API_KEY: str | None = os.getenv('LINKUP_API_KEY')
 HF_API_KEY: str | None = os.getenv('HF_API_KEY')
 CEREBRAS_API_KEY: str | None = os.getenv('CEREBRAS_API_KEY')
 
-GOOGLE_MODEL_NAME_0 = 'gemini-2.5-pro'
-GOOGLE_MODEL_NAME_1 = 'gemini-2.5-flash'
+GOOGLE_MODEL_PRO = 'gemini-2.5-pro'
+GOOGLE_MODEL_FLASH = 'gemini-2.5-flash'
+GOOGLE_MODEL_FLASH_EXP = 'gemini-flash-latest'
+GOOGLE_MODEL_FLASH_LITE = 'gemini-flash-lite-latest'
 
 OPENROUTER_MODEL_NORMAL = 'openai/gpt-oss-120b:free'
 OPENROUTER_MODEL_REASONING = 'moonshotai/kimi-k2:free'
@@ -47,8 +50,8 @@ REASONING_MODE = False
 
 COMMON_RETRY_SETTINGS = {
     'exponential_backoff': True,
-    'delay_between_retries': 3,
     'retries': 5,
+    'delay_between_retries': 3,
 }
 db = SqliteDb(db_file=DB_FILE)
 
@@ -58,7 +61,9 @@ COMMON_AGENT_USER_SETTINGS = {
     'session_id': DEFAULT_SESSION_ID,
     'debug_mode': DEBUG_MODE,
     'debug_level': DEBUG_LEVEL,
-    'db': db,
+    # 'reasoning': REASONING_MODE,
+    # 'reasoning_max_steps': 2,
+    # 'db': db,
 }
 
 TEAM_USER_SETTINGS = {
@@ -67,5 +72,5 @@ TEAM_USER_SETTINGS = {
     'session_id': DEFAULT_SESSION_ID,
     'debug_mode': DEBUG_MODE,
     'debug_level': DEBUG_LEVEL,
-    'db': db,
+    # 'db': db,
 }

@@ -146,6 +146,8 @@ def setup_logging(log_file='./logs/sentiment_fetch.log'):
 def initialize_finbert():
     """Initialize FinBERT model for sentiment analysis"""
     logger.info('Loading FinBERT model...')
+    import torch
+
     try:
         tokenizer = AutoTokenizer.from_pretrained('ProsusAI/finbert')
         model = AutoModelForSequenceClassification.from_pretrained(
@@ -155,7 +157,7 @@ def initialize_finbert():
             'sentiment-analysis',  # type: ignore
             model=model,
             tokenizer=tokenizer,
-            device='cpu',
+            device='cuda' if torch.cuda.is_available() else 'cpu',
         )  # type: ignore
         logger.info('FinBERT model loaded successfully')
         return finbert

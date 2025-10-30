@@ -13,6 +13,19 @@ HANDLER_MAP: dict[str, Callable[[str, dict[str, Any]], dict[str, Any]]] = {
     'Run': event_handlers.handle_run_event,
 }
 
+_tool_event_history: list[dict] = []
+
+
+def clear_tool_history() -> None:
+    """Clear the tool event history."""
+    global _tool_event_history
+    _tool_event_history = []
+
+
+def get_tool_history() -> list[dict[str, Any]]:
+    """Get the complete tool event history for the current conversation."""
+    return _tool_event_history.copy()
+
 
 def event_to_dict(event: Any) -> dict[str, Any]:
     """
@@ -73,6 +86,71 @@ def _track_token_metrics(
         logger.warning(f'Failed to track token metrics: {e}')
 
 
+def _extract_and_store_tool_history(payload: dict) -> None:
+    """
+    Extract tool history from RunCompleted events and append to global tool history.
+
+    This captures tool calls with their full details (name, args, result) from completed agent runs.
+
+    Args:
+        payload: The cleaned event payload from a RunCompleted event
+    """
+    import logging
+
+    logger = logging.getLogger(__name__)
+    global _tool_event_history
+
+    agent_id = payload.get('agent_id')
+    agent_name = payload.get('agent_name', payload.get('name', 'Unknown'))
+
+    tools = payload.get('tools', [])
+
+    if not tools and 'agents' in payload:
+        for agent_result in payload.get('agents', []):
+            agent_tools = agent_result.get('tools', [])
+            if agent_tools:
+                sub_agent_id = agent_result.get('agent_id')
+                sub_agent_name = agent_result.get(
+                    'agent_name', agent_result.get('name', 'Unknown')
+                )
+                logger.info(
+                    f'Extracting {len(agent_tools)} tools from nested agent {sub_agent_name}'
+                )
+
+                for tool in agent_tools:
+                    tool_event_record = {
+                        'event_name': 'ToolCallCompletedEvent',
+                        'timestamp': tool.get('created_at'),
+                        'agent_id': sub_agent_id,
+                        'agent_name': sub_agent_name,
+                        'tool_name': tool.get('tool_name'),
+                        'tool_args': tool.get('tool_args'),
+                        'tool_result': tool.get('result'),
+                    }
+                    _tool_event_history.append(tool_event_record)
+        return
+
+    logger.info(
+        f'Extracting tool history for agent {agent_name} (ID: {agent_id}): {len(tools)} tools found'
+    )
+
+    if not tools:
+        return
+
+    for tool in tools:
+        tool_event_record = {
+            'event_name': 'ToolCallCompletedEvent',
+            'timestamp': tool.get('created_at'),
+            'agent_id': agent_id,
+            'agent_name': agent_name,
+            'tool_name': tool.get('tool_name'),
+            'tool_args': tool.get('tool_args'),
+            'tool_result': tool.get('result'),
+        }
+        _tool_event_history.append(tool_event_record)
+        logger.info(f'Added tool {tool.get("tool_name")} to history')
+
+
 def process_event(event) -> str:
     """
     Processes an agent event and formats it for Server-Sent Events (SSE).
@@ -83,6 +161,7 @@ def process_event(event) -> str:
     Returns:
         str: Formatted SSE string with event type and JSON data
     """
+    global _tool_event_history
     try:
         event_name = event.__class__.__name__
         raw_payload = event_to_dict(event)
@@ -95,6 +174,10 @@ def process_event(event) -> str:
 
         cleaned_payload = event_handlers.clean_payload(raw_payload)
         processed_data = handler(event_name, cleaned_payload)
+
+        if 'RunCompleted' in event_name:
+            _extract_and_store_tool_history(cleaned_payload)
+
         if 'RunCompleted' in event_name or 'TeamRunCompleted' in event_name:
             _track_token_metrics(event_name, cleaned_payload, processed_data)
 

@@ -2,16 +2,17 @@ from agno.agent import Agent
 from agno.models.google import Gemini
 from agno.team import Team
 from agno.tools.duckduckgo import DuckDuckGoTools
-from agno.tools.linkup import LinkupTools
 
+# from agno.tools.linkup import LinkupTools
 from config import (
     COMMON_AGENT_USER_SETTINGS,
     COMMON_RETRY_SETTINGS,
     GOOGLE_API_KEY_0,
     GOOGLE_API_KEY_1,
     GOOGLE_API_KEY_2,
-    GOOGLE_MODEL_NAME_1,
-    LINKUP_API_KEY,
+    GOOGLE_API_KEY_3,
+    GOOGLE_API_KEY_4,
+    GOOGLE_MODEL_FLASH,
     REASONING_MODE,
     TEAM_USER_SETTINGS,
 )
@@ -49,7 +50,9 @@ def create_finance_agent() -> Agent:
         name='Finance_Agent',
         id='agent_1',
         description='You are a Finance Agent who analyzes technical indicators and explains them in simple terms.',
-        model=Gemini(id=GOOGLE_MODEL_NAME_1, api_key=GOOGLE_API_KEY_1, seed=42),
+        model=Gemini(
+            id=GOOGLE_MODEL_FLASH, api_key=GOOGLE_API_KEY_0, seed=42, temperature=0.5
+        ),
         instructions=[
             '1. Role: Analyze technical indicators and translate them into plain English.',
             '2. Tools Available:',
@@ -86,7 +89,6 @@ def create_finance_agent() -> Agent:
             detect_market_regime,
             check_earnings_calendar,
             get_sector_performance,
-            analyze_options_flow,
             get_sma_crossover_signal,
             get_rsi_signal,
             get_macd_signal,
@@ -113,7 +115,9 @@ def create_sentiment_agent() -> Agent:
         name='Sentiment_Agent',
         id='agent_2',
         description='You are a Sentiment Agent who gauges what people are saying about stocks.',
-        model=Gemini(id=GOOGLE_MODEL_NAME_1, api_key=GOOGLE_API_KEY_2, seed=42),
+        model=Gemini(
+            id=GOOGLE_MODEL_FLASH, api_key=GOOGLE_API_KEY_1, seed=42, temperature=0.5
+        ),
         instructions=[
             '1. Role: Gauge market sentiment from news, social media, and financial sources.',
             '2. Tools: Use Reddit, Finnhub news, and YFinance news sentiment.',
@@ -143,7 +147,9 @@ def create_advisory_agent() -> Agent:
     return Agent(
         name='Advisory_Agent',
         id='agent_3',
-        model=Gemini(id=GOOGLE_MODEL_NAME_1, api_key=GOOGLE_API_KEY_1, seed=42),
+        model=Gemini(
+            id=GOOGLE_MODEL_FLASH, api_key=GOOGLE_API_KEY_2, seed=42, temperature=0.5
+        ),
         description='You are an Advisory Agent who tests investment strategies and recommends the best approach.',
         instructions=[
             '1. Role: Test multiple investment strategies and recommend the best one based on data.',
@@ -174,6 +180,7 @@ def create_advisory_agent() -> Agent:
             backtest_investment_strategies,
             build_portfolio_allocation,
             check_portfolio_correlation,
+            analyze_options_flow,
         ],
         **COMMON_AGENT_USER_SETTINGS,
         **COMMON_RETRY_SETTINGS,
@@ -184,7 +191,9 @@ def create_search_agent() -> Agent:
     return Agent(
         name='Search_Agent',
         id='agent_4',
-        model=Gemini(id=GOOGLE_MODEL_NAME_1, api_key=GOOGLE_API_KEY_0, seed=42),
+        model=Gemini(
+            id=GOOGLE_MODEL_FLASH, api_key=GOOGLE_API_KEY_3, seed=42, temperature=0.5
+        ),
         description='You are a Search Agent who finds latest news and developments about stocks.',
         instructions=[
             '1. Role: Find recent news and developments that could impact stock prices.',
@@ -203,12 +212,12 @@ def create_search_agent() -> Agent:
         ],
         expected_output=SEARCH_AGENT_OUTPUT,
         tools=[
-            LinkupTools(
-                api_key=LINKUP_API_KEY, depth='standard', output_type='searchResults'
-            ),
+            # LinkupTools(
+            #     api_key=LINKUP_API_KEY, depth='standard', output_type='searchResults'
+            # ),
             DuckDuckGoTools(
                 enable_search=True, enable_news=True, fixed_max_results=100, timeout=30
-            ),
+            )
         ],
         **COMMON_AGENT_USER_SETTINGS,
         **COMMON_RETRY_SETTINGS,
@@ -223,7 +232,10 @@ def create_team() -> Team:
     return Team(
         id='team_1',
         name='PersonaQuantTeam',
-        model=Gemini(id=GOOGLE_MODEL_NAME_1, api_key=GOOGLE_API_KEY_1, seed=42),
+        description='You are an Expert Financial Analyst who leverages the power of agents to find and curate all the information and then give insights on it.',
+        model=Gemini(
+            id=GOOGLE_MODEL_FLASH, api_key=GOOGLE_API_KEY_4, seed=42, temperature=0.5
+        ),
         instructions=[
             '1. Identify Tickers: If user provides ticker, use it. If not, suggest 1-3 relevant tickers.',
             '2. Format Tickers: Indian stocks need .NS suffix (e.g., HDFC.NS). US stocks as-is (e.g., NVDA).',
@@ -254,6 +266,7 @@ def create_team() -> Team:
         ],
         expected_output=TEAM_CONVERSATIONAL_OUTPUT,
         reasoning=REASONING_MODE,
+        reasoning_max_steps=3,
         members=[finance_agent, sentiment_agent, advisory_agent, search_agent],
         **COMMON_RETRY_SETTINGS,
         **TEAM_USER_SETTINGS,

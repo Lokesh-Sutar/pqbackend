@@ -1,137 +1,114 @@
 SEARCH_AGENT_OUTPUT: str = """
-# Recent News & Developments
+# News Analysis Report: {ticker}
 
-## Latest Updates
-| Ticker | Recent News | Impact | When |
-|--------|-------------|--------|------|
-| {ticker} | {Development 1} | {Positive/Negative/Neutral} | {timeframe if available} |
-|          | {Development 2} | {Positive/Negative/Neutral} | {timeframe} |
-|          | {Development 3} | {Positive/Negative/Neutral} | {timeframe} |
+**Headline:** {A 1-sentence summary of the single most critical recent news item.}
 
-**Key Takeaway:** {1 sentence on what matters most from the news - focus on catalysts that could move the stock}
+**Key Developments:**
+* **[{timeframe}]:** {News item 1 and its immediate context.}
+* **[{timeframe}]:** {News item 2 and its immediate context.}
+* **[{timeframe}]:** {News item 3, if relevant.}
 
-## Conclusion:
-_Give the overall search outlook in 1-2 sentences and giving a summary to the user._
+**Analytical Insight:**
+{A 1-2 sentence analysis of *what this news means* for the stock. Is it a short-term catalyst? Does it change the long-term thesis? Does it confirm or contradict the technicals? This is the "so what?"}
 
-_Note: If web search returns limited results, state that. For better results, searched using company name + relevant keywords (not just ticker)._
+_Note: If search results are limited, state that. Searched using company name + keywords._
 """
 
 SENTIMENT_AGENT_OUTPUT: str = """
-# Market Sentiment Report
+# Sentiment Analysis: {ticker}
 
-## Sentiment Score
-| Ticker | Overall Score | Sources Used | Market Mood | Signal |
-|--------|---------------|--------------|-------------|--------|
-| {ticker} | {score}/100 | {Reddit/News/YFinance} | {Bullish/Bearish/Neutral} | {BUY/SELL/HOLD} |
+**Overall Sentiment:** {Bullish | Bearish | Neutral}
 
-**What People Are Saying:**
-{2-3 bullet points of actual headlines or sentiment drivers - keep it factual}
-- {Headline/theme 1}
-- {Headline/theme 2}
-- {Headline/theme 3}
+**Sentiment Drivers:**
+* **Social Media (Reddit/X):** {General theme, e.g., "High volume of discussion, primarily positive around {feature}." or "Fear/uncertainty dominates threads."}
+* **News Headlines:** {General theme, e.g., "Recent press coverage is predominantly negative, focusing on {topic}."}
 
-**Overall Trend:** (Hype/Fear/Neutral) - {1 sentence explaining the broader market sentiment context}
+**Analytical Insight:**
+{1-2 sentences on what this sentiment implies. e.g., "The high social media hype suggests a potential for a short-term, volatile rally, even as news sentiment remains cautious." or "The overwhelming bearishness indicates high fear, which could be a contrarian 'buy' signal if fundamentals are strong."}
 
-## Conclusion:
-_Give the overall sentiment outlook in 1-2 sentences, combining all indicators together and giving a summary to the user._
-
-_Note: For Indian stocks, primarily using news sources as Reddit/social media may have limited coverage. If no sentiment data available for a source, explicitly state which source had no data._
+_Note: If data for a source is unavailable (e.g., limited Reddit coverage for Indian stocks), state it._
 """
 
 FINANCE_AGENT_OUTPUT: str = """
-# Technical Analysis Report
+# Technical Analysis: {ticker}
 
-## Signal Summary
-| Ticker | Price | Trend | RSI | MACD | Moving Averages | Signal |
-|--------|-------|-------|-----|------|-----------------|--------|
-| {ticker} | ${price} | {↗/→/↘} | {value} ({condition}) | {Bullish/Bearish/Neutral} | {Above/Below/Mixed} | {BUY/SELL/HOLD} |
+**Current Price:** {currency_symbol}{price}
+**Technical Outlook:** {Bullish | Bearish | Neutral / Consolidating}
 
-**What This Means:**
-- **{ticker}**: {Plain English explanation: "Price is trending up with strong momentum" or "Oversold conditions suggest potential bounce" - max 1 sentence per ticker}
+**Key Indicator Summary:**
+* **Trend:** {Price is currently trading {above/below} the {50/200}-day moving average, indicating a {long-term/short-term} {uptrend/downtrend}.}
+* **Momentum:** {RSI is at {value}, suggesting {oversold/overbought/neutral} conditions. MACD is {bullishly/bearishly} crossed.}
+* **Key Levels to Watch:**
+    * **Support (Floor):** {currency_symbol}{support1}, {currency_symbol}{support2}
+    * **Resistance (Ceiling):** {currency_symbol}{resistance1}, {currency_symbol}{resistance2}
 
-**Key Levels to Watch:**
-| Ticker | Support (Floor) | Resistance (Ceiling) | Current Price |
-|--------|-----------------|----------------------|---------------|
-| {ticker} | ${support} | ${resistance} | ${current} |
+**Analytical Insight:**
+{1-2 sentences combining the indicators. e.g., "The stock is in a clear uptrend but is currently overbought (RSI > 70), suggesting a short-term pullback to support at {currency_symbol}{support1} is possible before continuing higher."}
 
-**Market Fear Gauge (VIX):** {value} - {Low/Moderate/High} fear means {explanation in simple terms}
-
-## Conclusion:
-_Give the overall technical outlook in 1-2 sentences, combining all indicators together and giving a summary to the user._
-
-_Note: If any indicator data is missing, state which one and provide analysis with available data only._
+_Note: If any indicator data is missing, state which one._
 """
 
 ADVISOR_AGENT_OUTPUT: str = """
-# Strategy & Portfolio Recommendation
+# Strategy & Trade Plan: {ticker}
 
-## Tested Strategies
-| Strategy | Annual Return | Risk Score | Max Loss | Winner |
-|----------|---------------|------------|----------|--------|
-| Buy & Hold | {X}% | {Sharpe} | -{X}% | {✓ if best} |
-| Dollar Cost Averaging | {X}% | {Sharpe} | -{X}% | {✓ if best} |
-| SMA Crossover | {X}% | {Sharpe} | -{X}% | {✓ if best} |
-| RSI Mean Reversion | {X}% | {Sharpe} | -{X}% | {✓ if best} |
+**Recommended Strategy:** {Strategy Name, e.g., "SMA Crossover" or "Buy & Hold"}
+**Strategy Rationale:** {This strategy was selected based on {backtest performance / user risk profile}, showing a {X}% annual return with a max loss of {X}% during the {period} backtest.}
 
-**Recommended Approach:** {strategy_name}  
-**Why:** {1 sentence explaining why it won - e.g., "Best balance of returns and stability for conservative investors" or "Highest returns with acceptable risk"}
+**Proposed Trade Parameters:**
+* **Action:** {BUY | SELL | WAIT}
+* **Timeline:** {Short-term (weeks) | Medium-term (months) | Long-term (years)}
+* **Entry Range:** {currency_symbol}{lower_range} - {currency_symbol}{upper_range}
+* **Stop-Loss Target:** {currency_symbol}{stop_loss_price} (e.g., ~{X}% below entry)
+* **Profit Target 1:** {currency_symbol}{take_profit_price_1}
+* **Position Size:** {Recommend {N} shares, totaling {currency_symbol}{total_investment} ({X}% of portfolio)}
 
-**What to Expect:**
-- Potential annual return: {X}%
-- Worst case loss: -{X}%
-- Trading fees: ${X}
-- Estimated tax: ${X}
+**Analytical Insight:**
+{1-2 sentences on *why* this trade makes sense *now*. e.g., "This trade plan aims to capture the new uptrend identified by the technical agent, while the stop-loss protects against a failure at the {currency_symbol}{resistance} level."}
 
-## Your Portfolio Split
-| Ticker | Current Price | Amount | Shares | Why |
-|--------|---------------|--------|--------|-----|
-| {ticker} | ${current_price} | ${X} ({X}%) | {N} shares | {Brief reason based on backtest} |
-| Cash | - | ${X} ({X}%) | - | Safety buffer |
-
-## Action Steps
-1. **Execute Trade**: Based on the recommended strategy, the following action is advised:
-   - **Ticker**: {ticker}
-   - **Current Market Price**: ${current_price} (CRITICAL: This is the ACTUAL price right now)
-   - **Action**: {BUY/SELL}
-   - **Entry Price Range**: ${lower_range} - ${upper_range} (should be close to current price)
-   - **Recommended Shares**: {N} shares
-   - **Position Size**: ${total_investment}
-   - **Stop-Loss**: ${stop_loss_price} (exit if drops below this)
-   - **Take-Profit Target 1**: ${take_profit_price_1} (first exit target)
-   - **Take-Profit Target 2**: ${take_profit_price_2} (second exit target)
-2. **Timeline**: This recommendation is for a {short/medium/long term} holding period.
-3. **Monitor**: Keep an eye on {key metric or event to watch}.
-
-## Conclusion:
-_Give the overall advisory outlook in 1-2 sentences, combining all indicators together and giving a summary to the user._
-_Note: Backtesting period: {period}. Broker: {broker}. Market: {market}. If any tool failed or returned no data, clearly state which one and provide basic recommendation based on risk profile only._
+_Note: All parameters are based on backtesting and current market conditions. They are not guaranteed._
 """
 
-TEAM_CONVERSATIONAL_OUTPUT = """
-# PersonaQuant Analysis for {ticker_or_query}
+TEAM_CONVERSATIONAL_OUTPUT: str = """
+# Financial Advisory: {Reflect the user's question, e.g., "Analysis of {Ticker}" or "Strategy for {Query}"}
 
-## Executive Summary
-_{A 2-3 sentence summary synthesizing the findings from all agents. It should balance the different perspectives and give a high-level conclusion. Example: "While technical indicators for NVDA suggest a short-term buying opportunity, negative sentiment from recent news warrants a cautious approach. The recommended strategy is to wait for a clear trend."}_
+## The Verdict: **{Decision: BUY | SELL | HOLD}**
 
-## Overall Recommendation
-**Decision:** {BUY | SELL | HOLD}
-**Confidence:** {High | Medium | Low}
-**Reasoning:** _{A brief explanation for the recommendation, highlighting the most critical factors. Example: "Confidence is medium because the bullish technical signals are in conflict with bearish news sentiment."}_
+**Current Stance:**
+{1-2 concise, non-robotic sentences that *directly* address the user's question, synthesizing the key findings. Example: "While {Ticker} shows strong technical momentum, recent negative news and bearish market sentiment suggest a high-risk entry. We recommend holding for now." or "This appears to be a solid buying opportunity, as the technicals are bullish, and recent news provides a clear positive catalyst."}
 
-## Agent Findings
-| Agent | Signal/Strategy | Key Finding |
+---
+
+## Core Rationale (The Agents' Consensus)
+
+| Factor | Signal | Key Finding |
 |---|---|---|
-| **Search** | _{Positive/Negative/Neutral}_ | _{Brief summary of key news}_ |
-| **Sentiment** | _{Bullish/Bearish/Neutral}_ | _{Overall market mood and score}_ |
-| **Finance** | _{BUY/SELL/HOLD}_ | _{Summary of technical indicators}_ |
-| **Advisory** | _{Recommended Strategy}_ | _{Backtest winner with expected returns}_ |
+| **Technical Analysis** | {Technical Outlook: Bullish/Bearish} | {1-sentence summary from Finance Agent, e.g., "Price is overbought, nearing major resistance at {currency_symbol}{X}."} |
+| **Market Sentiment** | {Overall Sentiment: Bullish/Bearish} | {1-sentence summary from Sentiment Agent, e.g., "Social media hype is high, but news remains cautious."} |
+| **News & Catalysts** | {Impact: Positive/Negative/Neutral} | {1-sentence summary from Search Agent, e.g., "Upcoming {event} is a major catalyst."} |
+| **Strategy Backtest** | {Strategy: {Strategy Name}} | {1-sentence summary from Advisor Agent, e.g., "Backtest favors a mean-reversion strategy."} |
+
+---
 
 ## Recommended Action Plan
-_Give a concise action plan based on the overall information from all the agents. Write them properly in sections, steps, or in bullet points._
 
+{This section provides the clear, "leads to somewhere" advice.}
 
-## Risks & Caveats
-- _{List any conflicting signals, e.g., "Technicals are bullish, but news sentiment is negative due to recent regulatory concerns."}_
-- _{Mention any other risks, e.g., "High volatility expected around the upcoming earnings report."}_
-- _{Note if any agent failed or data was missing.}_
+**If the Verdict is BUY or SELL:**
+* **Action:** {BUY/SELL} {Ticker}
+* **Entry Range:** {e.g., Wait for a dip to {currency_symbol}{X} or buy at market price.}
+* **Stop-Loss:** {Set a stop-loss at {currency_symbol}{stop_loss_price} to manage risk.}
+* **Profit Target:** {Look to take initial profits near {currency_symbol}{take_profit_price_1}.}
+* **Timeline:** {Short-term / Medium-term}
+
+**If the Verdict is HOLD:**
+* **Monitor:** Keep a close watch on the **{currency_symbol}{key_level}** support/resistance level.
+* **Trigger:** {A {break above/drop below} this level would be a new {buy/sell} signal.}
+* **Next Catalyst:** {Pay attention to the {event} on {date}.}
+
+---
+
+## Key Risks & Conflicting Signals
+* **Primary Conflict:** {Identify the main conflict, e.g., "Technicals are bullish, but fundamentals from recent news are weak."}
+* **Market Context:** {e.g., "The overall market is in a 'fear' state (VIX: {value}), so all long positions have elevated risk."}
+* _{Any other critical risk or missing data point from an agent.}_
 """

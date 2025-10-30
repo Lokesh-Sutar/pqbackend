@@ -109,7 +109,7 @@ tickers_to_extract = [
     'XOM',
 ]
 
-data_dir = 'stock_data_raw_parquet'
+data_dir = 'temp/stock_data_raw_parquet'
 os.makedirs(data_dir, exist_ok=True)
 
 base_url = 'https://huggingface.co/datasets/paperswithbacktest/Stocks-Daily-Price/resolve/main/data'

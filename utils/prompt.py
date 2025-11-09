@@ -69,7 +69,7 @@ _Note: All parameters are based on backtesting and current market conditions. Th
 """
 
 TEAM_CONVERSATIONAL_OUTPUT: str = """
-# Financial Advisory: {Reflect the user's question, e.g., "Analysis of {Ticker}" or "Strategy for {Query}"}
+# {Reflect the user's question, e.g., "Analysis of {Ticker}" or "Strategy for {Query}"}
 
 ## The Verdict: **{Decision: BUY | SELL | HOLD}**
 

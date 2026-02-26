@@ -2,13 +2,32 @@
 
 This repository contains the backend code for PersonaQuant, a multi-agent AI system for quantitative analysis.
 
+## Screenshot
+
+Here are some screenshots showcasing the backend in action:
+
+<p align="center">
+  <img src="assets/all_agents.png" alt="All agents overview" width="60%" />
+</p>
+
+<p align="center">
+  <sub><b>All Core Agents in the System (capped for brevity)</b></sub>
+</p>
+
+<p align="center">
+  <img src="assets/final_response.png" alt="Final response example" width="60%" />
+</p>
+
+<p align="center">
+  <sub><b>Final Response from Conductor Agent</b></sub>
+</p>
 
 ## Prerequisites
 
 Before you begin, ensure you have the following installed:
 
-* Python 3.8 or higher
-* uv (Python package manager)
+- Python 3.8 or higher
+- uv (Python package manager)
 
 If you don't have uv installed:
 
@@ -29,6 +48,13 @@ cd personaquant_backend
 
 ```bash
 uv sync
+```
+
+3. Set up environment variables:
+
+
+```bash
+cp .env.example .env
 ```
 
 ## Running the Server

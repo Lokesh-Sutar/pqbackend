@@ -22,7 +22,7 @@ Here are some screenshots showcasing the backend in action:
   <sub><b>Final Response from Conductor Agent</b></sub>
 </p>
 
-# Architecture Overview
+## Architecture Overview
 
 <p align="center">
   <img src="assets/arch.png" alt="System Architecture Diagram" width="65%" />

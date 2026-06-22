@@ -21,7 +21,8 @@ HF_API_KEY: str | None = os.getenv('HF_API_KEY')
 CEREBRAS_API_KEY: str | None = os.getenv('CEREBRAS_API_KEY')
 
 GOOGLE_MODEL_PRO = 'gemini-2.5-pro'
-GOOGLE_MODEL_FLASH = 'gemini-2.5-flash'
+# GOOGLE_MODEL_FLASH = 'gemini-2.5-flash'
+GOOGLE_MODEL_FLASH = 'gemma-4-31b-it'
 GOOGLE_MODEL_FLASH_EXP = 'gemini-flash-latest'
 GOOGLE_MODEL_FLASH_LITE = 'gemini-flash-lite-latest'
 
